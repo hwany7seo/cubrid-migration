@@ -13,6 +13,5 @@ Require-Bundle: org.eclipse.ui,
 Bundle-ActivationPolicy: lazy
 Export-Package: com.cubrid.cubridmigration.app
 Bundle-ClassPath: .
-Bundle-RequiredExecutionEnvironment: J2SE-1.5,
- JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: J2SE-11
 Bundle-Localization: plugin

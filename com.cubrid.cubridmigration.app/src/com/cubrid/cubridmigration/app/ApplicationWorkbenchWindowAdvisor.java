@@ -37,6 +37,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
@@ -138,10 +139,10 @@ public class ApplicationWorkbenchWindowAdvisor extends
 				try {
 					//Remove useless menu: install new software.
 					WorkbenchWindow window = (WorkbenchWindow) PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-					MenuManager manager2 = window.getMenuBarManager();
+					IMenuManager manager2 = window.getMenuBarManager();
 					IContributionItem help = manager2.find("help");
-					if (help instanceof MenuManager) {
-						manager2 = (MenuManager) help;
+					if (help instanceof IMenuManager) {
+						manager2 = (IMenuManager) help;
 						manager2.remove("com.cubrid.common.update.p2.menu.install");
 						manager2.update(true);
 					}
