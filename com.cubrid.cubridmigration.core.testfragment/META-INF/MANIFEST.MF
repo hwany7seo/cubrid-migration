@@ -14,4 +14,4 @@ Bundle-ClassPath: lib/cglib-nodep-2.1_3.jar,
  lib/objenesis-1.0.jar,
  . 
 Require-Bundle: org.junit
-Bundle-RequiredExecutionEnvironment: J2SE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-11
