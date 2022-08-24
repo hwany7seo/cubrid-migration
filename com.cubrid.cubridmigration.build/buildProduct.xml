@@ -5,6 +5,7 @@
 	<property name="product.version" value="${releaseStr}-build-${buildNumber}" />
 	<property name="launcher.win.32" value="${basedir}/launcher/win32/cubridmigration.exe" />
 	<property name="launcher.win.64" value="${basedir}/launcher/win64/cubridmigration.exe" />
+  <property name="installer.mac" value="${build.dir}/installer/mac" />
 	<!-- Clean build directory and workspace -->
 	<target name="cleanTrash">
 		<delete includeemptydirs="true" failonerror="false">
@@ -497,6 +498,19 @@
 		</exec>
 	</target>
 	-->
+  <!--
+  Make mac osx installer for CUBRID Manager
+  -->
+  <target name="macinstaller" description="Make mac dmg installer" depends="postbuild">
+    <exec dir="${installer.mac}" outputproperty="installer.output" errorproperty="redirector.err" executable="${installer.mac}/package.sh" failifexecutionfails="false">
+      <arg value="--name=${product.name}" />
+      <arg value="--version=${product.version}" />
+      <arg value="--dsstore=${installer.mac}/cubridmanager-dmg-dsstore.tgz" />
+      <arg value="--input=${product.macosx.cocoa}" />
+      <arg value="--output=${output.path}" />
+    </exec>
+  </target>
+
 	<target name="testbuild" depends="clean,build" />
-	<target name="dist" depends="clean,packagewin32,packagewin64,packagelinux32,packagelinux64,packagecocoa,package_console_win,package_console_linux,package_product_site_win,package_product_site_linux" />
+	<target name="dist" depends="clean,packagewin32,packagewin64,packagelinux32,packagelinux64,packagecocoa,package_console_win,package_console_linux,package_product_site_win,package_product_site_linux,macinstaller" />
 </project>
