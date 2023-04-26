@@ -16,6 +16,26 @@ MAKENSIS_EXEC_PATH=${HOME}/build/nsis/makensis.exe
 MAKENSIS_INPUT_PATH="c:/build/src/${PRODUCT_DIR}/com.cubrid.cubridmigration.build/deploy"
 MAKENSIS_OUTPUT_PATH="c:/build/src/${CUR_VER_DIR}"
 
+VERSION_FILE_PATH=${BUILD_DIR}/com.cubrid.cubridmigration.ui/version.properties
+
+echo "Version File Update.... (com.cubrid.cubridmigration.ui/version.properties)"
+
+if [ -d ${BUILD_DIR}/.git ]; then
+  COMMIT_NUMBER=$(cd ${BUILD_DIR} && git rev-list --count HEAD | awk '{ printf "%04d", $1 }' 2> /dev/null)
+  [ $? -ne 0 ] && COMMIT_NUMBER=$(cd ${BUILD_DIR} && git log --oneline | wc -l)
+else
+  COMMIT_NUMBER=0000
+fi
+
+RELEASE_VERSION=$(cat ${VERSION_FILE_PATH} | grep releaseVersion | cut -d '=' -f2)
+
+echo "RELEASE_VERSION = " $RELEASE_VERSION
+echo "COMMIT_NUMBER = " $COMMIT_NUMBER
+FULL_VERSION=buildVersionId=${RELEASE_VERSION}.${COMMIT_NUMBER}
+
+sed -i '/buildVersionId/d' ${VERSION_FILE_PATH}
+echo $FULL_VERSION >> ${VERSION_FILE_PATH}
+
 echo "${PRODUCT_NAME} ${VERSION} build is started..."
 rm -rf ${OUTPUT_DIR}
 mkdir -p ${OUTPUT_DIR}
