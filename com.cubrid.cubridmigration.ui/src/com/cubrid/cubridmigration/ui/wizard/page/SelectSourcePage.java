@@ -135,6 +135,8 @@ public class SelectSourcePage extends
 		 * Show view
 		 */
 		void show();
+		
+		boolean loadCatalog();
 
 	}
 
@@ -228,37 +230,48 @@ public class SelectSourcePage extends
 						return;
 					}
 					txtXMLFile.setText(xmlFileTmp);
-					btnAnalyz.setEnabled(true);
-					try {
-						xmlCatalog = getXmlCatalog(true);
-					} catch (Exception e) {
-						LOG.error(e.getMessage());
-					}
+					
+//					try {
+//					    if (checkCache()) {
+//					        System.out.println("cached");
+//					        xmlCatalog = getXmlCatalog(false);
+//					        if (null != xmlCatalog) {
+//					            System.out.println("cached resetBySourceDBChanged");
+//	                            getMigrationWizard().resetBySourceDBChanged();
+//	                        }
+//					    } else {
+//					        System.out.println("not cached");
+//					        xmlCatalog = getXmlCatalog(true);
+//					    }
+//					} catch (Exception e) {
+//						LOG.error(e.getMessage());
+//					}
 				}
 			});
 
 			btnAnalyz = new Button(grpXML, SWT.NONE);
-			GridData gdAnalyzXMLFile = new GridData(SWT.RIGHT, SWT.CENTER, false, false);
-			gdAnalyzXMLFile.minimumWidth = 70;
-			btnAnalyz.setLayoutData(gdAnalyzXMLFile);
-			btnAnalyz.setText(Messages.btnAnalyze);
-			btnAnalyz.setToolTipText(Messages.ttAnalyzXMLFile);
-			btnAnalyz.setEnabled(false);
-			btnAnalyz.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(final SelectionEvent event) {
-					if (!checkInput()) {
-						return;
-					}
-					try {
-						xmlCatalog = getXmlCatalog(false);
-						if (null != xmlCatalog) {
-							getMigrationWizard().resetBySourceDBChanged();
-						}
-					} catch (Exception e) {
-						LOG.error(e.getMessage());
-					}
-				}
-			});
+			btnAnalyz.setVisible(false);
+//			GridData gdAnalyzXMLFile = new GridData(SWT.RIGHT, SWT.CENTER, false, false);
+//			gdAnalyzXMLFile.minimumWidth = 70;
+//			btnAnalyz.setLayoutData(gdAnalyzXMLFile);
+//			btnAnalyz.setText(Messages.btnAnalyze);
+//			btnAnalyz.setToolTipText(Messages.ttAnalyzXMLFile);
+//			btnAnalyz.setEnabled(false);
+//			btnAnalyz.addSelectionListener(new SelectionAdapter() {
+//				public void widgetSelected(final SelectionEvent event) {
+//					if (!checkInput()) {
+//						return;
+//					}
+//					try {
+//						xmlCatalog = getXmlCatalog(false);
+//						if (null != xmlCatalog) {
+//							getMigrationWizard().resetBySourceDBChanged();
+//						}
+//					} catch (Exception e) {
+//						LOG.error(e.getMessage());
+//					}
+//				}
+//			});
 
 			Label charsetLabel = new Label(grpXML, SWT.NONE);
 			charsetLabel.setText(Messages.lblXMLFileCharset);
@@ -303,6 +316,21 @@ public class SelectSourcePage extends
 			}
 		}
 
+		/**
+         * Retrieves the catalog.
+         * 
+         * @return catalog
+         */
+        private boolean checkCache() {
+            if ((parsedSource != null
+                    && parsedSource.getFileName().equals(txtXMLFile.getText().trim()) && parsedSource.getCharset().equalsIgnoreCase(
+                    cboFileCharset.getText()))
+                    && xmlCatalog != null) {
+                return true;
+            }
+            return false;
+        }
+		
 		/**
 		 * return xml catalog
 		 * 
@@ -430,6 +458,35 @@ public class SelectSourcePage extends
 			}
 			grpXML.setVisible(true);
 			((GridData) grpXML.getLayoutData()).exclude = false;
+		}
+		
+		public boolean loadCatalog() {
+		    if (!checkInput()) {
+		        return false;
+		    }
+		    
+		    try {
+                if (checkCache()) {
+                    System.out.println("cached");
+                    final MigrationWizard wizard = getMigrationWizard();
+                    if (wizard.checkReload()) {
+                        xmlCatalog = getXmlCatalog(false);
+                        if (null != xmlCatalog) {
+                            System.out.println("cached resetBySourceDBChanged");
+                            getMigrationWizard().resetBySourceDBChanged();
+                        }
+                    } else {
+                        System.out.println("not reload");
+                        //xmlCatalog = getXmlCatalog(true);
+                    }
+                } else {
+                    System.out.println("not cached");
+                    xmlCatalog = getXmlCatalog(true);
+                }
+            } catch (Exception e) {
+                LOG.error(e.getMessage());
+            }
+		    return true;
 		}
 	}
 
@@ -617,6 +674,10 @@ public class SelectSourcePage extends
 		public void show() {
 			conMgrView.show();
 		}
+		
+		public boolean loadCatalog() {
+		    return false;
+		}
 	}
 
 	private static final Logger LOG = LogUtil.getLogger(SelectSourcePage.class);
@@ -695,6 +756,20 @@ public class SelectSourcePage extends
 		if (!isGotoNextPage(event)) {
 			return;
 		}
+		
+	    try {
+            final MigrationWizard wzd = getMigrationWizard();
+            if (wzd.getMigrationConfig().sourceIsXMLDump()) {
+                if (!mysqlDumpView.loadCatalog()) {
+                    System.out.println("loadCatalog failed");
+                    return;
+                }
+            } 
+        } catch (Exception ex) {
+            LOG.error("", ex);
+            MessageDialog.openError(getShell(), Messages.msgError, ex.getMessage());
+        }
+		
 		event.doit = updateMigrationConfig();
 	}
 

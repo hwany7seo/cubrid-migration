@@ -1,0 +1,39 @@
+diff --git a/com.cubrid.cubridmigration.app/src/com/cubrid/cubridmigration/app/ApplicationWorkbenchAdvisor.java b/com.cubrid.cubridmigration.app/src/com/cubrid/cubridmigration/app/ApplicationWorkbenchAdvisor.java
+index b1d9585..76729a2 100644
+--- a/com.cubrid.cubridmigration.app/src/com/cubrid/cubridmigration/app/ApplicationWorkbenchAdvisor.java
++++ b/com.cubrid.cubridmigration.app/src/com/cubrid/cubridmigration/app/ApplicationWorkbenchAdvisor.java
+@@ -38,6 +38,8 @@ import org.eclipse.ui.application.WorkbenchAdvisor;
+ import org.eclipse.ui.application.WorkbenchWindowAdvisor;
+ 
+ import com.cubrid.cubridmigration.ui.preference.GeneralPreferencePage;
++import org.eclipse.swt.internal.*;
++import org.eclipse.swt.widgets.Display;
+ 
+ /**
+  * ApplicationWorkbenchAdvisor
+@@ -82,7 +84,12 @@ public class ApplicationWorkbenchAdvisor extends
+ 				false);
+ 		PlatformUI.getPreferenceStore().setValue(
+ 				IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR, true);
+-
++		//System.setProperty("org.eclipse.swt.internal.deviceZoom", "100");
++//		for (Object key : System.getProperties().keySet()) {
++//			System.out.println("key : " + key.toString() + " val : " + System.getProperty(key.toString()));
++//		}
++		System.out.println(Display.getCurrent().getDPI());
++		System.setProperty("prism.allowhidpi", "false");
+ 	}
+ 
+ 	/**
+diff --git a/com.cubrid.cubridmigration.ui/src/com/cubrid/common/ui/StructuredContentProviderAdaptor.java b/com.cubrid.cubridmigration.ui/src/com/cubrid/common/ui/StructuredContentProviderAdaptor.java
+index 8a54b7c..4109bdd 100644
+--- a/com.cubrid.cubridmigration.ui/src/com/cubrid/common/ui/StructuredContentProviderAdaptor.java
++++ b/com.cubrid.cubridmigration.ui/src/com/cubrid/common/ui/StructuredContentProviderAdaptor.java
+@@ -33,6 +33,7 @@ import java.util.Collection;
+ 
+ import org.eclipse.jface.viewers.IStructuredContentProvider;
+ import org.eclipse.jface.viewers.Viewer;
++import org.eclipse.swt.internal.*;
+ 
+ /**
+  * StructuredContentProviderAdaptor Description

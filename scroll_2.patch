@@ -1,0 +1,1854 @@
+diff --git a/com.cubrid.cubridmigration.app/src/com/cubrid/cubridmigration/app/ApplicationWorkbenchAdvisor.java b/com.cubrid.cubridmigration.app/src/com/cubrid/cubridmigration/app/ApplicationWorkbenchAdvisor.java
+index b1d9585..76729a2 100644
+--- a/com.cubrid.cubridmigration.app/src/com/cubrid/cubridmigration/app/ApplicationWorkbenchAdvisor.java
++++ b/com.cubrid.cubridmigration.app/src/com/cubrid/cubridmigration/app/ApplicationWorkbenchAdvisor.java
+@@ -38,6 +38,8 @@ import org.eclipse.ui.application.WorkbenchAdvisor;
+ import org.eclipse.ui.application.WorkbenchWindowAdvisor;
+ 
+ import com.cubrid.cubridmigration.ui.preference.GeneralPreferencePage;
++import org.eclipse.swt.internal.*;
++import org.eclipse.swt.widgets.Display;
+ 
+ /**
+  * ApplicationWorkbenchAdvisor
+@@ -82,7 +84,12 @@ public class ApplicationWorkbenchAdvisor extends
+ 				false);
+ 		PlatformUI.getPreferenceStore().setValue(
+ 				IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR, true);
+-
++		//System.setProperty("org.eclipse.swt.internal.deviceZoom", "100");
++//		for (Object key : System.getProperties().keySet()) {
++//			System.out.println("key : " + key.toString() + " val : " + System.getProperty(key.toString()));
++//		}
++		System.out.println(Display.getCurrent().getDPI());
++		System.setProperty("prism.allowhidpi", "false");
+ 	}
+ 
+ 	/**
+diff --git a/com.cubrid.cubridmigration.ui/src/com/cubrid/common/ui/StructuredContentProviderAdaptor.java b/com.cubrid.cubridmigration.ui/src/com/cubrid/common/ui/StructuredContentProviderAdaptor.java
+index 8a54b7c..4109bdd 100644
+--- a/com.cubrid.cubridmigration.ui/src/com/cubrid/common/ui/StructuredContentProviderAdaptor.java
++++ b/com.cubrid.cubridmigration.ui/src/com/cubrid/common/ui/StructuredContentProviderAdaptor.java
+@@ -33,6 +33,7 @@ import java.util.Collection;
+ 
+ import org.eclipse.jface.viewers.IStructuredContentProvider;
+ import org.eclipse.jface.viewers.Viewer;
++import org.eclipse.swt.internal.*;
+ 
+ /**
+  * StructuredContentProviderAdaptor Description
+diff --git a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/BaseConfirmationPage.java b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/BaseConfirmationPage.java
+index 776aa9f..cfd1d14 100644
+--- a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/BaseConfirmationPage.java
++++ b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/BaseConfirmationPage.java
+@@ -182,7 +182,7 @@ public class BaseConfirmationPage extends MigrationWizardPage {
+ 	 * @param parent
+ 	 *            Composite
+ 	 */
+-	public void createControl(Composite parent) {
++	public Composite createSubControl(Composite parent) {
+ 		Composite container = new Composite(parent, SWT.NONE);
+ 		container.setLayout(new GridLayout());
+ 		setControl(container);
+@@ -204,6 +204,8 @@ public class BaseConfirmationPage extends MigrationWizardPage {
+ 		txtDDL.setVisible(false);
+ 		txtDDL.setBackground(SWTResourceConstents.COLOR_WHITE);
+ 		createButtons(container);
++		
++		return container;
+ 	}
+ 
+ 	/**
+diff --git a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/CSVSelectPage.java b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/CSVSelectPage.java
+index 2fe425c..ba39e60 100644
+--- a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/CSVSelectPage.java
++++ b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/CSVSelectPage.java
+@@ -668,7 +668,7 @@ public class CSVSelectPage extends
+ 	 * 
+ 	 * @param parent Composite
+ 	 */
+-	public void createControl(Composite parent) {
++	protected Composite createSubControl(Composite parent) {
+ 		SashForm container = new SashForm(parent, SWT.HORIZONTAL);
+ 		final GridLayout gridLayoutRoot = new GridLayout(2, false);
+ 		container.setLayout(gridLayoutRoot);
+@@ -684,6 +684,8 @@ public class CSVSelectPage extends
+ 		createTVFiles(group);
+ 
+ 		detailView = new MappingDetailView(container);
++		
++		return container;
+ 	}
+ 
+ 	/**
+diff --git a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/MigrationWizardPage.java b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/MigrationWizardPage.java
+index 30653ba..92eac05 100644
+--- a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/MigrationWizardPage.java
++++ b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/MigrationWizardPage.java
+@@ -36,6 +36,10 @@ import org.eclipse.jface.dialogs.PageChangedEvent;
+ import org.eclipse.jface.dialogs.PageChangingEvent;
+ import org.eclipse.jface.resource.ImageDescriptor;
+ import org.eclipse.jface.wizard.WizardPage;
++import org.eclipse.swt.SWT;
++import org.eclipse.swt.custom.ScrolledComposite;
++import org.eclipse.swt.layout.GridData;
++import org.eclipse.swt.layout.GridLayout;
+ import org.eclipse.swt.widgets.Composite;
+ 
+ import com.cubrid.cubridmigration.ui.wizard.MigrationWizard;
+@@ -46,118 +50,174 @@ import com.cubrid.cubridmigration.ui.wizard.MigrationWizard;
+  * @author Kevin Cao fulei
+  * @version 1.0 - 2011-6-30 created by Kevin Cao
+  */
+-public class MigrationWizardPage extends
+-		WizardPage implements
+-		IPageChangedListener,
+-		IPageChangingListener {
+-
+-	protected boolean isFirstVisible = true;
+-
+-	protected MigrationWizardPage(String pageName) {
+-		super(pageName);
+-	}
+-
+-	public MigrationWizardPage(String pageName, String title,
+-			ImageDescriptor titleImage) {
+-		super(pageName, title, titleImage);
+-	}
+-
+-	/**
+-	 * Retrieves the migration wizard object.
+-	 * 
+-	 * @return MigrationWizard
+-	 */
+-	public MigrationWizard getMigrationWizard() {
+-		return ((MigrationWizard) getWizard());
+-	}
+-
+-	/**
+-	 * Handle migration wizard page changed.
+-	 * 
+-	 * @param event PageChangedEvent
+-	 */
+-	public void pageChanged(PageChangedEvent event) {
+-		if (event.getSelectedPage() == this) {
+-			afterShowCurrentPage(event);
+-		}
+-	}
+-
+-	/**
+-	 * Handle migration wizard page changing.
+-	 * 
+-	 * @param event PageChangingEvent
+-	 */
+-	public void handlePageChanging(PageChangingEvent event) {
+-		if (!event.doit) {
+-			return;
+-		}
+-		if (event.getCurrentPage() == this) {
+-			handlePageLeaving(event);
+-		}
+-	}
+-
+-	/**
+-	 * When migration wizard displayed current page.
+-	 * 
+-	 * @param event PageChangedEvent
+-	 */
+-	protected void afterShowCurrentPage(PageChangedEvent event) {
+-		//Default is doing nothing.
+-	}
+-
+-	/**
+-	 * When migration wizard will show next page or previous page.
+-	 * 
+-	 * @param event PageChangingEvent
+-	 */
+-	protected void handlePageLeaving(PageChangingEvent event) {
+-		//Default is doing nothing.
+-	}
+-
+-	/**
+-	 * Retrieves that is in go to next page process.
+-	 * 
+-	 * @param event the PageChangingEvent that is fired.
+-	 * @return true:go to next page.false:go to previous page.
+-	 */
+-	protected boolean isGotoNextPage(PageChangingEvent event) {
+-		return getWizard().getNextPage(this) == event.getTargetPage();
+-	}
+-
+-	/**
+-	 * Create the control of wizard page.
+-	 * 
+-	 * @param parent Composite of control.
+-	 */
+-	public void createControl(Composite parent) {
+-		//Do nothing.		
+-	}
+-
+-	/**
+-	 * fire page changed
+-	 * 
+-	 * @param status IStatus
+-	 */
+-	protected void firePageStatusChanged(IStatus status) {
+-		if (status == null) {
+-			return;
+-		}
+-		if (status.getSeverity() == IStatus.INFO) {
+-			setErrorMessage(null);
+-			setMessage(status.getMessage());
+-			setPageComplete(true);
+-		} else {
+-			setErrorMessage(status.getMessage());
+-			setPageComplete(false);
+-		}
+-	}
+-
+-	/**
+-	 * Save options.
+-	 * 
+-	 * @return true if update success.
+-	 */
+-	protected boolean updateMigrationConfig() {
+-		return true;
+-	}
++public abstract class MigrationWizardPage extends WizardPage implements IPageChangedListener,
++        IPageChangingListener {
++
++    protected boolean isFirstVisible = true;
++    private ScrolledComposite scComposite;
++    private Composite childComposite;
++
++    protected MigrationWizardPage(String pageName) {
++        super(pageName);
++    }
++
++    public MigrationWizardPage(String pageName, String title, ImageDescriptor titleImage) {
++        super(pageName, title, titleImage);
++    }
++
++    /**
++     * Retrieves the migration wizard object.
++     * 
++     * @return MigrationWizard
++     */
++    public MigrationWizard getMigrationWizard() {
++        return ((MigrationWizard) getWizard());
++    }
++
++    /**
++     * Handle migration wizard page changed.
++     * 
++     * @param event
++     *            PageChangedEvent
++     */
++    public void pageChanged(PageChangedEvent event) {
++        if (event.getSelectedPage() == this) {
++            afterShowCurrentPage(event);
++            updateScrollPage();
++        }
++    }
++
++    /**
++     * Handle migration wizard page changing.
++     * 
++     * @param event
++     *            PageChangingEvent
++     */
++    public void handlePageChanging(PageChangingEvent event) {
++        if (!event.doit) {
++            return;
++        }
++        if (event.getCurrentPage() == this) {
++            handlePageLeaving(event);
++            hideScrollPage();
++        }
++    }
++
++    /**
++     * When migration wizard displayed current page.
++     * 
++     * @param event
++     *            PageChangedEvent
++     */
++    protected void afterShowCurrentPage(PageChangedEvent event) {
++        // Default is doing nothing.
++    }
++
++    private void updateScrollPage() {
++        if (scComposite != null) {
++            System.out.println("updateScrollPage setMinSize" + scComposite.getToolTipText());
++            scComposite.setMinSize(childComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT).x,
++                    childComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
++            scComposite.setContent(childComposite);
++            scComposite.setExpandHorizontal(true);
++            scComposite.setExpandVertical(true);
++            scComposite.layout(true);
++        }
++    }
++    
++    private void hideScrollPage() {
++        System.out.println("hideScrollPage setVisible false");
++        if (scComposite != null) {
++            System.out.println("hideScrollPage setVisible false : " + scComposite.getToolTipText());
++            //scComposite.setVisible(false);
++        }
++    }
++
++    /**
++     * When migration wizard will show next page or previous page.
++     * 
++     * @param event
++     *            PageChangingEvent
++     */
++    protected void handlePageLeaving(PageChangingEvent event) {
++        // Default is doing nothing.
++    }
++
++    /**
++     * Retrieves that is in go to next page process.
++     * 
++     * @param event
++     *            the PageChangingEvent that is fired.
++     * @return true:go to next page.false:go to previous page.
++     */
++    protected boolean isGotoNextPage(PageChangingEvent event) {
++        return getWizard().getNextPage(this) == event.getTargetPage();
++    }
++
++    /**
++     * Create the control of wizard page.
++     * 
++     * @param parent
++     *            Composite of control.
++     */
++//    public void createControl(Composite parent) {
++//        Composite content = new Composite(parent, SWT.NONE);
++//        content.setLayout(new GridLayout(1, false));
++//
++//        scComposite = new ScrolledComposite(content, SWT.H_SCROLL | SWT.V_SCROLL);
++//        scComposite.setToolTipText(getClass().getName());
++//        GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
++//        gd.heightHint = 300;
++//        scComposite.setLayoutData(gd);
++//        scComposite.setLayout(new GridLayout(1, false));
++//
++//        childComposite = createSubControl(scComposite);
++//
++//        scComposite.setMinSize(childComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT).x,
++//                childComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
++//        scComposite.setContent(childComposite);
++//        scComposite.setExpandHorizontal(true);
++//        scComposite.setExpandVertical(true);
++//        scComposite.layout(true);
++//        System.out.println("this" + this.getClass().getName());
++//    }
++    
++    public void createControl(Composite parent) {
++        createSubControl(parent);
++    }
++
++    protected abstract Composite createSubControl(Composite parent);
++
++    /**
++     * fire page changed
++     * 
++     * @param status
++     *            IStatus
++     */
++    protected void firePageStatusChanged(IStatus status) {
++        if (status == null) {
++            return;
++        }
++        if (status.getSeverity() == IStatus.INFO) {
++            setErrorMessage(null);
++            setMessage(status.getMessage());
++            setPageComplete(true);
++        } else {
++            setErrorMessage(status.getMessage());
++            setPageComplete(false);
++        }
++    }
++
++    /**
++     * Save options.
++     * 
++     * @return true if update success.
++     */
++    protected boolean updateMigrationConfig() {
++        return true;
++    }
++    
++    public ScrolledComposite getScrollComposite() {
++        return scComposite;
++    }
+ }
+diff --git a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/ObjectMappingPage.java b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/ObjectMappingPage.java
+index 924b05c..bc8f8fd 100644
+--- a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/ObjectMappingPage.java
++++ b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/ObjectMappingPage.java
+@@ -283,7 +283,7 @@ public class ObjectMappingPage extends
+ 	 * 
+ 	 * @param parent Composite
+ 	 */
+-	public void createControl(Composite parent) {
++	public Composite createSubControl(Composite parent) {
+ 		Composite container = new Composite(parent, SWT.NONE);
+ 		container.setLayout(new GridLayout());
+ 		container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+@@ -296,6 +296,8 @@ public class ObjectMappingPage extends
+ 		createDetailPanel(container2);
+ 		container2.setWeights(new int[] {1, 3});
+ 		createToolButtons(container);
++		
++		return container;
+ 	}
+ 
+ 	/**
+diff --git a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SQLSelectPage.java b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SQLSelectPage.java
+index b28ef45..f035655 100644
+--- a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SQLSelectPage.java
++++ b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SQLSelectPage.java
+@@ -468,7 +468,7 @@ public class SQLSelectPage extends
+ 	 * 
+ 	 * @param parent Composite
+ 	 */
+-	public void createControl(Composite parent) {
++	public Composite createSubControl(Composite parent) {
+ 		Composite container = new Composite(parent, SWT.NONE);
+ 		final GridLayout gridLayoutRoot = new GridLayout();
+ 		container.setLayout(gridLayoutRoot);
+@@ -485,6 +485,8 @@ public class SQLSelectPage extends
+ 		createSettings(container);
+ 		//Initialize
+ 		//afterShowCurrentPage(null);
++		
++		return container;
+ 	}
+ 
+ 	/**
+diff --git a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SQLTargetDBSelectPage.java b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SQLTargetDBSelectPage.java
+index babddb2..f0b0fa2 100644
+--- a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SQLTargetDBSelectPage.java
++++ b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SQLTargetDBSelectPage.java
+@@ -193,13 +193,15 @@ public class SQLTargetDBSelectPage extends
+ 	 * 
+ 	 * @param parent Composite
+ 	 */
+-	public void createControl(Composite parent) {
++	public Composite createSubControl(Composite parent) {
+ 		container = new Composite(parent, SWT.NONE);
+ 		final GridLayout gridLayoutRoot = new GridLayout();
+ 		container.setLayout(gridLayoutRoot);
+ 		container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+ 		setControl(container);
+ 		onlineTargetDBView = new OnlineTargetDBView();
++		
++		return container;
+ 	}
+ 
+ 	/**
+diff --git a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SchemaMappingPage.java b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SchemaMappingPage.java
+index ad3df4b..5a1edc4 100644
+--- a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SchemaMappingPage.java
++++ b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SchemaMappingPage.java
+@@ -195,7 +195,7 @@ public class SchemaMappingPage extends MigrationWizardPage {
+ 	}
+ 	
+ 	@Override
+-	public void createControl(Composite parent) {
++	public Composite createSubControl(Composite parent) {
+ 		Composite container = new Composite(parent, SWT.NONE);
+ 		container.setLayout(new FillLayout());
+ 		container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+@@ -203,6 +203,8 @@ public class SchemaMappingPage extends MigrationWizardPage {
+ 		createSrcTable(container);
+ 		
+ 		setControl(container);
++		
++		return container;
+ 	}
+ 	
+ 	private void createSrcTable(Composite container) {
+diff --git a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SelectDestinationPage.java b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SelectDestinationPage.java
+index 25974f9..915bcd6 100644
+--- a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SelectDestinationPage.java
++++ b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SelectDestinationPage.java
+@@ -908,7 +908,7 @@ public class SelectDestinationPage extends
+ 	 * 
+ 	 * @param parent Composite
+ 	 */
+-	public void createControl(Composite parent) {
++	public Composite createSubControl(Composite parent) {
+ 		container = new Composite(parent, SWT.NONE);
+ 		final GridLayout gridLayoutRoot = new GridLayout();
+ 		container.setLayout(gridLayoutRoot);
+@@ -918,6 +918,8 @@ public class SelectDestinationPage extends
+ 		onlineTargetDBView = new OnlineTargetDBView();
+ 		// offlineTargetDBView = new OfflineTargetDBView();
+ 		unloadTargetDBView = new UnloadTargetDBView();
++		
++		return container;
+ 	}
+ 
+ 	/**
+diff --git a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SelectSourcePage.java b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SelectSourcePage.java
+index 6d278fd..7db2354 100644
+--- a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SelectSourcePage.java
++++ b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SelectSourcePage.java
+@@ -41,6 +41,9 @@ import org.eclipse.jface.dialogs.MessageDialog;
+ import org.eclipse.jface.dialogs.PageChangedEvent;
+ import org.eclipse.jface.dialogs.PageChangingEvent;
+ import org.eclipse.swt.SWT;
++import org.eclipse.swt.custom.ScrolledComposite;
++import org.eclipse.swt.events.ControlEvent;
++import org.eclipse.swt.events.ControlListener;
+ import org.eclipse.swt.events.SelectionAdapter;
+ import org.eclipse.swt.events.SelectionEvent;
+ import org.eclipse.swt.layout.GridData;
+@@ -82,630 +85,659 @@ import com.cubrid.cubridmigration.ui.wizard.dialog.RenameSchemaDialog;
+  * @author fulei caoyilin
+  * @version 1.0 - 2011-09-21
+  */
+-public class SelectSourcePage extends
+-		MigrationWizardPage {
+-
+-	/**
+-	 * AbstractSourceView
+-	 * 
+-	 * @author Kevin Cao
+-	 * @version 1.0 - 2013-6-3 created by Kevin Cao
+-	 */
+-	private static interface AbstractSourceView {
+-		/**
+-		 * Create controls
+-		 * 
+-		 * @param parent of the controls
+-		 */
+-		void createControls(Composite parent);
+-
+-		/**
+-		 * Retrieves the catalog
+-		 * 
+-		 * @return Catalog
+-		 */
+-		Catalog getCatalog();
+-
+-		/**
+-		 * Hide view
+-		 */
+-		void hide();
+-
+-		/**
+-		 * Initialize the view
+-		 * 
+-		 */
+-		void init();
+-
+-		/**
+-		 * check whether the dialog changed
+-		 * 
+-		 * @return true if content changed
+-		 */
+-		boolean isInputChanged();
+-
+-		/**
+-		 * Save to wizard
+-		 * 
+-		 * @return true if successfully
+-		 */
+-		boolean save();
+-
+-		/**
+-		 * Show view
+-		 */
+-		void show();
+-
+-	}
+-
+-	/**
+-	 * Select MySQL Dump file as source.
+-	 * 
+-	 * @author Kevin Cao
+-	 * @version 1.0 - 2013-5-4 created by Kevin Cao
+-	 */
+-	private class SelectMySQLDumpSrcView implements
+-			AbstractSourceView {
+-		private Text txtXMLFile;
+-		private Button btnBrowse;
+-		private Button btnAnalyz;
+-		private Combo cboFileCharset;
+-		private Combo cobTimezone;
+-		private Group grpXML;
+-		private MysqlXmlDumpSource parsedSource;
+-		private Catalog xmlCatalog = null;
+-
+-		/**
+-		 * Validate the char-set input.
+-		 * 
+-		 * @return true if all are valid.
+-		 */
+-		private boolean checkCharset() {
+-			if (StringUtils.isBlank(cboFileCharset.getItem(cboFileCharset.getSelectionIndex()))) {
+-				MessageDialog.openError(getShell(), Messages.msgError,
+-						Messages.sourceDBPageErrNoSetXMLFileCharset);
+-				return false;
+-			}
+-			return true;
+-		}
+-
+-		/**
+-		 * Validate the input.
+-		 * 
+-		 * @return true if all are valid.
+-		 */
+-		private boolean checkInput() {
+-			if (StringUtils.isBlank(txtXMLFile.getText())) {
+-				MessageDialog.openError(getShell(), Messages.msgError,
+-						Messages.sourceDBPageErrNoSelectedXMLFile);
+-				return false;
+-			}
+-			return checkCharset();
+-		}
+-
+-		/**
+-		 * Create controls
+-		 * 
+-		 * @param parent of the controls
+-		 */
+-		public void createControls(Composite parent) {
+-			if (grpXML != null) {
+-				return;
+-			}
+-			grpXML = new Group(parent, SWT.SHADOW_ETCHED_IN);
+-			grpXML.setLayout(new GridLayout(4, false));
+-			GridData groupGridData2 = new GridData(SWT.FILL, SWT.FILL, true, false);
+-			groupGridData2.heightHint = 98;
+-			grpXML.setLayoutData(groupGridData2);
+-
+-			Label xmlFilePathLabel = new Label(grpXML, SWT.NONE);
+-			xmlFilePathLabel.setText(Messages.lblXMLFilePath);
+-			xmlFilePathLabel.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
+-
+-			txtXMLFile = new Text(grpXML, SWT.BORDER | SWT.READ_ONLY);
+-			GridData gdXmlFilePathTxt = new GridData(SWT.FILL, SWT.CENTER, true, false);
+-			gdXmlFilePathTxt.grabExcessHorizontalSpace = true;
+-			txtXMLFile.setLayoutData(gdXmlFilePathTxt);
+-
+-			btnBrowse = new Button(grpXML, SWT.NONE);
+-			GridData xmlButtonGd = new GridData(SWT.RIGHT, SWT.CENTER, false, false);
+-			xmlButtonGd.minimumWidth = 70;
+-			btnBrowse.setLayoutData(xmlButtonGd);
+-			btnBrowse.setText(Messages.btnBrowse);
+-			btnBrowse.setToolTipText(Messages.ttSelectXMLDumpFile);
+-			btnBrowse.addSelectionListener(new SelectionAdapter() {
+-				public void widgetSelected(final SelectionEvent event) {
+-					if (!checkCharset()) {
+-						return;
+-					}
+-					FileDialog dlg = new FileDialog(
+-							PlatformUI.getWorkbench().getDisplay().getActiveShell(), SWT.SINGLE
+-									| SWT.OPEN);
+-					dlg.setFilterPath(".");
+-					dlg.setFilterExtensions(new String[] {"*.xml"});
+-					dlg.setFilterNames(new String[] {"*.xml"});
+-					final String xmlFileTmp = dlg.open();
+-					if (xmlFileTmp == null) {
+-						return;
+-					}
+-					txtXMLFile.setText(xmlFileTmp);
+-					btnAnalyz.setEnabled(true);
+-					try {
+-						xmlCatalog = getXmlCatalog(true);
+-					} catch (Exception e) {
+-						LOG.error(e.getMessage());
+-					}
+-				}
+-			});
+-
+-			btnAnalyz = new Button(grpXML, SWT.NONE);
+-			GridData gdAnalyzXMLFile = new GridData(SWT.RIGHT, SWT.CENTER, false, false);
+-			gdAnalyzXMLFile.minimumWidth = 70;
+-			btnAnalyz.setLayoutData(gdAnalyzXMLFile);
+-			btnAnalyz.setText(Messages.btnAnalyze);
+-			btnAnalyz.setToolTipText(Messages.ttAnalyzXMLFile);
+-			btnAnalyz.setEnabled(false);
+-			btnAnalyz.addSelectionListener(new SelectionAdapter() {
+-				public void widgetSelected(final SelectionEvent event) {
+-					if (!checkInput()) {
+-						return;
+-					}
+-					try {
+-						xmlCatalog = getXmlCatalog(false);
+-						if (null != xmlCatalog) {
+-							getMigrationWizard().resetBySourceDBChanged();
+-						}
+-					} catch (Exception e) {
+-						LOG.error(e.getMessage());
+-					}
+-				}
+-			});
+-
+-			Label charsetLabel = new Label(grpXML, SWT.NONE);
+-			charsetLabel.setText(Messages.lblXMLFileCharset);
+-			charsetLabel.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
+-			cboFileCharset = new Combo(grpXML, SWT.READ_ONLY);
+-			final GridData gdCharsetCombo = new GridData(SWT.FILL, SWT.CENTER, true, false);
+-			cboFileCharset.setLayoutData(gdCharsetCombo);
+-			cboFileCharset.setItems(com.cubrid.cubridmigration.core.common.CharsetUtils.getCharsets());
+-			cboFileCharset.select(1);
+-
+-			new Label(grpXML, SWT.NONE);
+-			new Label(grpXML, SWT.NONE);
+-
+-			Label lblTZ = new Label(grpXML, SWT.NONE);
+-			lblTZ.setText(Messages.lblXMLFileTimezone);
+-			lblTZ.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
+-
+-			cobTimezone = new Combo(grpXML, SWT.READ_ONLY);
+-			final GridData gdTimezoneCombo = new GridData(SWT.FILL, SWT.TOP, true, false);
+-			gdTimezoneCombo.widthHint = 600;
+-			cobTimezone.setLayoutData(gdTimezoneCombo);
+-			cobTimezone.setVisibleItemCount(20);
+-			List<String> allTimeZones = TimeZoneUtils.getTimeZonesList();
+-			cobTimezone.setItems(allTimeZones.toArray(new String[allTimeZones.size()]));
+-			cobTimezone.add(Messages.msgDefault, 0);
+-			cobTimezone.select(0);
+-		}
+-
+-		/**
+-		 * Retrieves the catalog.
+-		 * 
+-		 * @return catalog
+-		 */
+-		public Catalog getCatalog() {
+-			if ((parsedSource != null
+-					&& parsedSource.getFileName().equals(txtXMLFile.getText().trim()) && parsedSource.getCharset().equalsIgnoreCase(
+-					cboFileCharset.getText()))
+-					&& xmlCatalog != null) {
+-				return xmlCatalog;
+-			} else {
+-				return getXmlCatalog(true);
+-			}
+-		}
+-
+-		/**
+-		 * return xml catalog
+-		 * 
+-		 * @param hisFirst reading the parsing history firstly.
+-		 * @return Catalog
+-		 */
+-		private Catalog getXmlCatalog(boolean hisFirst) {
+-			//Reading parsing history firstly.
+-			String xmlFileCharset = cboFileCharset.getItem(cboFileCharset.getSelectionIndex());
+-			String xmlFile = txtXMLFile.getText();
+-			final File file = new File(xmlFile);
+-			if (!file.exists() || !file.isFile()) {
+-				MessageDialog.openError(getShell(), Messages.msgError,
+-						Messages.errInvalidMysqlDumpFile);
+-				return null;
+-			}
+-			parsedSource = new MysqlXmlDumpSource(xmlFile, xmlFileCharset);
+-			Catalog catalog = MysqlXmlDumpSchemaProgressFetcher.fetch(parsedSource, hisFirst);
+-			if (catalog == null) {
+-				parsedSource = null;
+-				return null;
+-			}
+-			//Update timezone.
+-			String newTimezoneTxt = cobTimezone.getText();
+-			String timezone;
+-			if (newTimezoneTxt.equalsIgnoreCase(UIConstant.DEFAULT_TIME_ZONE)) {
+-				timezone = TimeZoneUtils.getDefaultID2GMT();
+-			} else {
+-				timezone = TimeZoneUtils.getGMTByDisplay(newTimezoneTxt);
+-			}
+-			catalog.setTimezone(timezone);
+-			return catalog;
+-		}
+-
+-		/**
+-		 * Hide
+-		 */
+-		public void hide() {
+-			if (grpXML == null) {
+-				return;
+-			}
+-			grpXML.setVisible(false);
+-			((GridData) grpXML.getLayoutData()).exclude = true;
+-		}
+-
+-		/**
+-		 * Initialize
+-		 */
+-		public void init() {
+-			setTitle(getMigrationWizard().getStepNoMsg(SelectSourcePage.this)
+-					+ Messages.msgSrcSelectMySQLDump);
+-			setMessage(Messages.msgSrcSelectMySQLDumpDes);
+-
+-			final MigrationWizard wizard = getMigrationWizard();
+-			final MigrationConfiguration config = wizard.getMigrationConfig();
+-			//if load script and use MYSQL dump, load the XML catalog
+-			if (wizard.isLoadMigrationScript()) {
+-				parsedSource = new MysqlXmlDumpSource(config.getSourceFileName(),
+-						config.getSourceFileEncoding());
+-				txtXMLFile.setText(config.getSourceFileName() == null ? ""
+-						: config.getSourceFileName());
+-				cboFileCharset.setText(config.getSourceFileEncoding() == null ? ""
+-						: config.getSourceFileEncoding());
+-				cobTimezone.setText(config.getSourceFileTimeZone() == null ? UIConstant.DEFAULT_TIME_ZONE
+-						: config.getSourceFileTimeZone());
+-			}
+-
+-		}
+-
+-		/**
+-		 * check whether the dialog changed
+-		 * 
+-		 * @return true if content changed
+-		 */
+-		public boolean isInputChanged() {
+-			boolean srcDBChanged = false;
+-			MigrationConfiguration config = getMigrationWizard().getMigrationConfig();
+-			// if online is saved but not selected or dumpfile is saved but not selected
+-			String xmlFile = config.getSourceFileName();
+-			String xmlFileCharset = config.getSourceFileEncoding();
+-			if (!(txtXMLFile.getText().equals(xmlFile) && xmlFileCharset.equals(cboFileCharset.getItem(cboFileCharset.getSelectionIndex())))) {
+-				srcDBChanged = true;
+-			}
+-			// online saved but but some of the parameters changed
+-			return srcDBChanged;
+-		}
+-
+-		/**
+-		 * Check and save
+-		 * 
+-		 * @return true if saved.
+-		 */
+-		public boolean save() {
+-			if (!checkInput()) {
+-				return false;
+-			}
+-			Catalog catalog = getCatalog();
+-			if (null == catalog) {
+-				return false;
+-			}
+-			final MigrationWizard wzd = getMigrationWizard();
+-			if (isInputChanged()) {
+-				//If it is a new migration, initialize the configuration
+-				wzd.resetBySourceDBChanged();
+-			}
+-			wzd.setOriginalSourceCatalog(catalog);
+-			MigrationConfiguration cfg = wzd.getMigrationConfig();
+-			cfg.setSourceType(MigrationConfiguration.XML);
+-			cfg.setSourceFileName(txtXMLFile.getText());
+-			cfg.setSourceFileEncoding(cboFileCharset.getItem(cboFileCharset.getSelectionIndex()));
+-			cfg.setSourceFileTimeZone(cobTimezone.getItem(cobTimezone.getSelectionIndex()));
+-			cfg.clearAllSQLTables();
+-			xmlCatalog = catalog;
+-			xmlCatalog.setCharset(cboFileCharset.getItem(cboFileCharset.getSelectionIndex()));
+-			xmlCatalog.setTimezone(cobTimezone.getItem(cobTimezone.getSelectionIndex()));
+-			return true;
+-		}
+-
+-		/**
+-		 * Show
+-		 */
+-		public void show() {
+-			if (grpXML == null) {
+-				return;
+-			}
+-			grpXML.setVisible(true);
+-			((GridData) grpXML.getLayoutData()).exclude = false;
+-		}
+-	}
+-
+-	/**
+-	 * SelectOnlineSrcView Description
+-	 * 
+-	 * @author Kevin Cao
+-	 * @version 1.0 - 2013-4-23 created by Kevin Cao
+-	 */
+-	private class SelectOnlineSrcView implements
+-			AbstractSourceView {
+-
+-		private final JDBCConnectionMgrView conMgrView;
+-
+-		private SelectOnlineSrcView() {
+-			conMgrView = new JDBCConnectionMgrView(MigrationWizard.getSupportedSrcDBTypes(),
+-					new IJDBCConnectionFilter() {
+-
+-						public boolean doFilter(ConnParameters cp) {
+-							return getMigrationWizard().getMigrationConfig().getSourceType() != cp.getDatabaseType().getID();
+-						}
+-
+-					});
+-		}
+-
+-		/**
+-		 * Create controls
+-		 * 
+-		 * @param parent of the controls
+-		 */
+-		public void createControls(Composite parent) {
+-			conMgrView.createControls(parent);
+-		}
+-
+-		/**
+-		 * get Catalog
+-		 * 
+-		 * @return Catalog
+-		 */
+-		public Catalog getCatalog() {
+-			return conMgrView.getCatalog();
+-		}
+-
+-		/**
+-		 * Hide
+-		 */
+-		public void hide() {
+-			conMgrView.hide();
+-		}
+-
+-		/**
+-		 * Initialize with script's source connection
+-		 */
+-		public void init() {
+-			MigrationWizard wzd = getMigrationWizard();
+-			setTitle(wzd.getStepNoMsg(SelectSourcePage.this) + Messages.msgSrcSelectOnlineDB);
+-			setMessage(Messages.msgSrcSelectOnlineDBDes);
+-			List<Integer> dts = new ArrayList<Integer>();
+-			MigrationConfiguration cfg = wzd.getMigrationConfig();
+-			dts.add(cfg.getSourceType());
+-			conMgrView.setSupportedDBType(dts);
+-			//Add catalog to cache.
+-			Catalog offlineSrcCatalog = cfg.getOfflineSrcCatalog();
+-			ConnParameters srcConParams = cfg.getSourceConParams();
+-			conMgrView.init(srcConParams, offlineSrcCatalog);
+-
+-		}
+-
+-		/**
+-		 * check whether the dialog changed
+-		 * 
+-		 * @return true if content changed
+-		 */
+-		public boolean isInputChanged() {
+-			boolean srcDBChanged = false;
+-			MigrationConfiguration config = getMigrationWizard().getMigrationConfig();
+-			// if online is saved but not selected or dumpfile is saved but not selected
+-			ConnParameters oldCP = config.getSourceConParams();
+-			// the first time set it changed
+-			DatabaseConnectionInfo dci = conMgrView.getSelectedDCI();
+-			if (oldCP == null && dci != null) {
+-				srcDBChanged = true;
+-			} else if (oldCP != null) {
+-				srcDBChanged = !oldCP.isSameDB(dci.getConnParameters());
+-			}
+-			return srcDBChanged;
+-		}
+-
+-		/**
+-		 * Save to configurations
+-		 * 
+-		 * @return true if successfully
+-		 */
+-		public boolean save() {
+-			if (this.conMgrView.getSelectedDCI() == null) {
+-				MessageDialog.openError(getShell(), Messages.msgError,
+-						Messages.sourceDBPageErrNoSelectedItem);
+-				return false;
+-			}
+-			final MigrationWizard wzd = getMigrationWizard();
+-			Catalog catalog = getCatalog();
+-			if (catalog == null) {
+-				return false;
+-			}
+-			
+-			if (catalog.getDatabaseType().getID() == 1) {
+-				removeEmptySchema(catalog);
+-			}
+-			
+-			List<String> errorSchemas = new ArrayList<String>();
+-			Map<String, String> old2NewSchemaMapping = new HashMap<String, String>();
+-			MigrationConfiguration cfg = wzd.getMigrationConfig();
+-			cfg.resetSchemaInfo();
+-			if (catalog.getDatabaseType().isSupportMultiSchema()
+-					&& !cfg.getExpEntryTableCfg().isEmpty()) {
+-				List<String> expSchemas = cfg.getExpSchemaNames();
+-				for (String schema : expSchemas) {
+-					if (catalog.getSchemaByName(schema) != null) {
+-						continue;
+-					}
+-					errorSchemas.add(schema);
+-				}
+-				if (!errorSchemas.isEmpty()) {
+-					List<String> newSchemas = new ArrayList<String>();
+-					for (Schema newSchema : catalog.getSchemas()) {
+-						newSchemas.add(newSchema.getName());
+-					}
+-					old2NewSchemaMapping = RenameSchemaDialog.renameSchemas(errorSchemas,
+-							newSchemas);
+-					//Dialog canceled, user maybe want to choose another source.  
+-					if (old2NewSchemaMapping == null) {
+-						return false;
+-					}
+-				}
+-			}
+-
+-			if (isInputChanged() || wzd.getOriginalSourceCatalog() != catalog) {
+-				//If it is a new migration, initialize the configuration
+-				wzd.resetBySourceDBChanged();
+-				cfg = wzd.getMigrationConfig();
+-			}
+-			wzd.setOriginalSourceCatalog(catalog);
+-			cfg.setSourceConParams(catalog.getConnectionParameters());
+-			//Set the invalid schema to right schema or remove them.
+-			for (String es : errorSchemas) {
+-				String newSchema = old2NewSchemaMapping.get(es);
+-				if (StringUtils.isBlank(newSchema)) {
+-					cfg.removeExpSchema(es);
+-				} else {
+-					cfg.renameExpSchema(es, newSchema);
+-				}
+-			}
+-			return true;
+-		}
+-		
+-		/**
+-		 * Remove empty Schema
+-		 * 
+-		 * @param catalog Catalog
+-		 */
+-		private void removeEmptySchema(Catalog catalog) {
+-			List<Schema> schemaList = catalog.getSchemas();
+-			List<Schema> removeSchema = new ArrayList<Schema>();
+-			
+-			for (Schema schema : schemaList) {
+-				List<Table> tableList = schema.getTables();
+-				List<View> viewList = schema.getViews();
+-				List<Sequence> sequenceList = schema.getSequenceList();
+-				List<Synonym> synonymList = schema.getSynonymList();
+-				List<Grant> grantList = schema.getGrantList();
+-				
+-				if (tableList.isEmpty() && viewList.isEmpty() 
+-						&& sequenceList.isEmpty() && synonymList.isEmpty()
+-						&& grantList.isEmpty()) {
+-					removeSchema.add(schema);
+-				}
+-			}
+-			
+-			catalog.removeSchema(removeSchema);
+-		}
+-
+-		/**
+-		 * Show
+-		 */
+-		public void show() {
+-			conMgrView.show();
+-		}
+-	}
+-
+-	private static final Logger LOG = LogUtil.getLogger(SelectSourcePage.class);
+-	private AbstractSourceView onlineView = new SelectOnlineSrcView();
+-	private AbstractSourceView mysqlDumpView = new SelectMySQLDumpSrcView();
+-
+-	private Composite container;
+-
+-	public SelectSourcePage(String pageName) {
+-		super(pageName);
+-	}
+-
+-	/**
+-	 * When migration wizard displayed current page.
+-	 * 
+-	 * @param event PageChangedEvent
+-	 */
+-
+-	protected void afterShowCurrentPage(PageChangedEvent event) {
+-		try {
+-			final MigrationWizard wzd = getMigrationWizard();
+-			if (wzd.getMigrationConfig().sourceIsOnline()) {
+-				onlineView.createControls(container);
+-				mysqlDumpView.hide();
+-				onlineView.show();
+-			} else if (wzd.getMigrationConfig().sourceIsXMLDump()) {
+-				mysqlDumpView.createControls(container);
+-				onlineView.hide();
+-				mysqlDumpView.show();
+-			}
+-			container.layout(true);
+-			getCurrentView().init();
+-		} catch (Exception ex) {
+-			LOG.error("", ex);
+-			MessageDialog.openError(getShell(), Messages.msgError, ex.getMessage());
+-		}
+-	}
+-
+-	/**
+-	 * Create contents of the wizard
+-	 * 
+-	 * @param parent Composite
+-	 */
+-	public void createControl(Composite parent) {
+-		container = new Composite(parent, SWT.NONE);
+-		final GridLayout gridLayoutRoot = new GridLayout();
+-		container.setLayout(gridLayoutRoot);
+-		setControl(container);
+-	}
+-
+-	/**
+-	 * Retrieves the current view for selection data source.
+-	 * 
+-	 * @return AbstractView
+-	 */
+-	private AbstractSourceView getCurrentView() {
+-		final MigrationConfiguration cfg = getMigrationWizard().getMigrationConfig();
+-		if (cfg.sourceIsOnline()) {
+-			return onlineView;
+-		} else if (cfg.sourceIsXMLDump()) {
+-			return mysqlDumpView;
+-		}
+-		throw new RuntimeException("Can't support source type :" + cfg.getSourceType());
+-	}
+-
+-	/**
+-	 * When migration wizard will show next page or previous page.
+-	 * 
+-	 * @param event PageChangingEvent
+-	 */
+-	protected void handlePageLeaving(PageChangingEvent event) {
+-		// If page is not complete, it should be go to previous page.
+-		if (!isPageComplete()) {
+-			return;
+-		}
+-		if (!isGotoNextPage(event)) {
+-			return;
+-		}
+-		event.doit = updateMigrationConfig();
+-	}
+-
+-	/**
+-	 * Save user input (source database connection information) to export
+-	 * options.
+-	 * 
+-	 * @return true if update success.
+-	 */
+-	protected boolean updateMigrationConfig() {
+-		return getCurrentView().save();
+-	}
++public class SelectSourcePage extends MigrationWizardPage {
++
++    /**
++     * AbstractSourceView
++     * 
++     * @author Kevin Cao
++     * @version 1.0 - 2013-6-3 created by Kevin Cao
++     */
++    private static interface AbstractSourceView {
++        /**
++         * Create controls
++         * 
++         * @param parent
++         *            of the controls
++         */
++        void createControls(Composite parent);
++
++        /**
++         * Retrieves the catalog
++         * 
++         * @return Catalog
++         */
++        Catalog getCatalog();
++
++        /**
++         * Hide view
++         */
++        void hide();
++
++        /**
++         * Initialize the view
++         * 
++         */
++        void init();
++
++        /**
++         * check whether the dialog changed
++         * 
++         * @return true if content changed
++         */
++        boolean isInputChanged();
++
++        /**
++         * Save to wizard
++         * 
++         * @return true if successfully
++         */
++        boolean save();
++
++        /**
++         * Show view
++         */
++        void show();
++
++    }
++
++    /**
++     * Select MySQL Dump file as source.
++     * 
++     * @author Kevin Cao
++     * @version 1.0 - 2013-5-4 created by Kevin Cao
++     */
++    private class SelectMySQLDumpSrcView implements AbstractSourceView {
++        private Text txtXMLFile;
++        private Button btnBrowse;
++        private Button btnAnalyz;
++        private Combo cboFileCharset;
++        private Combo cobTimezone;
++        private Group grpXML;
++        private MysqlXmlDumpSource parsedSource;
++        private Catalog xmlCatalog = null;
++
++        /**
++         * Validate the char-set input.
++         * 
++         * @return true if all are valid.
++         */
++        private boolean checkCharset() {
++            if (StringUtils.isBlank(cboFileCharset.getItem(cboFileCharset.getSelectionIndex()))) {
++                MessageDialog.openError(getShell(), Messages.msgError,
++                        Messages.sourceDBPageErrNoSetXMLFileCharset);
++                return false;
++            }
++            return true;
++        }
++
++        /**
++         * Validate the input.
++         * 
++         * @return true if all are valid.
++         */
++        private boolean checkInput() {
++            if (StringUtils.isBlank(txtXMLFile.getText())) {
++                MessageDialog.openError(getShell(), Messages.msgError,
++                        Messages.sourceDBPageErrNoSelectedXMLFile);
++                return false;
++            }
++            return checkCharset();
++        }
++
++        /**
++         * Create controls
++         * 
++         * @param parent
++         *            of the controls
++         */
++        public void createControls(Composite parent) {
++            if (grpXML != null) {
++                return;
++            }
++            grpXML = new Group(parent, SWT.SHADOW_ETCHED_IN);
++            grpXML.setLayout(new GridLayout(4, false));
++            GridData groupGridData2 = new GridData(SWT.FILL, SWT.FILL, true, false);
++            groupGridData2.heightHint = 98;
++            grpXML.setLayoutData(groupGridData2);
++
++            Label xmlFilePathLabel = new Label(grpXML, SWT.NONE);
++            xmlFilePathLabel.setText(Messages.lblXMLFilePath);
++            xmlFilePathLabel.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
++
++            txtXMLFile = new Text(grpXML, SWT.BORDER | SWT.READ_ONLY);
++            GridData gdXmlFilePathTxt = new GridData(SWT.FILL, SWT.CENTER, true, false);
++            gdXmlFilePathTxt.grabExcessHorizontalSpace = true;
++            txtXMLFile.setLayoutData(gdXmlFilePathTxt);
++
++            btnBrowse = new Button(grpXML, SWT.NONE);
++            GridData xmlButtonGd = new GridData(SWT.RIGHT, SWT.CENTER, false, false);
++            xmlButtonGd.minimumWidth = 70;
++            btnBrowse.setLayoutData(xmlButtonGd);
++            btnBrowse.setText(Messages.btnBrowse);
++            btnBrowse.setToolTipText(Messages.ttSelectXMLDumpFile);
++            btnBrowse.addSelectionListener(new SelectionAdapter() {
++                public void widgetSelected(final SelectionEvent event) {
++                    if (!checkCharset()) {
++                        return;
++                    }
++                    FileDialog dlg = new FileDialog(PlatformUI.getWorkbench().getDisplay()
++                            .getActiveShell(), SWT.SINGLE | SWT.OPEN);
++                    dlg.setFilterPath(".");
++                    dlg.setFilterExtensions(new String[] { "*.xml" });
++                    dlg.setFilterNames(new String[] { "*.xml" });
++                    final String xmlFileTmp = dlg.open();
++                    if (xmlFileTmp == null) {
++                        return;
++                    }
++                    txtXMLFile.setText(xmlFileTmp);
++                    btnAnalyz.setEnabled(true);
++                    try {
++                        xmlCatalog = getXmlCatalog(true);
++                    } catch (Exception e) {
++                        LOG.error(e.getMessage());
++                    }
++                }
++            });
++
++            btnAnalyz = new Button(grpXML, SWT.NONE);
++            GridData gdAnalyzXMLFile = new GridData(SWT.RIGHT, SWT.CENTER, false, false);
++            gdAnalyzXMLFile.minimumWidth = 70;
++            btnAnalyz.setLayoutData(gdAnalyzXMLFile);
++            btnAnalyz.setText(Messages.btnAnalyze);
++            btnAnalyz.setToolTipText(Messages.ttAnalyzXMLFile);
++            btnAnalyz.setEnabled(false);
++            btnAnalyz.addSelectionListener(new SelectionAdapter() {
++                public void widgetSelected(final SelectionEvent event) {
++                    if (!checkInput()) {
++                        return;
++                    }
++                    try {
++                        xmlCatalog = getXmlCatalog(false);
++                        if (null != xmlCatalog) {
++                            getMigrationWizard().resetBySourceDBChanged();
++                        }
++                    } catch (Exception e) {
++                        LOG.error(e.getMessage());
++                    }
++                }
++            });
++
++            Label charsetLabel = new Label(grpXML, SWT.NONE);
++            charsetLabel.setText(Messages.lblXMLFileCharset);
++            charsetLabel.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
++            cboFileCharset = new Combo(grpXML, SWT.READ_ONLY);
++            final GridData gdCharsetCombo = new GridData(SWT.FILL, SWT.CENTER, true, false);
++            cboFileCharset.setLayoutData(gdCharsetCombo);
++            cboFileCharset.setItems(com.cubrid.cubridmigration.core.common.CharsetUtils
++                    .getCharsets());
++            cboFileCharset.select(1);
++
++            new Label(grpXML, SWT.NONE);
++            new Label(grpXML, SWT.NONE);
++
++            Label lblTZ = new Label(grpXML, SWT.NONE);
++            lblTZ.setText(Messages.lblXMLFileTimezone);
++            lblTZ.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
++
++            cobTimezone = new Combo(grpXML, SWT.READ_ONLY);
++            final GridData gdTimezoneCombo = new GridData(SWT.FILL, SWT.TOP, true, false);
++            gdTimezoneCombo.widthHint = 600;
++            cobTimezone.setLayoutData(gdTimezoneCombo);
++            cobTimezone.setVisibleItemCount(20);
++            List<String> allTimeZones = TimeZoneUtils.getTimeZonesList();
++            cobTimezone.setItems(allTimeZones.toArray(new String[allTimeZones.size()]));
++            cobTimezone.add(Messages.msgDefault, 0);
++            cobTimezone.select(0);
++        }
++
++        /**
++         * Retrieves the catalog.
++         * 
++         * @return catalog
++         */
++        public Catalog getCatalog() {
++            if ((parsedSource != null
++                    && parsedSource.getFileName().equals(txtXMLFile.getText().trim()) && parsedSource
++                    .getCharset().equalsIgnoreCase(cboFileCharset.getText())) && xmlCatalog != null) {
++                return xmlCatalog;
++            } else {
++                return getXmlCatalog(true);
++            }
++        }
++
++        /**
++         * return xml catalog
++         * 
++         * @param hisFirst
++         *            reading the parsing history firstly.
++         * @return Catalog
++         */
++        private Catalog getXmlCatalog(boolean hisFirst) {
++            // Reading parsing history firstly.
++            String xmlFileCharset = cboFileCharset.getItem(cboFileCharset.getSelectionIndex());
++            String xmlFile = txtXMLFile.getText();
++            final File file = new File(xmlFile);
++            if (!file.exists() || !file.isFile()) {
++                MessageDialog.openError(getShell(), Messages.msgError,
++                        Messages.errInvalidMysqlDumpFile);
++                return null;
++            }
++            parsedSource = new MysqlXmlDumpSource(xmlFile, xmlFileCharset);
++            Catalog catalog = MysqlXmlDumpSchemaProgressFetcher.fetch(parsedSource, hisFirst);
++            if (catalog == null) {
++                parsedSource = null;
++                return null;
++            }
++            // Update timezone.
++            String newTimezoneTxt = cobTimezone.getText();
++            String timezone;
++            if (newTimezoneTxt.equalsIgnoreCase(UIConstant.DEFAULT_TIME_ZONE)) {
++                timezone = TimeZoneUtils.getDefaultID2GMT();
++            } else {
++                timezone = TimeZoneUtils.getGMTByDisplay(newTimezoneTxt);
++            }
++            catalog.setTimezone(timezone);
++            return catalog;
++        }
++
++        /**
++         * Hide
++         */
++        public void hide() {
++            if (grpXML == null) {
++                return;
++            }
++            grpXML.setVisible(false);
++            ((GridData) grpXML.getLayoutData()).exclude = true;
++        }
++
++        /**
++         * Initialize
++         */
++        public void init() {
++            setTitle(getMigrationWizard().getStepNoMsg(SelectSourcePage.this)
++                    + Messages.msgSrcSelectMySQLDump);
++            setMessage(Messages.msgSrcSelectMySQLDumpDes);
++
++            final MigrationWizard wizard = getMigrationWizard();
++            final MigrationConfiguration config = wizard.getMigrationConfig();
++            // if load script and use MYSQL dump, load the XML catalog
++            if (wizard.isLoadMigrationScript()) {
++                parsedSource = new MysqlXmlDumpSource(config.getSourceFileName(),
++                        config.getSourceFileEncoding());
++                txtXMLFile.setText(config.getSourceFileName() == null ? "" : config
++                        .getSourceFileName());
++                cboFileCharset.setText(config.getSourceFileEncoding() == null ? "" : config
++                        .getSourceFileEncoding());
++                cobTimezone
++                        .setText(config.getSourceFileTimeZone() == null ? UIConstant.DEFAULT_TIME_ZONE
++                                : config.getSourceFileTimeZone());
++            }
++
++        }
++
++        /**
++         * check whether the dialog changed
++         * 
++         * @return true if content changed
++         */
++        public boolean isInputChanged() {
++            boolean srcDBChanged = false;
++            MigrationConfiguration config = getMigrationWizard().getMigrationConfig();
++            // if online is saved but not selected or dumpfile is saved but not
++            // selected
++            String xmlFile = config.getSourceFileName();
++            String xmlFileCharset = config.getSourceFileEncoding();
++            if (!(txtXMLFile.getText().equals(xmlFile) && xmlFileCharset.equals(cboFileCharset
++                    .getItem(cboFileCharset.getSelectionIndex())))) {
++                srcDBChanged = true;
++            }
++            // online saved but but some of the parameters changed
++            return srcDBChanged;
++        }
++
++        /**
++         * Check and save
++         * 
++         * @return true if saved.
++         */
++        public boolean save() {
++            if (!checkInput()) {
++                return false;
++            }
++            Catalog catalog = getCatalog();
++            if (null == catalog) {
++                return false;
++            }
++            final MigrationWizard wzd = getMigrationWizard();
++            if (isInputChanged()) {
++                // If it is a new migration, initialize the configuration
++                wzd.resetBySourceDBChanged();
++            }
++            wzd.setOriginalSourceCatalog(catalog);
++            MigrationConfiguration cfg = wzd.getMigrationConfig();
++            cfg.setSourceType(MigrationConfiguration.XML);
++            cfg.setSourceFileName(txtXMLFile.getText());
++            cfg.setSourceFileEncoding(cboFileCharset.getItem(cboFileCharset.getSelectionIndex()));
++            cfg.setSourceFileTimeZone(cobTimezone.getItem(cobTimezone.getSelectionIndex()));
++            cfg.clearAllSQLTables();
++            xmlCatalog = catalog;
++            xmlCatalog.setCharset(cboFileCharset.getItem(cboFileCharset.getSelectionIndex()));
++            xmlCatalog.setTimezone(cobTimezone.getItem(cobTimezone.getSelectionIndex()));
++            return true;
++        }
++
++        /**
++         * Show
++         */
++        public void show() {
++            if (grpXML == null) {
++                return;
++            }
++            grpXML.setVisible(true);
++            ((GridData) grpXML.getLayoutData()).exclude = false;
++        }
++    }
++
++    /**
++     * SelectOnlineSrcView Description
++     * 
++     * @author Kevin Cao
++     * @version 1.0 - 2013-4-23 created by Kevin Cao
++     */
++    private class SelectOnlineSrcView implements AbstractSourceView {
++
++        private final JDBCConnectionMgrView conMgrView;
++
++        private SelectOnlineSrcView() {
++            conMgrView = new JDBCConnectionMgrView(MigrationWizard.getSupportedSrcDBTypes(),
++                    new IJDBCConnectionFilter() {
++
++                        public boolean doFilter(ConnParameters cp) {
++                            return getMigrationWizard().getMigrationConfig().getSourceType() != cp
++                                    .getDatabaseType().getID();
++                        }
++
++                    });
++        }
++
++        /**
++         * Create controls
++         * 
++         * @param parent
++         *            of the controls
++         */
++        public void createControls(Composite parent) {
++            conMgrView.createControls(parent);
++        }
++
++        /**
++         * get Catalog
++         * 
++         * @return Catalog
++         */
++        public Catalog getCatalog() {
++            return conMgrView.getCatalog();
++        }
++
++        /**
++         * Hide
++         */
++        public void hide() {
++            conMgrView.hide();
++        }
++
++        /**
++         * Initialize with script's source connection
++         */
++        public void init() {
++            MigrationWizard wzd = getMigrationWizard();
++            setTitle(wzd.getStepNoMsg(SelectSourcePage.this) + Messages.msgSrcSelectOnlineDB);
++            setMessage(Messages.msgSrcSelectOnlineDBDes);
++            List<Integer> dts = new ArrayList<Integer>();
++            MigrationConfiguration cfg = wzd.getMigrationConfig();
++            dts.add(cfg.getSourceType());
++            conMgrView.setSupportedDBType(dts);
++            // Add catalog to cache.
++            Catalog offlineSrcCatalog = cfg.getOfflineSrcCatalog();
++            ConnParameters srcConParams = cfg.getSourceConParams();
++            conMgrView.init(srcConParams, offlineSrcCatalog);
++
++        }
++
++        /**
++         * check whether the dialog changed
++         * 
++         * @return true if content changed
++         */
++        public boolean isInputChanged() {
++            boolean srcDBChanged = false;
++            MigrationConfiguration config = getMigrationWizard().getMigrationConfig();
++            // if online is saved but not selected or dumpfile is saved but not
++            // selected
++            ConnParameters oldCP = config.getSourceConParams();
++            // the first time set it changed
++            DatabaseConnectionInfo dci = conMgrView.getSelectedDCI();
++            if (oldCP == null && dci != null) {
++                srcDBChanged = true;
++            } else if (oldCP != null) {
++                srcDBChanged = !oldCP.isSameDB(dci.getConnParameters());
++            }
++            return srcDBChanged;
++        }
++
++        /**
++         * Save to configurations
++         * 
++         * @return true if successfully
++         */
++        public boolean save() {
++            if (this.conMgrView.getSelectedDCI() == null) {
++                MessageDialog.openError(getShell(), Messages.msgError,
++                        Messages.sourceDBPageErrNoSelectedItem);
++                return false;
++            }
++            final MigrationWizard wzd = getMigrationWizard();
++            Catalog catalog = getCatalog();
++            if (catalog == null) {
++                return false;
++            }
++
++            if (catalog.getDatabaseType().getID() == 1) {
++                removeEmptySchema(catalog);
++            }
++
++            List<String> errorSchemas = new ArrayList<String>();
++            Map<String, String> old2NewSchemaMapping = new HashMap<String, String>();
++            MigrationConfiguration cfg = wzd.getMigrationConfig();
++            cfg.resetSchemaInfo();
++            if (catalog.getDatabaseType().isSupportMultiSchema()
++                    && !cfg.getExpEntryTableCfg().isEmpty()) {
++                List<String> expSchemas = cfg.getExpSchemaNames();
++                for (String schema : expSchemas) {
++                    if (catalog.getSchemaByName(schema) != null) {
++                        continue;
++                    }
++                    errorSchemas.add(schema);
++                }
++                if (!errorSchemas.isEmpty()) {
++                    List<String> newSchemas = new ArrayList<String>();
++                    for (Schema newSchema : catalog.getSchemas()) {
++                        newSchemas.add(newSchema.getName());
++                    }
++                    old2NewSchemaMapping = RenameSchemaDialog.renameSchemas(errorSchemas,
++                            newSchemas);
++                    // Dialog canceled, user maybe want to choose another
++                    // source.
++                    if (old2NewSchemaMapping == null) {
++                        return false;
++                    }
++                }
++            }
++
++            if (isInputChanged() || wzd.getOriginalSourceCatalog() != catalog) {
++                // If it is a new migration, initialize the configuration
++                wzd.resetBySourceDBChanged();
++                cfg = wzd.getMigrationConfig();
++            }
++            wzd.setOriginalSourceCatalog(catalog);
++            cfg.setSourceConParams(catalog.getConnectionParameters());
++            // Set the invalid schema to right schema or remove them.
++            for (String es : errorSchemas) {
++                String newSchema = old2NewSchemaMapping.get(es);
++                if (StringUtils.isBlank(newSchema)) {
++                    cfg.removeExpSchema(es);
++                } else {
++                    cfg.renameExpSchema(es, newSchema);
++                }
++            }
++            return true;
++        }
++
++        /**
++         * Remove empty Schema
++         * 
++         * @param catalog
++         *            Catalog
++         */
++        private void removeEmptySchema(Catalog catalog) {
++            List<Schema> schemaList = catalog.getSchemas();
++            List<Schema> removeSchema = new ArrayList<Schema>();
++
++            for (Schema schema : schemaList) {
++                List<Table> tableList = schema.getTables();
++                List<View> viewList = schema.getViews();
++                List<Sequence> sequenceList = schema.getSequenceList();
++                List<Synonym> synonymList = schema.getSynonymList();
++                List<Grant> grantList = schema.getGrantList();
++
++                if (tableList.isEmpty() && viewList.isEmpty() && sequenceList.isEmpty()
++                        && synonymList.isEmpty() && grantList.isEmpty()) {
++                    removeSchema.add(schema);
++                }
++            }
++
++            catalog.removeSchema(removeSchema);
++        }
++
++        /**
++         * Show
++         */
++        public void show() {
++            conMgrView.show();
++        }
++    }
++
++    private static final Logger LOG = LogUtil.getLogger(SelectSourcePage.class);
++    private AbstractSourceView onlineView = new SelectOnlineSrcView();
++    private AbstractSourceView mysqlDumpView = new SelectMySQLDumpSrcView();
++
++    private Composite container;
++
++    public SelectSourcePage(String pageName) {
++        super(pageName);
++    }
++
++    /**
++     * When migration wizard displayed current page.
++     * 
++     * @param event
++     *            PageChangedEvent
++     */
++
++    protected void afterShowCurrentPage(PageChangedEvent event) {
++        try {
++            final MigrationWizard wzd = getMigrationWizard();
++            if (wzd.getMigrationConfig().sourceIsOnline()) {
++                onlineView.createControls(container);
++                mysqlDumpView.hide();
++                onlineView.show();
++            } else if (wzd.getMigrationConfig().sourceIsXMLDump()) {
++                mysqlDumpView.createControls(container);
++                onlineView.hide();
++                mysqlDumpView.show();
++            }
++            container.layout(true);
++            getCurrentView().init();
++        } catch (Exception ex) {
++            LOG.error("", ex);
++            MessageDialog.openError(getShell(), Messages.msgError, ex.getMessage());
++        }
++    }
++
++    /**
++     * Create contents of the wizard
++     * 
++     * @param parent
++     *            Composite
++     */
++    public Composite createSubControl(Composite parent) {
++        Composite content = new Composite(parent, SWT.NONE);
++        content.setLayout(new GridLayout(1, false));
++
++        ScrolledComposite scComposite = new ScrolledComposite(content, SWT.H_SCROLL | SWT.V_SCROLL);
++        scComposite.setToolTipText(getClass().getName());
++        GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
++        gd.heightHint = 300;
++        scComposite.setLayoutData(gd);
++        scComposite.setLayout(new GridLayout(1, false));
++
++        container = new Composite(scComposite, SWT.NONE);
++        final GridLayout gridLayoutRoot = new GridLayout();
++        container.setLayout(gridLayoutRoot);
++        setControl(container);
++
++        scComposite.setMinSize(container.computeSize(SWT.DEFAULT, SWT.DEFAULT).x,
++                container.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
++        scComposite.setContent(container);
++        scComposite.setExpandHorizontal(true);
++        scComposite.setExpandVertical(true);
++        scComposite.layout(true);
++        System.out.println("this" + this.getClass().getName());
++
++        return container;
++    }
++
++    /**
++     * Retrieves the current view for selection data source.
++     * 
++     * @return AbstractView
++     */
++    private AbstractSourceView getCurrentView() {
++        final MigrationConfiguration cfg = getMigrationWizard().getMigrationConfig();
++        if (cfg.sourceIsOnline()) {
++            return onlineView;
++        } else if (cfg.sourceIsXMLDump()) {
++            return mysqlDumpView;
++        }
++        throw new RuntimeException("Can't support source type :" + cfg.getSourceType());
++    }
++
++    /**
++     * When migration wizard will show next page or previous page.
++     * 
++     * @param event
++     *            PageChangingEvent
++     */
++    protected void handlePageLeaving(PageChangingEvent event) {
++        // If page is not complete, it should be go to previous page.
++        if (!isPageComplete()) {
++            return;
++        }
++        if (!isGotoNextPage(event)) {
++            return;
++        }
++        event.doit = updateMigrationConfig();
++    }
++
++    /**
++     * Save user input (source database connection information) to export
++     * options.
++     * 
++     * @return true if update success.
++     */
++    protected boolean updateMigrationConfig() {
++        return getCurrentView().save();
++    }
+ }
+diff --git a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SelectSrcTarTypesPage.java b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SelectSrcTarTypesPage.java
+index ad43580..4f921bf 100644
+--- a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SelectSrcTarTypesPage.java
++++ b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SelectSrcTarTypesPage.java
+@@ -95,13 +95,15 @@ public class SelectSrcTarTypesPage extends
+ 	 * 
+ 	 * @param parent Composite
+ 	 */
+-	public void createControl(Composite parent) {
++	protected Composite createSubControl(Composite parent) {
+ 		Composite container = new Composite(parent, SWT.NONE);
+ 		container.setLayout(new GridLayout());
+ 		setControl(container);
+ 		container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+ 		comSelection = new SelectSrcTarTypesView(container);
+ 		afterShowCurrentPage(null);
++		
++		return container;
+ 	}
+ 
+ 	/**
+diff --git a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/view/SelectSrcTarTypesView.java b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/view/SelectSrcTarTypesView.java
+index 0795ae5..a1812bc 100644
+--- a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/view/SelectSrcTarTypesView.java
++++ b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/view/SelectSrcTarTypesView.java
+@@ -205,21 +205,22 @@ public class SelectSrcTarTypesView {
+ 	private Button createSrcTarTypeBtn(Composite parent, String name, String des) {
+ 		Button result = new Button(parent, SWT.RADIO);
+ 		result.setText(name);
++		result.setToolTipText(des);
+ 		{
+ 			GridData gd = new GridData(SWT.LEFT, SWT.TOP, false, false);
+ 			gd.verticalIndent = 8;
+ 			result.setLayoutData(gd);
+ 		}
+-		Text txt = new Text(parent, SWT.MULTI | SWT.WRAP | SWT.READ_ONLY);
+-		{
+-			GridData gd = new GridData(SWT.LEFT, SWT.TOP, false, false);
+-			gd.horizontalIndent = 15;
+-			gd.widthHint = 370;
+-			txt.setLayoutData(gd);
+-		}
+-		txt.setBackground(parent.getBackground());
+-		txt.setForeground(Resources.getInstance().getColor(SWT.COLOR_DARK_GRAY));
+-		txt.setText(des);
++//		Text txt = new Text(parent, SWT.MULTI | SWT.WRAP | SWT.READ_ONLY);
++//		{
++//			GridData gd = new GridData(SWT.LEFT, SWT.TOP, false, false);
++//			gd.horizontalIndent = 15;
++//			gd.widthHint = 370;
++//			txt.setLayoutData(gd);
++//		}
++//		txt.setBackground(parent.getBackground());
++//		txt.setForeground(Resources.getInstance().getColor(SWT.COLOR_DARK_GRAY));
++//		txt.setText(des);
+ 		return result;
+ 	}
+ 

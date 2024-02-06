@@ -363,6 +363,12 @@ public class MigrationWizard extends
 
 	}
 
+	public boolean checkReload() {
+        return MessageDialog.openConfirm(getShell(), Messages.msgConfirmation,
+                Messages.wizardReload);
+
+    }
+	
 	/**
 	 * override Wizard method
 	 * 

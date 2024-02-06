@@ -724,12 +724,9 @@ public class SelectDestinationPage extends
 					+ Messages.msgDestOutputFilesSetting);
 			setDescription(Messages.msgDestOutputFilesSettingDes);
 			
-			if (getMigrationWizard().getOriginalSourceCatalog().getConnectionParameters() == null) {
-			    System.out.println("getConnectionParameters is null");
-			}
-			
-			String dbName = getMigrationWizard().getOriginalSourceCatalog().getConnectionParameters().getDbName();
-			
+			Catalog catalog = getMigrationWizard().getOriginalSourceCatalog();
+			String dbName = catalog.getConnectionParameters() != null ? 
+			        catalog.getConnectionParameters().getDbName() : catalog.getName();
 			
 			MigrationConfiguration config = getMigrationWizard().getMigrationConfig();
 			btnCSVSetting.setVisible(config.targetIsCSV());

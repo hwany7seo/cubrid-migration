@@ -1,0 +1,196 @@
+diff --git a/com.cubrid.cubridmigration.core/src/com/cubrid/cubridmigration/core/engine/task/imp/CleanDBTask.java b/com.cubrid.cubridmigration.core/src/com/cubrid/cubridmigration/core/engine/task/imp/CleanDBTask.java
+index 68f6279..e7c7303 100644
+--- a/com.cubrid.cubridmigration.core/src/com/cubrid/cubridmigration/core/engine/task/imp/CleanDBTask.java
++++ b/com.cubrid.cubridmigration.core/src/com/cubrid/cubridmigration/core/engine/task/imp/CleanDBTask.java
+@@ -84,7 +84,8 @@ public class CleanDBTask extends
+ 		Map<String, List<String>> fkDropQueryBySchemaMap = new HashMap<String, List<String>>();
+ 		Map<String, List<String>> tbTruncateQueryBySchemaMap = new HashMap<String, List<String>>();
+ 		
+-		String conUser = config.getSourceConParams().getConUser();
++		String conUser = config.getSourceConParams() != null ? 
++		        config.getSourceConParams().getConUser() : config.getSrcCatalog().getName(); 
+ 		for (SourceEntryTableConfig setc : config.getExpEntryTableCfg()) {
+ 			if (!setc.isCreateNewTable()) {
+ 				continue;
+diff --git a/com.cubrid.cubridmigration.core/src/com/cubrid/cubridmigration/mysql/meta/MySQLXMLSchemaParser.java b/com.cubrid.cubridmigration.core/src/com/cubrid/cubridmigration/mysql/meta/MySQLXMLSchemaParser.java
+index 0f59f5d..52b1718 100644
+--- a/com.cubrid.cubridmigration.core/src/com/cubrid/cubridmigration/mysql/meta/MySQLXMLSchemaParser.java
++++ b/com.cubrid.cubridmigration.core/src/com/cubrid/cubridmigration/mysql/meta/MySQLXMLSchemaParser.java
+@@ -37,6 +37,7 @@ import org.xml.sax.SAXException;
+ import org.xml.sax.SAXParseException;
+ import org.xml.sax.helpers.DefaultHandler;
+ 
++import com.cubrid.cubridmigration.core.connection.ConnParameters;
+ import com.cubrid.cubridmigration.core.dbmetadata.AbstractJDBCSchemaFetcher;
+ import com.cubrid.cubridmigration.core.dbobject.Catalog;
+ import com.cubrid.cubridmigration.core.dbobject.Column;
+@@ -111,10 +112,19 @@ public class MySQLXMLSchemaParser extends
+ 	 * @throws SAXException e
+ 	 */
+ 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
++	    ConnParameters connParam = null;
+ 		if ("mysqldump".equals(qName)) {
+ 			catalog.setDatabaseType(DatabaseType.MYSQL);
++			connParam = createDefaultConnParam();
++			connParam.setDatabaseType(DatabaseType.MYSQL);
++			catalog.setConnectionParameters(connParam);
+ 		} else if ("database".equals(qName)) {
+ 			String databaseName = attributes.getValue("name");
++			connParam = catalog.getConnectionParameters() == null ? 
++			        createDefaultConnParam() : catalog.getConnectionParameters();
++			catalog.getConnectionParameters().setConUser(databaseName);
++			catalog.getConnectionParameters().setDbName(databaseName);
++			catalog.getConnectionParameters().setName(databaseName);
+ 			catalog.setName(databaseName);
+ 			schema.setName(databaseName);
+ 			catalog.addSchema(schema);
+@@ -243,5 +253,8 @@ public class MySQLXMLSchemaParser extends
+ 			super.fatalError(e1);
+ 		}
+ 	}
+-
++	
++	private ConnParameters createDefaultConnParam() {
++	    return ConnParameters.getConParam("", "", 0, "", DatabaseType.MYSQL, "", "", "", "", "");
++	}
+ }
+diff --git a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/message/Messages.java b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/message/Messages.java
+index eaf82ea..cc24c67 100644
+--- a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/message/Messages.java
++++ b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/message/Messages.java
+@@ -618,6 +618,7 @@ public class Messages extends
+ 	public static String msgIsUseNewerScriptCatalog;
+ 	public static String msgIsUseScriptCatalog;
+ 	public static String msgLobInformation;
++	public static String msgLobNotFound;
+ 	public static String msgLowerCaseWarning;
+ 	public static String msgMainSchema;
+ 	public static String msgMappingOverride;
+diff --git a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/message/Messages.properties b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/message/Messages.properties
+index 6b4d43c..0c980ef 100644
+--- a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/message/Messages.properties
++++ b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/message/Messages.properties
+@@ -576,6 +576,7 @@ msgIsUseCachedCatalog=Do you want to use the cached catalog?
+ msgIsUseNewerScriptCatalog=The catalog information of current script is newer than the cached catalog.\r\nDo you want to udpate the cache?
+ msgIsUseScriptCatalog=Do you want to use the catalog information of current script?
+ msgLobInformation=CUBRID does not allow to set to "Not Null" for LOB typed columns. (for now)\nIf there are LOB typed columns that Not Null is set in source database, It will be changed to nullable in the target.
++msgLobNotFound=Not found LOB info.
+ msgLowerCaseWarning=All of the table/column/view/serial names will be converted to lowercase in target CUBRID database.
+ msgMappingOverride=Current configuration will be overridden\!\r\nDo you want to continue?
+ msgMainSchema=Main schema
+diff --git a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/message/Messages_ko_KR.properties b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/message/Messages_ko_KR.properties
+index c301911..ea4c352 100644
+--- a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/message/Messages_ko_KR.properties
++++ b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/message/Messages_ko_KR.properties
+@@ -575,6 +575,7 @@ msgIsUseCachedCatalog=\uae30\uc874\uc5d0 \uc218\uc9d1\ub41c \uc2a4\ud0a4\ub9c8 \
+ msgIsUseNewerScriptCatalog=\uc2a4\ud06c\ub9bd\ud2b8\uc758 \uc2a4\ud0a4\ub9c8 \uc815\ubcf4\uac00 \uce90\uc2dc\ub41c \uc2a4\ud0a4\ub9c8 \uc815\ubcf4\uc5d0 \ube44\ud574 \ucd5c\uc2e0 \uc785\ub2c8\ub2e4.\r\n\uc2a4\ud06c\ub9bd\ud2b8\uc5d0 \uc788\ub294 \uc2a4\ud0a4\ub9c8 \uc815\ubcf4\ub97c \uac31\uc2e0\ud558\uc2dc\uaca0\uc2b5\ub2c8\uae4c?
+ msgIsUseScriptCatalog=\ud604\uc7ac \ub9c8\uc774\uadf8\ub808\uc774\uc158 \uc2a4\ud06c\ub9bd\ud2b8\uc5d0 \uc800\uc7a5\ub41c \uc2a4\ud0a4\ub9c8 \uc815\ubcf4\ub97c \uc0ac\uc6a9\ud558\uc2dc\uaca0\uc2b5\ub2c8\uae4c?
+ msgLobInformation=CUBRID\ub294 LOB \ub370\uc774\ud130 \ud0c0\uc785\uc5d0 \ub300\ud574 Not Null\uc744 \ud5c8\uc6a9\ud558\uc9c0 \uc54a\uc2b5\ub2c8\ub2e4.\nLOB \ub370\uc774\ud130 \ud0c0\uc785 \uc911 Not Null\uc778 \uceec\ub7fc\uc758 \uc18d\uc131\uc744 Nullable\ub85c \ubcc0\uacbd\ud569\ub2c8\ub2e4.
++msgLobNotFound=Lob \uc815\ubcf4\ub97c \ucc3e\uc744 \uc218 \uc5c6\uc2b5\ub2c8\ub2e4.
+ msgLowerCaseWarning=\ub300\uc0c1 CUBRID \ub370\uc774\ud130\ubca0\uc774\uc2a4\uc5d0\uc11c \ubaa8\ub4e0 \ud14c\uc774\ube14/\uceec\ub7fc/\ubdf0/\uc2dc\ub9ac\uc5bc \uc774\ub984\uc774 \uc18c\ubb38\uc790\ub85c \ubcc0\uacbd\ub418\uc5c8\uc2b5\ub2c8\ub2e4.
+ msgMainSchema=\uba54\uc778 \uc2a4\ud0a4\ub9c8
+ msgMappingOverride=\ud604\uc7ac \ub9e4\ud551 \uc124\uc815\uc774 \uc9c0\uc815\ud558\uc2e0 \ud30c\uc77c \uc815\ubcf4\ub85c \ubcc0\uacbd\ub429\ub2c8\ub2e4.\r\n\uacc4\uc18d\ud558\uc2dc\uaca0\uc2b5\ub2c8\uae4c?
+diff --git a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/ConfirmationPage.java b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/ConfirmationPage.java
+index d6217ee..db4d906 100644
+--- a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/ConfirmationPage.java
++++ b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/ConfirmationPage.java
+@@ -168,7 +168,8 @@ public class ConfirmationPage extends
+ 			int oldLength;
+ 			boolean isCreateFileRepository = false;
+ 			boolean isAddUserSchema = migration.isAddUserSchema();
+-			String conUser = migration.getSourceConParams().getConUser();
++			String conUser = migration.getSourceConParams() != null ? 
++			        migration.getSourceConParams().getConUser() : migration.getSrcCatalog().getName();
+ 			if (migration.isSplitSchema()) {
+ 				// table
+ 				text.append(Messages.confrimTable).append(lineSeparator);
+diff --git a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SchemaMappingPage.java b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SchemaMappingPage.java
+index ad3df4b..fce4448 100644
+--- a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SchemaMappingPage.java
++++ b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SchemaMappingPage.java
+@@ -763,7 +763,16 @@ public class SchemaMappingPage extends MigrationWizardPage {
+ 			schema.setTargetSchemaName(srcTable.getTarSchema());
+ 			targetSchemaList.add(schema);
+ 			
+-			String schemaName = config.isAddUserSchema() ? srcTable.getSrcSchema() : srcCatalog.getConnectionParameters().getConUser();
++			String schemaName;
++			if (config.isAddUserSchema()) { 
++			    schemaName = srcTable.getSrcSchema();
++			} else {
++			    if (srcCatalog.getConnectionParameters() != null) {
++			        schemaName = srcCatalog.getConnectionParameters().getConUser();
++			    } else { // mysql xml
++			        schemaName = srcCatalog.getName();
++			    }
++			}
+ 			if (splitSchema) {
+ 				tableFullName.put(schemaName, config.getTableFullName(schemaName));
+ 				viewFullName.put(schemaName, config.getViewFullName(schemaName));
+diff --git a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SelectDestinationPage.java b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SelectDestinationPage.java
+index e79e5bf..96bb6ea 100644
+--- a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SelectDestinationPage.java
++++ b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SelectDestinationPage.java
+@@ -724,12 +724,10 @@ public class SelectDestinationPage extends
+ 					+ Messages.msgDestOutputFilesSetting);
+ 			setDescription(Messages.msgDestOutputFilesSettingDes);
+ 			
+-			if (getMigrationWizard().getOriginalSourceCatalog().getConnectionParameters() == null) {
+-			    System.out.println("getConnectionParameters is null");
+-			}
+-			
+-			String dbName = getMigrationWizard().getOriginalSourceCatalog().getConnectionParameters().getDbName();
++			Catalog catalog = getMigrationWizard().getOriginalSourceCatalog();
+ 			
++			String dbName = catalog.getConnectionParameters() != null ? 
++			        catalog.getConnectionParameters().getDbName() : catalog.getName(); 
+ 			
+ 			MigrationConfiguration config = getMigrationWizard().getMigrationConfig();
+ 			btnCSVSetting.setVisible(config.targetIsCSV());
+diff --git a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/utils/MigrationCfgUtils.java b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/utils/MigrationCfgUtils.java
+index 2608e40..8d38d4a 100644
+--- a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/utils/MigrationCfgUtils.java
++++ b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/utils/MigrationCfgUtils.java
+@@ -1074,22 +1074,27 @@ public class MigrationCfgUtils {
+ 	 */
+ 	public String getLobInfo(Catalog sourceCatalog) {
+ 		StringBuffer sb = new StringBuffer();
+-		List<Schema> schemas = sourceCatalog.getSchemas();
+-		for (Schema schema : schemas) {
+-			List<Table> tables = schema.getTables();
+-			for (Table table : tables) {
+-				List<Column> columns = table.getColumns();
+-				for (Column column : columns) {
+-					String dataType = column.getDataType();
+-					boolean isNullable = column.isNullable();
+-					if (("BLOB".equalsIgnoreCase(dataType) || "CLOB".equalsIgnoreCase(dataType)) && !isNullable) {
+-						sb.append("[").append(schema.getName()).append("]");
+-						sb.append(" ").append(table.getName()).append(".").append(column.getName());
+-						sb.append(" (").append(column.getDataType()).append(")\n");
+-					}
+-				}
+-			}
++		
++		if (sourceCatalog != null) {
++    		List<Schema> schemas = sourceCatalog.getSchemas();
++    		for (Schema schema : schemas) {
++    			List<Table> tables = schema.getTables();
++    			for (Table table : tables) {
++    				List<Column> columns = table.getColumns();
++    				for (Column column : columns) {
++    					String dataType = column.getDataType();
++    					boolean isNullable = column.isNullable();
++    					if (("BLOB".equalsIgnoreCase(dataType) || "CLOB".equalsIgnoreCase(dataType)) && !isNullable) {
++    						sb.append("[").append(schema.getName()).append("]");
++    						sb.append(" ").append(table.getName()).append(".").append(column.getName());
++    						sb.append(" (").append(column.getDataType()).append(")\n");
++    					}
++    				}
++    			}
++    		}
++    		return sb.toString();
++		} else {
++		    return Messages.msgLobNotFound;
+ 		}
+-		return sb.toString();
+ 	}
+ }

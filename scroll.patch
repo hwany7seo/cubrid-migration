@@ -1,0 +1,313 @@
+diff --git a/com.cubrid.cubridmigration.app/src/com/cubrid/cubridmigration/app/ApplicationWorkbenchAdvisor.java b/com.cubrid.cubridmigration.app/src/com/cubrid/cubridmigration/app/ApplicationWorkbenchAdvisor.java
+index b1d9585..76729a2 100644
+--- a/com.cubrid.cubridmigration.app/src/com/cubrid/cubridmigration/app/ApplicationWorkbenchAdvisor.java
++++ b/com.cubrid.cubridmigration.app/src/com/cubrid/cubridmigration/app/ApplicationWorkbenchAdvisor.java
+@@ -38,6 +38,8 @@ import org.eclipse.ui.application.WorkbenchAdvisor;
+ import org.eclipse.ui.application.WorkbenchWindowAdvisor;
+ 
+ import com.cubrid.cubridmigration.ui.preference.GeneralPreferencePage;
++import org.eclipse.swt.internal.*;
++import org.eclipse.swt.widgets.Display;
+ 
+ /**
+  * ApplicationWorkbenchAdvisor
+@@ -82,7 +84,12 @@ public class ApplicationWorkbenchAdvisor extends
+ 				false);
+ 		PlatformUI.getPreferenceStore().setValue(
+ 				IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR, true);
+-
++		//System.setProperty("org.eclipse.swt.internal.deviceZoom", "100");
++//		for (Object key : System.getProperties().keySet()) {
++//			System.out.println("key : " + key.toString() + " val : " + System.getProperty(key.toString()));
++//		}
++		System.out.println(Display.getCurrent().getDPI());
++		System.setProperty("prism.allowhidpi", "false");
+ 	}
+ 
+ 	/**
+diff --git a/com.cubrid.cubridmigration.ui/src/com/cubrid/common/ui/StructuredContentProviderAdaptor.java b/com.cubrid.cubridmigration.ui/src/com/cubrid/common/ui/StructuredContentProviderAdaptor.java
+index 8a54b7c..4109bdd 100644
+--- a/com.cubrid.cubridmigration.ui/src/com/cubrid/common/ui/StructuredContentProviderAdaptor.java
++++ b/com.cubrid.cubridmigration.ui/src/com/cubrid/common/ui/StructuredContentProviderAdaptor.java
+@@ -33,6 +33,7 @@ import java.util.Collection;
+ 
+ import org.eclipse.jface.viewers.IStructuredContentProvider;
+ import org.eclipse.jface.viewers.Viewer;
++import org.eclipse.swt.internal.*;
+ 
+ /**
+  * StructuredContentProviderAdaptor Description
+diff --git a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/BaseConfirmationPage.java b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/BaseConfirmationPage.java
+index 776aa9f..cfd1d14 100644
+--- a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/BaseConfirmationPage.java
++++ b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/BaseConfirmationPage.java
+@@ -182,7 +182,7 @@ public class BaseConfirmationPage extends MigrationWizardPage {
+ 	 * @param parent
+ 	 *            Composite
+ 	 */
+-	public void createControl(Composite parent) {
++	public Composite createSubControl(Composite parent) {
+ 		Composite container = new Composite(parent, SWT.NONE);
+ 		container.setLayout(new GridLayout());
+ 		setControl(container);
+@@ -204,6 +204,8 @@ public class BaseConfirmationPage extends MigrationWizardPage {
+ 		txtDDL.setVisible(false);
+ 		txtDDL.setBackground(SWTResourceConstents.COLOR_WHITE);
+ 		createButtons(container);
++		
++		return container;
+ 	}
+ 
+ 	/**
+diff --git a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/CSVSelectPage.java b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/CSVSelectPage.java
+index 2fe425c..ba39e60 100644
+--- a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/CSVSelectPage.java
++++ b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/CSVSelectPage.java
+@@ -668,7 +668,7 @@ public class CSVSelectPage extends
+ 	 * 
+ 	 * @param parent Composite
+ 	 */
+-	public void createControl(Composite parent) {
++	protected Composite createSubControl(Composite parent) {
+ 		SashForm container = new SashForm(parent, SWT.HORIZONTAL);
+ 		final GridLayout gridLayoutRoot = new GridLayout(2, false);
+ 		container.setLayout(gridLayoutRoot);
+@@ -684,6 +684,8 @@ public class CSVSelectPage extends
+ 		createTVFiles(group);
+ 
+ 		detailView = new MappingDetailView(container);
++		
++		return container;
+ 	}
+ 
+ 	/**
+diff --git a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/MigrationWizardPage.java b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/MigrationWizardPage.java
+index 30653ba..6b231b7 100644
+--- a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/MigrationWizardPage.java
++++ b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/MigrationWizardPage.java
+@@ -36,6 +36,10 @@ import org.eclipse.jface.dialogs.PageChangedEvent;
+ import org.eclipse.jface.dialogs.PageChangingEvent;
+ import org.eclipse.jface.resource.ImageDescriptor;
+ import org.eclipse.jface.wizard.WizardPage;
++import org.eclipse.swt.SWT;
++import org.eclipse.swt.custom.ScrolledComposite;
++import org.eclipse.swt.layout.GridData;
++import org.eclipse.swt.layout.GridLayout;
+ import org.eclipse.swt.widgets.Composite;
+ 
+ import com.cubrid.cubridmigration.ui.wizard.MigrationWizard;
+@@ -46,12 +50,14 @@ import com.cubrid.cubridmigration.ui.wizard.MigrationWizard;
+  * @author Kevin Cao fulei
+  * @version 1.0 - 2011-6-30 created by Kevin Cao
+  */
+-public class MigrationWizardPage extends
++public abstract class MigrationWizardPage extends
+ 		WizardPage implements
+ 		IPageChangedListener,
+ 		IPageChangingListener {
+ 
+ 	protected boolean isFirstVisible = true;
++	private ScrolledComposite scComposite;
++	private Composite childComposite;
+ 
+ 	protected MigrationWizardPage(String pageName) {
+ 		super(pageName);
+@@ -79,6 +85,7 @@ public class MigrationWizardPage extends
+ 	public void pageChanged(PageChangedEvent event) {
+ 		if (event.getSelectedPage() == this) {
+ 			afterShowCurrentPage(event);
++			updateScrollPage();
+ 		}
+ 	}
+ 
+@@ -105,6 +112,13 @@ public class MigrationWizardPage extends
+ 		//Default is doing nothing.
+ 	}
+ 
++	private void updateScrollPage() {
++		System.out.println("updateScrollPage setMinSize");
++		if (scComposite != null) {
++			scComposite.setMinSize(400, childComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
++		}
++	}
++	
+ 	/**
+ 	 * When migration wizard will show next page or previous page.
+ 	 * 
+@@ -130,9 +144,26 @@ public class MigrationWizardPage extends
+ 	 * @param parent Composite of control.
+ 	 */
+ 	public void createControl(Composite parent) {
+-		//Do nothing.		
++		Composite content = new Composite(parent, SWT.NONE);
++		content.setLayout(new GridLayout(1, false));
++		
++		scComposite = new ScrolledComposite(content, SWT.H_SCROLL | SWT.V_SCROLL);
++		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
++		gd.heightHint = 300;
++		scComposite.setLayoutData(gd);
++		scComposite.setLayout(new GridLayout(1, false));
++		
++		childComposite = createSubControl(scComposite);
++		
++		scComposite.setMinSize(400, childComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
++		scComposite.setContent(childComposite);
++		scComposite.setExpandHorizontal(true);
++		scComposite.setExpandVertical(true);
++		scComposite.layout(true);
+ 	}
+ 
++	protected abstract Composite createSubControl(Composite parent);
++	
+ 	/**
+ 	 * fire page changed
+ 	 * 
+diff --git a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/ObjectMappingPage.java b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/ObjectMappingPage.java
+index 924b05c..bc8f8fd 100644
+--- a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/ObjectMappingPage.java
++++ b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/ObjectMappingPage.java
+@@ -283,7 +283,7 @@ public class ObjectMappingPage extends
+ 	 * 
+ 	 * @param parent Composite
+ 	 */
+-	public void createControl(Composite parent) {
++	public Composite createSubControl(Composite parent) {
+ 		Composite container = new Composite(parent, SWT.NONE);
+ 		container.setLayout(new GridLayout());
+ 		container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+@@ -296,6 +296,8 @@ public class ObjectMappingPage extends
+ 		createDetailPanel(container2);
+ 		container2.setWeights(new int[] {1, 3});
+ 		createToolButtons(container);
++		
++		return container;
+ 	}
+ 
+ 	/**
+diff --git a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SQLSelectPage.java b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SQLSelectPage.java
+index b28ef45..f035655 100644
+--- a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SQLSelectPage.java
++++ b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SQLSelectPage.java
+@@ -468,7 +468,7 @@ public class SQLSelectPage extends
+ 	 * 
+ 	 * @param parent Composite
+ 	 */
+-	public void createControl(Composite parent) {
++	public Composite createSubControl(Composite parent) {
+ 		Composite container = new Composite(parent, SWT.NONE);
+ 		final GridLayout gridLayoutRoot = new GridLayout();
+ 		container.setLayout(gridLayoutRoot);
+@@ -485,6 +485,8 @@ public class SQLSelectPage extends
+ 		createSettings(container);
+ 		//Initialize
+ 		//afterShowCurrentPage(null);
++		
++		return container;
+ 	}
+ 
+ 	/**
+diff --git a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SQLTargetDBSelectPage.java b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SQLTargetDBSelectPage.java
+index babddb2..f0b0fa2 100644
+--- a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SQLTargetDBSelectPage.java
++++ b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SQLTargetDBSelectPage.java
+@@ -193,13 +193,15 @@ public class SQLTargetDBSelectPage extends
+ 	 * 
+ 	 * @param parent Composite
+ 	 */
+-	public void createControl(Composite parent) {
++	public Composite createSubControl(Composite parent) {
+ 		container = new Composite(parent, SWT.NONE);
+ 		final GridLayout gridLayoutRoot = new GridLayout();
+ 		container.setLayout(gridLayoutRoot);
+ 		container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+ 		setControl(container);
+ 		onlineTargetDBView = new OnlineTargetDBView();
++		
++		return container;
+ 	}
+ 
+ 	/**
+diff --git a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SchemaMappingPage.java b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SchemaMappingPage.java
+index ad3df4b..5a1edc4 100644
+--- a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SchemaMappingPage.java
++++ b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SchemaMappingPage.java
+@@ -195,7 +195,7 @@ public class SchemaMappingPage extends MigrationWizardPage {
+ 	}
+ 	
+ 	@Override
+-	public void createControl(Composite parent) {
++	public Composite createSubControl(Composite parent) {
+ 		Composite container = new Composite(parent, SWT.NONE);
+ 		container.setLayout(new FillLayout());
+ 		container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+@@ -203,6 +203,8 @@ public class SchemaMappingPage extends MigrationWizardPage {
+ 		createSrcTable(container);
+ 		
+ 		setControl(container);
++		
++		return container;
+ 	}
+ 	
+ 	private void createSrcTable(Composite container) {
+diff --git a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SelectDestinationPage.java b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SelectDestinationPage.java
+index 25974f9..915bcd6 100644
+--- a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SelectDestinationPage.java
++++ b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SelectDestinationPage.java
+@@ -908,7 +908,7 @@ public class SelectDestinationPage extends
+ 	 * 
+ 	 * @param parent Composite
+ 	 */
+-	public void createControl(Composite parent) {
++	public Composite createSubControl(Composite parent) {
+ 		container = new Composite(parent, SWT.NONE);
+ 		final GridLayout gridLayoutRoot = new GridLayout();
+ 		container.setLayout(gridLayoutRoot);
+@@ -918,6 +918,8 @@ public class SelectDestinationPage extends
+ 		onlineTargetDBView = new OnlineTargetDBView();
+ 		// offlineTargetDBView = new OfflineTargetDBView();
+ 		unloadTargetDBView = new UnloadTargetDBView();
++		
++		return container;
+ 	}
+ 
+ 	/**
+diff --git a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SelectSourcePage.java b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SelectSourcePage.java
+index 6d278fd..3e85b19 100644
+--- a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SelectSourcePage.java
++++ b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SelectSourcePage.java
+@@ -661,11 +661,13 @@ public class SelectSourcePage extends
+ 	 * 
+ 	 * @param parent Composite
+ 	 */
+-	public void createControl(Composite parent) {
++	public Composite createSubControl(Composite parent) {
+ 		container = new Composite(parent, SWT.NONE);
+ 		final GridLayout gridLayoutRoot = new GridLayout();
+ 		container.setLayout(gridLayoutRoot);
+ 		setControl(container);
++		
++		return container;
+ 	}
+ 
+ 	/**
+diff --git a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SelectSrcTarTypesPage.java b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SelectSrcTarTypesPage.java
+index ad43580..4f921bf 100644
+--- a/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SelectSrcTarTypesPage.java
++++ b/com.cubrid.cubridmigration.ui/src/com/cubrid/cubridmigration/ui/wizard/page/SelectSrcTarTypesPage.java
+@@ -95,13 +95,15 @@ public class SelectSrcTarTypesPage extends
+ 	 * 
+ 	 * @param parent Composite
+ 	 */
+-	public void createControl(Composite parent) {
++	protected Composite createSubControl(Composite parent) {
+ 		Composite container = new Composite(parent, SWT.NONE);
+ 		container.setLayout(new GridLayout());
+ 		setControl(container);
+ 		container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+ 		comSelection = new SelectSrcTarTypesView(container);
+ 		afterShowCurrentPage(null);
++		
++		return container;
+ 	}
+ 
+ 	/**

@@ -618,6 +618,7 @@ public class Messages extends
 	public static String msgIsUseNewerScriptCatalog;
 	public static String msgIsUseScriptCatalog;
 	public static String msgLobInformation;
+	public static String msgLobNotFound;
 	public static String msgLowerCaseWarning;
 	public static String msgMainSchema;
 	public static String msgMappingOverride;
@@ -828,6 +829,7 @@ public class Messages extends
 	public static String verifySQLDialogExecuteErrorMess;
 	public static String wizardCancelMsg;
 	public static String wizardTitle;
+	public static String wizardReload;
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);
 	}
