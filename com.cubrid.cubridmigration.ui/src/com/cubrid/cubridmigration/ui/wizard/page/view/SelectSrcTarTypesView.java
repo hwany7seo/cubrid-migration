@@ -90,11 +90,11 @@ public class SelectSrcTarTypesView {
 	public SelectSrcTarTypesView(Composite parent) {
 		Composite sectionClient = new Composite(parent, SWT.NONE);
 		sectionClient.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		sectionClient.setLayout(new GridLayout(2, true));
+		sectionClient.setLayout(new GridLayout(2, false));
 
 		Group grpSrc = new Group(sectionClient, SWT.NONE);
 		grpSrc.setLayout(new GridLayout());
-		grpSrc.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, true));
+		grpSrc.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		grpSrc.setText(Messages.msgSrcType);
 
 		btnOnlineCUBRIDSrc = createSrcTarTypeBtn(grpSrc, Messages.btnSrcOnlineCUBRIDDB,
@@ -150,7 +150,7 @@ public class SelectSrcTarTypesView {
 
 		Group grpTar = new Group(sectionClient, SWT.NONE);
 		grpTar.setLayout(new GridLayout());
-		grpTar.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, true));
+		grpTar.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		grpTar.setText(Messages.msgDestType);
 
 		btnOnlineTar = createSrcTarTypeBtn(grpTar, Messages.btnDestOnlineCUBRIDDB,
@@ -203,23 +203,25 @@ public class SelectSrcTarTypesView {
 	 * @return button
 	 */
 	private Button createSrcTarTypeBtn(Composite parent, String name, String des) {
+	    String space = "     ";
 		Button result = new Button(parent, SWT.RADIO);
-		result.setText(name);
+		result.setText(name + space);
+		result.setToolTipText(des);
 		{
 			GridData gd = new GridData(SWT.LEFT, SWT.TOP, false, false);
 			gd.verticalIndent = 8;
 			result.setLayoutData(gd);
 		}
-		Text txt = new Text(parent, SWT.MULTI | SWT.WRAP | SWT.READ_ONLY);
-		{
-			GridData gd = new GridData(SWT.LEFT, SWT.TOP, false, false);
-			gd.horizontalIndent = 15;
-			gd.widthHint = 370;
-			txt.setLayoutData(gd);
-		}
-		txt.setBackground(parent.getBackground());
-		txt.setForeground(Resources.getInstance().getColor(SWT.COLOR_DARK_GRAY));
-		txt.setText(des);
+//		Text txt = new Text(parent, SWT.MULTI | SWT.WRAP | SWT.READ_ONLY);
+//		{
+//			GridData gd = new GridData(SWT.LEFT, SWT.TOP, false, false);
+//			gd.horizontalIndent = 15;
+//			gd.widthHint = 370;
+//			txt.setLayoutData(gd);
+//		}
+//		txt.setBackground(parent.getBackground());
+//		txt.setForeground(Resources.getInstance().getColor(SWT.COLOR_DARK_GRAY));
+//		txt.setText(des);
 		return result;
 	}
 

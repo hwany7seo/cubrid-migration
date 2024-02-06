@@ -723,7 +723,13 @@ public class SelectDestinationPage extends
 			setTitle(getMigrationWizard().getStepNoMsg(SelectDestinationPage.this)
 					+ Messages.msgDestOutputFilesSetting);
 			setDescription(Messages.msgDestOutputFilesSettingDes);
+			
+			if (getMigrationWizard().getOriginalSourceCatalog().getConnectionParameters() == null) {
+			    System.out.println("getConnectionParameters is null");
+			}
+			
 			String dbName = getMigrationWizard().getOriginalSourceCatalog().getConnectionParameters().getDbName();
+			
 			
 			MigrationConfiguration config = getMigrationWizard().getMigrationConfig();
 			btnCSVSetting.setVisible(config.targetIsCSV());

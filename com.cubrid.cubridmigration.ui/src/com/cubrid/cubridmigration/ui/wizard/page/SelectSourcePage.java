@@ -194,8 +194,7 @@ public class SelectSourcePage extends
 			}
 			grpXML = new Group(parent, SWT.SHADOW_ETCHED_IN);
 			grpXML.setLayout(new GridLayout(4, false));
-			GridData groupGridData2 = new GridData(SWT.FILL, SWT.FILL, true, false);
-			groupGridData2.heightHint = 98;
+			GridData groupGridData2 = new GridData(SWT.FILL, SWT.FILL, true, true);
 			grpXML.setLayoutData(groupGridData2);
 
 			Label xmlFilePathLabel = new Label(grpXML, SWT.NONE);

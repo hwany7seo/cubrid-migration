@@ -103,6 +103,7 @@ public class Catalog implements
 	}
 
 	public void setConnectionParameters(ConnParameters connectionParameters) {
+	    System.out.println("setConnectionParameters ok");
 		this.connectionParameters = connectionParameters;
 	}
 
