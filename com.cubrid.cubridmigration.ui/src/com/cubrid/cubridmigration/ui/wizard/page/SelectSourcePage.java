@@ -136,8 +136,6 @@ public class SelectSourcePage extends
 		 */
 		void show();
 		
-		boolean loadCatalog();
-
 	}
 
 	/**
@@ -427,7 +425,8 @@ public class SelectSourcePage extends
 			if (!checkInput()) {
 				return false;
 			}
-			Catalog catalog = getCatalog();
+			//Catalog catalog = getCatalog();
+			Catalog catalog = loadCatalog();
 			if (null == catalog) {
 				return false;
 			}
@@ -460,18 +459,20 @@ public class SelectSourcePage extends
 			((GridData) grpXML.getLayoutData()).exclude = false;
 		}
 		
-		public boolean loadCatalog() {
+		private Catalog loadCatalog() {
 		    if (!checkInput()) {
-		        return false;
+		        return null;
 		    }
+		    
+		    Catalog catalog = null;
 		    
 		    try {
                 if (checkCache()) {
                     System.out.println("cached");
                     final MigrationWizard wizard = getMigrationWizard();
                     if (wizard.checkReload()) {
-                        xmlCatalog = getXmlCatalog(false);
-                        if (null != xmlCatalog) {
+                        catalog = getXmlCatalog(false);
+                        if (null != catalog) {
                             System.out.println("cached resetBySourceDBChanged");
                             getMigrationWizard().resetBySourceDBChanged();
                         }
@@ -481,12 +482,13 @@ public class SelectSourcePage extends
                     }
                 } else {
                     System.out.println("not cached");
-                    xmlCatalog = getXmlCatalog(true);
+                    catalog = getXmlCatalog(true);
                 }
             } catch (Exception e) {
                 LOG.error(e.getMessage());
             }
-		    return true;
+		    
+		    return catalog;
 		}
 	}
 
@@ -674,10 +676,6 @@ public class SelectSourcePage extends
 		public void show() {
 			conMgrView.show();
 		}
-		
-		public boolean loadCatalog() {
-		    return false;
-		}
 	}
 
 	private static final Logger LOG = LogUtil.getLogger(SelectSourcePage.class);
@@ -756,19 +754,6 @@ public class SelectSourcePage extends
 		if (!isGotoNextPage(event)) {
 			return;
 		}
-		
-	    try {
-            final MigrationWizard wzd = getMigrationWizard();
-            if (wzd.getMigrationConfig().sourceIsXMLDump()) {
-                if (!mysqlDumpView.loadCatalog()) {
-                    System.out.println("loadCatalog failed");
-                    return;
-                }
-            } 
-        } catch (Exception ex) {
-            LOG.error("", ex);
-            MessageDialog.openError(getShell(), Messages.msgError, ex.getMessage());
-        }
 		
 		event.doit = updateMigrationConfig();
 	}

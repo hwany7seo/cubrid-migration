@@ -37,7 +37,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.cubrid.cubridmigration.core.connection.ConnParameters;
 import com.cubrid.cubridmigration.core.dbmetadata.AbstractJDBCSchemaFetcher;
 import com.cubrid.cubridmigration.core.dbobject.Catalog;
 import com.cubrid.cubridmigration.core.dbobject.Column;
@@ -114,17 +113,9 @@ public class MySQLXMLSchemaParser extends
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 		if ("mysqldump".equals(qName)) {
 			catalog.setDatabaseType(DatabaseType.MYSQL);
-			ConnParameters connParam = createDefaultConnParam();
-			connParam.setDatabaseType(DatabaseType.MYSQL);
-			catalog.setConnectionParameters(connParam);
 		} else if ("database".equals(qName)) {
 		    System.out.println("startElement input database name");
 			String databaseName = attributes.getValue("name");
-			ConnParameters connParam = catalog.getConnectionParameters() == null ? 
-			        createDefaultConnParam() : catalog.getConnectionParameters();
-			connParam.setConUser(databaseName);
-			connParam.setDbName(databaseName);
-			connParam.setName(databaseName);
 			catalog.setName(databaseName);
 			schema.setName(databaseName);
 			catalog.addSchema(schema);
@@ -254,7 +245,4 @@ public class MySQLXMLSchemaParser extends
 		}
 	}
 	
-	private ConnParameters createDefaultConnParam() {
-	    return ConnParameters.getConParam("", "", 0, "", DatabaseType.MYSQL, "", "", "", "", "");
-	}
 }
