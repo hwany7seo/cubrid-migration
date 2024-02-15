@@ -245,7 +245,7 @@ public class MigrationTasksScheduler {
 					deleteFile(config, schema.getName());
 				}
 			} else {
-				deleteFile(config, config.getSourceConParams().getConUser());
+			    deleteFile(config, config.getSrcConnOwner());
 			}
 		}
 		executeTask(taskFactory.createCleanDBTask());

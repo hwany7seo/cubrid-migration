@@ -148,7 +148,13 @@ public class LoadFileImporter extends
 		synchronized (lockObj) {
 			MigrationDirAndFilesManager mdfm = mrManager.getDirAndFilesMgr();
 			
-			String schemaName = config.isAddUserSchema() ? stc.getOwner() : config.getSourceConParams().getConUser();
+			final String schemaName;
+			if (config.sourceIsXMLDump()) {
+			    schemaName = config.getSrcConnOwner();
+			} else {
+			    schemaName = config.isAddUserSchema() ? stc.getOwner() : config.getSrcConnOwner();
+			}
+			
 			if (!tableFiles.containsKey(schemaName + stc.getName())) {
 				tableFiles.put(schemaName + stc.getName(), new CurrentDataFileInfo(config.getTargetDataFileName(schemaName), 
 						mdfm.getMergeFilesDir(), config.getTargetFilePrefix(), schemaName, stc.getName(), config.getDataFileExt()));

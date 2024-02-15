@@ -660,7 +660,7 @@ public abstract class OfflineImporter extends
 		table.setDDL(ddl);
 		sql.append(ddl).append("\n");
 		executeDDL(sql.toString(), DBObject.OBJ_TYPE_TABLE, createResultHandler(table), 
-				config.isAddUserSchema() ? table.getSourceOwner() : config.getSourceConParams().getConUser());
+				config.isAddUserSchema() ? table.getSourceOwner() : config.getSrcConnOwner());
 	}
 
 	/**
@@ -672,7 +672,7 @@ public abstract class OfflineImporter extends
 		String viewDDL = CUBRIDSQLHelper.getInstance(null).getViewDDL(view, config.isAddUserSchema());
 		view.setDDL(viewDDL);
 		executeDDL(viewDDL + "\n", DBObject.OBJ_TYPE_VIEW, createResultHandler(view), 
-				config.isAddUserSchema() ? view.getSourceOwner() : config.getSourceConParams().getConUser());
+				config.isAddUserSchema() ? view.getSourceOwner() : config.getSrcConnOwner());
 	}
 	
 	/**
@@ -684,7 +684,7 @@ public abstract class OfflineImporter extends
 		String viewAlterDDL = CUBRIDSQLHelper.getInstance(null).getViewAlterDDL(view, config.isAddUserSchema());
 		view.setAlterDDL(viewAlterDDL);
 		executeDDL(viewAlterDDL + "\n", DBObject.OBJ_TYPE_VIEW_QUERY_SPEC, createResultHandler(view), 
-				config.isAddUserSchema() ? view.getSourceOwner() : config.getSourceConParams().getConUser());
+				config.isAddUserSchema() ? view.getSourceOwner() : config.getSrcConnOwner());
 	}
 
 	/**
@@ -697,7 +697,7 @@ public abstract class OfflineImporter extends
 				pk.getName(), pk.getPkColumns(), config.isAddUserSchema());
 		pk.setDDL(ddl);
 		executeDDL(ddl + ";\n", DBObject.OBJ_TYPE_PK, createResultHandler(pk), 
-				config.isAddUserSchema() ? pk.getTable().getSourceOwner() : config.getSourceConParams().getConUser());
+				config.isAddUserSchema() ? pk.getTable().getSourceOwner() : config.getSrcConnOwner());
 	}
 
 	/**
@@ -710,7 +710,7 @@ public abstract class OfflineImporter extends
 				fk, config.isAddUserSchema());
 		fk.setDDL(ddl);
 		executeDDL(ddl + ";\n", DBObject.OBJ_TYPE_FK, createResultHandler(fk), 
-				config.isAddUserSchema() ? fk.getTable().getSourceOwner() : config.getSourceConParams().getConUser());
+				config.isAddUserSchema() ? fk.getTable().getSourceOwner() : config.getSrcConnOwner());
 	}
 
 	/**
@@ -722,8 +722,9 @@ public abstract class OfflineImporter extends
 		String ddl = CUBRIDSQLHelper.getInstance(null).getIndexDDL(index.getTable().getOwner(), index.getTable().getName(),
 				index, "", config.isAddUserSchema());
 		index.setDDL(ddl);
+		
 		executeDDL(ddl + ";\n", DBObject.OBJ_TYPE_INDEX, createResultHandler(index), 
-				config.isAddUserSchema() ? index.getTable().getSourceOwner() : config.getSourceConParams().getConUser());
+				config.isAddUserSchema() ? index.getTable().getSourceOwner() : config.getSrcConnOwner());
 	}
 
 	/**
@@ -735,7 +736,7 @@ public abstract class OfflineImporter extends
 		String ddl = CUBRIDSQLHelper.getInstance(null).getSequenceDDL(sq, config.isAddUserSchema());
 		sq.setDDL(ddl);
 		executeDDL(ddl + ";\n", DBObject.OBJ_TYPE_SEQUENCE, createResultHandler(sq), 
-				config.isAddUserSchema() ? sq.getSourceOwner() : config.getSourceConParams().getConUser());
+				config.isAddUserSchema() ? sq.getSourceOwner() : config.getSrcConnOwner());
 	}
 	
 	/**
@@ -747,7 +748,7 @@ public abstract class OfflineImporter extends
 		String ddl = CUBRIDSQLHelper.getInstance(null).getSynonymDDL(sn, config.isAddUserSchema());
 		sn.setDDL(ddl);
 		executeDDL(ddl + ";\n", DBObject.OBJ_TYPE_SYNONYM, createResultHandler(sn), 
-				config.isAddUserSchema() ? sn.getSourceOwner() : config.getSourceConParams().getConUser());
+				config.isAddUserSchema() ? sn.getSourceOwner() : config.getSrcConnOwner());
 	}
 	
 	/**
@@ -759,7 +760,7 @@ public abstract class OfflineImporter extends
 		String ddl = CUBRIDSQLHelper.getInstance(null).getGrantDDL(gr, config.isAddUserSchema());
 		gr.setDDL(ddl);
 		executeDDL(ddl + ";\n", DBObject.OBJ_TYPE_GRANT, createResultHandler(gr), 
-				config.isAddUserSchema() ? gr.getSourceOwner() : config.getSourceConParams().getConUser(), gr.getSourceObjectOwner());
+				config.isAddUserSchema() ? gr.getSourceOwner() : config.getSrcConnOwner(), gr.getSourceObjectOwner());
 	}
 	
 	public void createSchema(Schema schema) {

@@ -723,9 +723,16 @@ public class SelectDestinationPage extends
 			setTitle(getMigrationWizard().getStepNoMsg(SelectDestinationPage.this)
 					+ Messages.msgDestOutputFilesSetting);
 			setDescription(Messages.msgDestOutputFilesSettingDes);
-			String dbName = getMigrationWizard().getOriginalSourceCatalog().getConnectionParameters().getDbName();
 			
 			MigrationConfiguration config = getMigrationWizard().getMigrationConfig();
+			
+			String dbName = "";
+			if (config.sourceIsXMLDump()) {
+			    dbName = getMigrationWizard().getOriginalSourceCatalog().getName();
+			} else {
+			    dbName = getMigrationWizard().getOriginalSourceCatalog().getConnectionParameters().getDbName();
+			}
+			
 			btnCSVSetting.setVisible(config.targetIsCSV());
 
 			// final boolean isChar = config.targetIsCSV() ||

@@ -194,7 +194,7 @@ public class SelectSourcePage extends
 			}
 			grpXML = new Group(parent, SWT.SHADOW_ETCHED_IN);
 			grpXML.setLayout(new GridLayout(4, false));
-			GridData groupGridData2 = new GridData(SWT.FILL, SWT.FILL, true, false);
+			GridData groupGridData2 = new GridData(SWT.FILL, SWT.FILL, true, true);
 			groupGridData2.heightHint = 98;
 			grpXML.setLayoutData(groupGridData2);
 
@@ -419,6 +419,7 @@ public class SelectSourcePage extends
 			xmlCatalog = catalog;
 			xmlCatalog.setCharset(cboFileCharset.getItem(cboFileCharset.getSelectionIndex()));
 			xmlCatalog.setTimezone(cobTimezone.getItem(cobTimezone.getSelectionIndex()));
+			cfg.setSrcCatalog(catalog, isInputChanged());
 			return true;
 		}
 

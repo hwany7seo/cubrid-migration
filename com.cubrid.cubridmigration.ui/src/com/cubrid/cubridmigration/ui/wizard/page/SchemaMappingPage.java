@@ -763,7 +763,8 @@ public class SchemaMappingPage extends MigrationWizardPage {
 			schema.setTargetSchemaName(srcTable.getTarSchema());
 			targetSchemaList.add(schema);
 			
-			String schemaName = config.isAddUserSchema() ? srcTable.getSrcSchema() : srcCatalog.getConnectionParameters().getConUser();
+			String schemaName = config.isAddUserSchema() ? srcTable.getSrcSchema() : config.getSrcConnOwner();
+
 			if (splitSchema) {
 				tableFullName.put(schemaName, config.getTableFullName(schemaName));
 				viewFullName.put(schemaName, config.getViewFullName(schemaName));
@@ -853,7 +854,7 @@ public class SchemaMappingPage extends MigrationWizardPage {
 				duplicateFilePath(buffer, srcTable.getSrcSchema());
 			}
 		} else {
-			duplicateFilePath(buffer, srcCatalog.getConnectionParameters().getConUser());
+	        duplicateFilePath(buffer, config.getSrcConnOwner());
 		}
 
 		if (buffer.length() > 0) {

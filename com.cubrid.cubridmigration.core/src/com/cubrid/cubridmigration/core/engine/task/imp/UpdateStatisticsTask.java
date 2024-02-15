@@ -151,7 +151,7 @@ public class UpdateStatisticsTask extends
 			}
 		} else {
 			// For versions that do not support multi schema, the targetSchema parameter is not needed.
-			writeFile(config.getSourceConParams().getConUser(), "");
+			writeFile(config.getSrcConnOwner(), "");
 		}
 		
 	}

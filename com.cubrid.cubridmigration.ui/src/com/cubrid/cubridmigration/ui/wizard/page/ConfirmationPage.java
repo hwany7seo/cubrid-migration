@@ -168,7 +168,8 @@ public class ConfirmationPage extends
 			int oldLength;
 			boolean isCreateFileRepository = false;
 			boolean isAddUserSchema = migration.isAddUserSchema();
-			String conUser = migration.getSourceConParams().getConUser();
+			String conUser = migration.getSrcConnOwner();
+			
 			if (migration.isSplitSchema()) {
 				// table
 				text.append(Messages.confrimTable).append(lineSeparator);
