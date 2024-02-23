@@ -616,6 +616,7 @@ public class Messages extends NLS {
     public static String msgIsUseNewerScriptCatalog;
     public static String msgIsUseScriptCatalog;
     public static String msgLobInformation;
+    public static String msgLobNotFound;
     public static String msgLowerCaseWarning;
     public static String msgMainSchema;
     public static String msgMappingOverride;
@@ -699,7 +700,9 @@ public class Messages extends NLS {
     public static String productName;
     public static String progressMetadata;
     public static String refreshButtonLabel;
+    public static String refreshButtonDescription;
     public static String refreshDBConnActionMessage;
+    public static String refreshNextDBConnActionMessage;
     public static String removeButtonLabel;
     public static String schemaMappingPageTitle;
     public static String schemaMappingPageDescription;
@@ -826,6 +829,7 @@ public class Messages extends NLS {
     public static String verifySQLDialogExecuteErrorMess;
     public static String wizardCancelMsg;
     public static String wizardTitle;
+    public static String wizardReload;
 
     static {
         NLS.initializeMessages(Messages.class.getName(), Messages.class);

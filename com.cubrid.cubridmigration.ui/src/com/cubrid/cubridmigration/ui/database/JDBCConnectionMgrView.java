@@ -114,6 +114,8 @@ public class JDBCConnectionMgrView {
 
     private final List<Integer> supportedDBType = new ArrayList<Integer>();
 
+    private boolean refreshStatus = false;
+    
     public JDBCConnectionMgrView(
             Collection<Integer> supportedDBType, IJDBCConnectionFilter conFilter) {
         this.supportedDBType.addAll(supportedDBType);
@@ -303,14 +305,16 @@ public class JDBCConnectionMgrView {
                     }
                 });
 
-        Button btnRefresh = new Button(buttonContainer, SWT.NONE);
+        Button btnRefresh = new Button(buttonContainer, SWT.CHECK);
         btnRefresh.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         btnRefresh.setText(Messages.refreshButtonLabel);
+        btnRefresh.setToolTipText(Messages.refreshButtonDescription);
+        btnRefresh.setSelection(refreshStatus);
         btnRefresh.addSelectionListener(
                 new SelectionAdapter() {
 
                     public void widgetSelected(SelectionEvent se) {
-                        refreshCon();
+                    	refreshStatus = btnRefresh.getSelection();
                     }
                 });
     }
@@ -390,16 +394,20 @@ public class JDBCConnectionMgrView {
                 catalog = instance.getCatalog(dbID);
             } else {
                 // Cache found, newer catalog information should replace the old catalog.
-                if (scriptCatalog != null
-                        && cp.isSameDB(scriptCatalog.getConnectionParameters())
-                        && scriptCatalog.getCreateTime() > catalog.getCreateTime()) {
-                    if (MessageDialog.openQuestion(
-                            getActiveShell(),
-                            Messages.msgConfirmation,
-                            Messages.msgIsUseNewerScriptCatalog)) {
-                        instance.updateCatalog(dbID, scriptCatalog);
-                    }
-                }
+            	if (refreshStatus) {
+            		refreshCon(true);
+            	} else {
+	                if (scriptCatalog != null
+	                        && cp.isSameDB(scriptCatalog.getConnectionParameters())
+	                        && scriptCatalog.getCreateTime() > catalog.getCreateTime()) {
+	                    if (MessageDialog.openQuestion(
+	                            getActiveShell(),
+	                            Messages.msgConfirmation,
+	                            Messages.msgIsUseNewerScriptCatalog)) {
+	                        instance.updateCatalog(dbID, scriptCatalog);
+	                    }
+	                }
+            	}
             }
             if (catalog != null) {
                 catalog.setConnectionParameters(cp.clone());
@@ -488,20 +496,33 @@ public class JDBCConnectionMgrView {
     }
 
     /** Refresh the schema of selected connection. */
-    private void refreshCon() {
+    public void refreshCon(boolean isNext) {
         DatabaseConnectionInfo dci = getSelectedDCI();
         if (dci == null) {
             MessageDialog.openError(
                     getActiveShell(), Messages.msgWarning, Messages.sourceDBPageErrNoSelectedItem);
             return;
         }
+        
+        final String msg;
+        if (!isNext) {
+        	msg = Messages.refreshDBConnActionMessage;
+        } else {
+        	msg = Messages.refreshNextDBConnActionMessage;
+        }
+        
         if (!MessageDialog.openConfirm(
-                getActiveShell(), Messages.msgConfirmation, Messages.refreshDBConnActionMessage)) {
+                getActiveShell(), Messages.msgConfirmation, msg)) {
             return;
         }
+        
         updateConParamCatalog(dci.getConnParameters());
     }
-
+    
+    public void refreshCon() {
+    	refreshCon(false);
+    }
+    
     /** removeDBConInfo */
     private void removeDBConInfo() {
         DatabaseConnectionInfo dci = getSelectedDCI();

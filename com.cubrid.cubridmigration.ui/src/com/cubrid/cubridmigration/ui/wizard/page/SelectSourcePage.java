@@ -135,12 +135,12 @@ public class SelectSourcePage extends MigrationWizardPage {
     private class SelectMySQLDumpSrcView implements AbstractSourceView {
         private Text txtXMLFile;
         private Button btnBrowse;
-        private Button btnAnalyz;
         private Combo cboFileCharset;
         private Combo cobTimezone;
         private Group grpXML;
         private MysqlXmlDumpSource parsedSource;
         private Catalog xmlCatalog = null;
+        private boolean refreshStatus = false;
 
         /**
          * Validate the char-set input.
@@ -192,6 +192,7 @@ public class SelectSourcePage extends MigrationWizardPage {
             txtXMLFile = new Text(grpXML, SWT.BORDER | SWT.READ_ONLY);
             GridData gdXmlFilePathTxt = new GridData(SWT.FILL, SWT.CENTER, true, false);
             gdXmlFilePathTxt.grabExcessHorizontalSpace = true;
+            gdXmlFilePathTxt.horizontalSpan = 2;
             txtXMLFile.setLayoutData(gdXmlFilePathTxt);
 
             btnBrowse = new Button(grpXML, SWT.NONE);
@@ -218,36 +219,6 @@ public class SelectSourcePage extends MigrationWizardPage {
                                 return;
                             }
                             txtXMLFile.setText(xmlFileTmp);
-                            btnAnalyz.setEnabled(true);
-                            try {
-                                xmlCatalog = getXmlCatalog(true);
-                            } catch (Exception e) {
-                                LOG.error(e.getMessage());
-                            }
-                        }
-                    });
-
-            btnAnalyz = new Button(grpXML, SWT.NONE);
-            GridData gdAnalyzXMLFile = new GridData(SWT.RIGHT, SWT.CENTER, false, false);
-            gdAnalyzXMLFile.minimumWidth = 70;
-            btnAnalyz.setLayoutData(gdAnalyzXMLFile);
-            btnAnalyz.setText(Messages.btnAnalyze);
-            btnAnalyz.setToolTipText(Messages.ttAnalyzXMLFile);
-            btnAnalyz.setEnabled(false);
-            btnAnalyz.addSelectionListener(
-                    new SelectionAdapter() {
-                        public void widgetSelected(final SelectionEvent event) {
-                            if (!checkInput()) {
-                                return;
-                            }
-                            try {
-                                xmlCatalog = getXmlCatalog(false);
-                                if (null != xmlCatalog) {
-                                    getMigrationWizard().resetBySourceDBChanged();
-                                }
-                            } catch (Exception e) {
-                                LOG.error(e.getMessage());
-                            }
                         }
                     });
 
@@ -261,7 +232,19 @@ public class SelectSourcePage extends MigrationWizardPage {
                     com.cubrid.cubridmigration.core.common.CharsetUtils.getCharsets());
             cboFileCharset.select(1);
 
-            new Label(grpXML, SWT.NONE);
+            Button btnRefresh = new Button(grpXML, SWT.CHECK);
+            btnRefresh.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
+            btnRefresh.setText(Messages.refreshButtonLabel);
+            btnRefresh.setToolTipText(Messages.refreshButtonDescription);
+            btnRefresh.setSelection(refreshStatus);
+            btnRefresh.addSelectionListener(
+                    new SelectionAdapter() {
+
+                        public void widgetSelected(SelectionEvent se) {
+                        	refreshStatus = btnRefresh.getSelection();
+                        }
+                    });
+            
             new Label(grpXML, SWT.NONE);
 
             Label lblTZ = new Label(grpXML, SWT.NONE);
@@ -293,6 +276,21 @@ public class SelectSourcePage extends MigrationWizardPage {
             } else {
                 return getXmlCatalog(true);
             }
+        }
+
+        /**
+         * Retrieves the catalog.
+         *
+         * @return catalog
+         */
+        private boolean checkCache() {
+            if ((parsedSource != null
+                            && parsedSource.getFileName().equals(txtXMLFile.getText().trim())
+                            && parsedSource.getCharset().equalsIgnoreCase(cboFileCharset.getText()))
+                    && xmlCatalog != null) {
+                return true;
+            }
+            return false;
         }
 
         /**
@@ -394,7 +392,7 @@ public class SelectSourcePage extends MigrationWizardPage {
             if (!checkInput()) {
                 return false;
             }
-            Catalog catalog = getCatalog();
+            Catalog catalog = loadCatalog();
             if (null == catalog) {
                 return false;
             }
@@ -413,7 +411,6 @@ public class SelectSourcePage extends MigrationWizardPage {
             xmlCatalog = catalog;
             xmlCatalog.setCharset(cboFileCharset.getItem(cboFileCharset.getSelectionIndex()));
             xmlCatalog.setTimezone(cobTimezone.getItem(cobTimezone.getSelectionIndex()));
-            cfg.setSrcCatalog(catalog, isInputChanged());
             return true;
         }
 
@@ -424,6 +421,46 @@ public class SelectSourcePage extends MigrationWizardPage {
             }
             grpXML.setVisible(true);
             ((GridData) grpXML.getLayoutData()).exclude = false;
+        }
+
+        private Catalog loadCatalog() {
+            if (!checkInput()) {
+                return null;
+            }
+
+            Catalog catalog = null;
+
+            try {
+                if (checkCache()) {
+                    final MigrationWizard wizard = getMigrationWizard();
+                    if (refreshStatus) {
+                    	if (wizard.performReload()) {
+	                        catalog = getXmlCatalog(false);
+	                        if (null != catalog) {
+	                            getMigrationWizard().resetBySourceDBChanged();
+	                        }
+	                    } else {
+	                        if (xmlCatalog != null) {
+	                            catalog = xmlCatalog;
+	                        } else {
+	                        	catalog = getXmlCatalog(true);
+	                        }
+	                    }
+                    } else {
+                    	if (xmlCatalog != null) {
+                            catalog = xmlCatalog;
+                        } else {
+                        	catalog = getXmlCatalog(true);
+                        }
+                    }
+                } else {
+                    catalog = getXmlCatalog(true);
+                }
+            } catch (Exception e) {
+                LOG.error(e.getMessage());
+            }
+
+            return catalog;
         }
     }
 

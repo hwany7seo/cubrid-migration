@@ -353,6 +353,11 @@ public class MigrationWizard extends Wizard implements IMigrationWizardStatus {
                 getShell(), Messages.msgConfirmation, Messages.wizardCancelMsg);
     }
 
+    public boolean performReload() {
+        return MessageDialog.openConfirm(
+                getShell(), Messages.msgConfirmation, Messages.refreshNextDBConnActionMessage);
+    }
+
     /**
      * override Wizard method
      *
