@@ -471,7 +471,6 @@ public class Messages extends NLS {
     public static String lblStartValue;
     public static String lblSynonymName;
     public static String lblSynonymOwnerName;
-    public static String lblSyonymPublic;
     public static String lblSynonymObjectName;
     public static String lblSynonymObjectOwnerName;
     public static String lblTableName;
