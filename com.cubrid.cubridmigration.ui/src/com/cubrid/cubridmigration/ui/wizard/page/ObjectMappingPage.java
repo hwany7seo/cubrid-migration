@@ -769,7 +769,7 @@ public class ObjectMappingPage extends MigrationWizardPage implements IRefreshab
         // Show confirm dialog.
         StringBuffer detailMsg = new StringBuffer();
         if (result.hasPKConfirm()) {
-            detailMsg.insert(0, result.getPKConfirmMessage()).append("\r\n");
+            detailMsg.append(result.getPKConfirmMessage()).append("\r\n");
         }
         if (result.hasConfirm()) {
             detailMsg.append(result.getConfirmMessage()).append("\r\n");

@@ -318,7 +318,7 @@ public class MigrationCfgUtils {
     protected VerifyResultMessages checkEntryTableCfg(MigrationConfiguration config) {
         StringBuffer sbWarning = new StringBuffer();
         StringBuffer sbConfirm = new StringBuffer();
-        StringBuffer sbPKConfirm = new StringBuffer();
+        StringBuffer pkConfirm = new StringBuffer();
         for (SourceEntryTableConfig setc : config.getExpEntryTableCfg()) {
             VerifyResultMessages result = checkEntryTableCfg(config, setc);
             if (result.hasWarning() && sbWarning.indexOf(result.getWarningMessage()) < 0) {
@@ -327,15 +327,15 @@ public class MigrationCfgUtils {
             if (result.hasConfirm() && sbConfirm.indexOf(result.getConfirmMessage()) < 0) {
                 sbConfirm.append(result.getConfirmMessage()).append(LINE_SEP);
             }
-            if (result.hasPKConfirm() && sbPKConfirm.indexOf(result.getPKConfirmMessage()) < 0) {
-                sbPKConfirm.append(result.getPKConfirmMessage()).append(LINE_SEP);
+            if (result.hasPKConfirm() && pkConfirm.indexOf(result.getPKConfirmMessage()) < 0) {
+                pkConfirm.append(result.getPKConfirmMessage()).append(LINE_SEP);
             }
         }
         return new VerifyResultMessages(
                 null,
                 sbWarning.toString().trim(),
                 sbConfirm.toString().trim(),
-                sbPKConfirm.toString().trim());
+                pkConfirm.toString().trim());
     }
 
     /**
@@ -943,16 +943,6 @@ public class MigrationCfgUtils {
      * @param sbConfirm StringBuffer
      * @param result VerifyResultMessages
      */
-    protected void mergeVerifyResults(
-            StringBuffer sbWarning, StringBuffer sbConfirm, VerifyResultMessages result) {
-        if (result.hasWarning()) {
-            sbWarning.append(result.getWarningMessage()).append(LINE_SEP);
-        }
-        if (result.hasConfirm()) {
-            sbConfirm.append(result.getConfirmMessage()).append(LINE_SEP);
-        }
-    }
-
     protected void mergeVerifyResults(
             StringBuffer sbWarning,
             StringBuffer sbConfirm,
