@@ -54,7 +54,10 @@
                name="startupMessageRect"
                value="230,280,557,15">
          </property>
-
+         <property
+                name="cssTheme"
+                value="org.eclipse.e4.ui.css.theme.e4_default">
+          </property>
       </product>
    </extension>
    <extension

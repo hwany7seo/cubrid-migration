@@ -60,5 +60,8 @@
          id="com.cubrid.common.configuration"
          version="0.0.0"
          unpack="false"/>
+   <plugin 
+         id="org.eclipse.ui.themes" 
+         version="0.0.0"/>
 
 </feature>
