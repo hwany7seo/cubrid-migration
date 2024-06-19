@@ -105,7 +105,7 @@ public class OpenWizardWithHistoryDialog extends Dialog {
     /** constrainShellSize */
     protected void constrainShellSize() {
         super.constrainShellSize();
-        getShell().setSize(700, 250);
+        getShell().setMinimumSize(700, 250);
         getShell().setText(Messages.msgErrorMigrationTitle);
     }
 

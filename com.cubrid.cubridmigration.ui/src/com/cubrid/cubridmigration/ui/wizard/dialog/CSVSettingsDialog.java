@@ -100,7 +100,7 @@ public class CSVSettingsDialog extends Dialog {
     /** constrainShellSize */
     protected void constrainShellSize() {
         super.constrainShellSize();
-        getShell().setSize(400, 210);
+        getShell().setMinimumSize(400, 210);
         getShell().setText(Messages.titleCSVSettings);
     }
 

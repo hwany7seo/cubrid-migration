@@ -565,10 +565,10 @@ public class CUBRIDHadoopFSExplorer extends Dialog {
         return new ArrayList<String>(hdfsFiles);
     }
 
-    /** @return dialog size */
-    protected Point getInitialSize() {
-        return new Point(640, 480);
-    }
+//    /** @return dialog size */
+//    protected Point getInitialSize() {
+//        return new Point(640, 480);
+//    }
 
     /** Refresh root path text */
     private void gotoPath() {

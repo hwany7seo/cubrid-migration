@@ -34,6 +34,7 @@ import com.cubrid.cubridmigration.core.common.PathUtils;
 import com.cubrid.cubridmigration.core.common.SSHHost;
 import com.cubrid.cubridmigration.ui.MigrationUIPlugin;
 import com.cubrid.cubridmigration.ui.common.CompositeUtils;
+import com.cubrid.cubridmigration.ui.common.Label;
 import com.cubrid.cubridmigration.ui.message.Messages;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -54,10 +55,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolTip;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
@@ -113,7 +114,6 @@ public class TransFileBySSHDialog extends Dialog {
      */
     protected void configureShell(Shell newShell) {
         newShell.setMinimumSize(300, 600);
-        newShell.setSize(500, 600);
         CompositeUtils.centerDialog(newShell);
         super.configureShell(newShell);
     }
@@ -189,7 +189,7 @@ public class TransFileBySSHDialog extends Dialog {
 
         Group grpRemote = new Group(result, SWT.NONE);
         grpRemote.setLayout(new GridLayout(3, false));
-        grpRemote.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        grpRemote.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true));
 
         Label lblRemoteFile = new Label(grpRemote, SWT.NONE);
         lblRemoteFile.setText(Messages.lblScriptFileName);

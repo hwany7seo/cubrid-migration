@@ -99,7 +99,7 @@ public class SelectSchemaDialog extends Dialog {
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         newShell.setText("Select Schemas");
-        newShell.setSize(320, 400);
+        newShell.setMinimumSize(320, 400);
         // Adjust dialog position.
         if (newShell.getParent() != null) {
             Point location = newShell.getParent().getLocation();

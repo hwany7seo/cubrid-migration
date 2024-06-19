@@ -148,7 +148,7 @@ public class CSVImportSettingDialog extends Dialog {
     /** constrainShellSize */
     protected void constrainShellSize() {
         super.constrainShellSize();
-        getShell().setSize(400, 360);
+        getShell().setMinimumSize(400, 360);
         getShell().setText(Messages.titleCSVSettings);
     }
 

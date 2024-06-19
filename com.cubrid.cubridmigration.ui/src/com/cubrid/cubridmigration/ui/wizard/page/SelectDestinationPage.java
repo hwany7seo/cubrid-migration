@@ -38,6 +38,7 @@ import com.cubrid.cubridmigration.core.connection.ConnParameters;
 import com.cubrid.cubridmigration.core.dbobject.Catalog;
 import com.cubrid.cubridmigration.core.engine.config.MigrationConfiguration;
 import com.cubrid.cubridmigration.ui.common.Status;
+import com.cubrid.cubridmigration.ui.common.Label;
 import com.cubrid.cubridmigration.ui.common.UICommonTool;
 import com.cubrid.cubridmigration.ui.database.IJDBCConnectionFilter;
 import com.cubrid.cubridmigration.ui.database.JDBCConnectionMgrView;
@@ -66,7 +67,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
