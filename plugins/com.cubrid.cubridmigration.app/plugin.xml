@@ -24,35 +24,14 @@
          point="org.eclipse.core.runtime.products">
       <product
             application="com.cubrid.cubridmigration.app.application"
-            name="CUBRID Migration Toolkit">
+            name="CUBRID Migration">
          <property
                name="CUBRID Migration Toolkit"
                value="com.cubrid.cubridmigration.product">
          </property>
          <property
                name="appName"
-               value="CUBRID Migration Toolkit">
-         </property>
-         <property
-               name="windowImages"
-               value="icons/cubrid-logo-16.gif,icons/cubrid-logo-32.gif,icons/cubrid-logo-48.gif,icons/cubrid-logo-64.gif">
-         </property>
-         <property
-               name="aboutImage"
-               value="icons/cubrid-logo-16.gif">
-         </property>
-         <property name="preferenceCustomization" value="plugin_customization.ini" />
-         <property
-               name="startupProgressRect"
-               value="5,380,557,15">
-         </property>
-         <property
-               name="startupForegroundColor"
-               value="C0C0C0">
-         </property>
-         <property
-               name="startupMessageRect"
-               value="230,280,557,15">
+               value="CUBRID Migration">
          </property>
 
       </product>
@@ -124,6 +103,12 @@
             name="MSSQL&gt;&gt;CUBRID">
       </page>
       <page
+            category="com.cubrid.cubridmigration.ui.common.composite.MigrationConfigPage"
+            class="com.cubrid.cubridmigration.ui.common.composite.Tibero2CUBRIDTypeMapPage"
+            id="com.cubrid.cubridmigration.ui.common.composite.Tibero2CUBRIDTypeMapPage"
+            name="Oracle&gt;&gt;CUBRID">
+      </page>
+      <page
             class="com.cubrid.cubridmigration.ui.preference.JDBCDriverManagePage"
             id="com.cubrid.cubridmigration.ui.preference.JDBCDriverManagePage"
             name="%JDBCDrivers">
@@ -151,9 +136,14 @@
          <menu
                id="com.cubrid.cubridmigration.ui.menu.migration"
                label="%migration">
-    <command
+    		<command
                   commandId="com.cubrid.cubridmigration.ui.command.NewMigration"
                   label="%newMigration"
+                  style="push">
+            </command>
+            <command
+                  commandId="com.cubrid.cubridmigration.ui.command.NewGraphMigration"
+                  label="%newGraphMigration"
                   style="push">
             </command>
             <separator
@@ -241,6 +231,14 @@
                mode="FORCE_TEXT"
                style="push"
                tooltip="%ttCreateNewMigration">
+         </command>
+         <command
+               commandId="com.cubrid.cubridmigration.ui.command.NewGraphMigration"
+               icon="icons/tb/tb_new_wizard.png"
+               label="%newGraphMigration"
+               mode="FORCE_TEXT"
+               style="push"
+               tooltip="%ttCreateNewGraphMigration">
          </command>
          <separator
                name="com.cubrid.cubridmigration.ui.toolbar.separator2"

@@ -88,6 +88,11 @@ public class Column extends DBObject {
 
     /** Element string of CUBRID, MySQL enum type such as 'Y','N'... */
     private String enumElements = null;
+    
+    // for Graph
+    private boolean isSelected = true;
+    private boolean isConditionColumn = false;
+    
 
     public Column() {
         // do nothing
@@ -96,6 +101,16 @@ public class Column extends DBObject {
     public Column(Table table) {
         this.tableOrView = table;
     }
+    
+	public Column(String name) {
+		this.setName(name);
+//		this.setGraphDataType("ID");
+	}
+	
+	public Column(String name, String vLabel) {
+		this.setName(name);
+//		this.setGraphDataType("ID(" + vLabel + ")");
+	}
 
     /**
      * clone oracle column to CUBRID column
@@ -405,4 +420,24 @@ public class Column extends DBObject {
         }
         return result;
     }
+    
+	public void setSelected(boolean isSelected) {
+		this.isSelected = isSelected;
+	}
+	
+	public boolean isSelected() {
+		return isSelected;
+	}
+	
+	public String toString() {
+		return "Column name: " + this.getName() + " | Column type: " + this.getDataType() + "\n";
+	}
+
+	public boolean isConditionColumn() {
+		return isConditionColumn;
+	}
+
+	public void setConditionColumn(boolean isConditionColumn) {
+		this.isConditionColumn = isConditionColumn;
+	}
 }

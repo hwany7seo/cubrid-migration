@@ -59,6 +59,7 @@ import com.cubrid.cubridmigration.ui.wizard.dialog.MigrationWizardDialog;
 import com.cubrid.cubridmigration.ui.wizard.editor.CSVProgressEditorPart;
 import com.cubrid.cubridmigration.ui.wizard.editor.MigrationProgressEditorPart;
 import com.cubrid.cubridmigration.ui.wizard.editor.SQLProgressEditorPart;
+import com.cubrid.cubridmigration.ui.wizard.dialog.GraphMigrationWizardDialog;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -68,6 +69,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
+import java.awt.JobAttributes.DestinationType;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -153,6 +155,20 @@ public final class MigrationWizardFactory {
 
         openWizardDlg(dialog);
     }
+    
+    public static void newGraphMigrationWizard() {
+        if (migrationIsRunning()) {
+            return;
+        }
+        Shell activeShell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
+
+        MigrationWizard wizard = new GraphMigrationWizard();
+
+        MigrationWizardDialog dialog = new MigrationWizardDialog(activeShell, wizard);
+
+        openWizardDlg(dialog);
+    }
+
 
     /** Create a new SQL migration wizard */
     public static void newSQLWizard() {

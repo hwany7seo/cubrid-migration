@@ -113,6 +113,11 @@
           name="%newMigration">
     </command>
     <command
+          categoryId="com.cubrid.cubridmigration.ui.commands.category.script"
+          id="com.cubrid.cubridmigration.ui.command.NewGraphMigration"
+          name="%newGraphMigration">
+    </command>
+    <command
           categoryId="com.cubrid.cubridmigration.app.commands.category.migration"
           id="com.cubrid.cubridmigration.ui.command.MigrationHistory"
           name="%migrationHistory">
@@ -244,6 +249,10 @@
     <handler
           class="com.cubrid.cubridmigration.ui.wizard.handler.NewMigrationWizardHandler"
           commandId="com.cubrid.cubridmigration.ui.command.NewMigration">
+    </handler>
+    <handler
+          class="com.cubrid.cubridmigration.ui.wizard.handler.NewGraphMigrationWizardHandler"
+          commandId="com.cubrid.cubridmigration.ui.command.NewGraphMigration">
     </handler>
     <handler
           class="com.cubrid.cubridmigration.ui.history.handler.MigrationHistoryHandler"

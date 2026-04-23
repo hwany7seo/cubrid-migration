@@ -45,9 +45,10 @@ public class DBConstant {
     public static final int DBTYPE_MARIADB = 4;
     public static final int DBTYPE_INFORMIX = 5;
     public static final int DBTYPE_TIBERO = 6;
+    public static final int DBTYPE_CORADB = 7;
 
     public static final String[] DB_NAMES =
-            new String[] {"MYSQL", "CUBRID", "MSSQL", "ORACLE", "MARIADB", "INFORMIX", "TIBERO"};
+            new String[] {"MYSQL", "CUBRID", "MSSQL", "ORACLE", "MARIADB", "INFORMIX", "TIBERO", "CORADB"};
 
     public static final String JDBC_CLASS_ORACLE = "oracle.jdbc.OracleDriver";
     public static final String JDBC_CLASS_MSSQL = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
@@ -58,6 +59,7 @@ public class DBConstant {
     public static final String JDBC_CLASS_MARIADB = "org.mariadb.jdbc.Driver";
     public static final String JDBC_CLASS_INFORMIX = "com.informix.jdbc.IfxDriver";
     public static final String JDBC_CLASS_TIBERO = "com.tmax.tibero.jdbc.TbDriver";
+    public static final String JDBC_CLASS_CORADB = "coradb.jdbc.driver.CoraDBDriver";
 
     public static final String DEF_PORT_MSSQL = "1433";
     public static final String DEF_PORT_MYSQL = "3306";

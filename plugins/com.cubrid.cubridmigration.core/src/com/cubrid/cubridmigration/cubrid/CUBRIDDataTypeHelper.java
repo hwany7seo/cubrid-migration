@@ -196,7 +196,7 @@ public final class CUBRIDDataTypeHelper extends DBDataTypeHelper {
         //		CUBRIDDATA_TYPES.add(nvarcharSymbol);
 
         // time
-        DataTypeSymbol timeSymbol =
+        DataTypeSymbol timeSymbol = 
                 new DataTypeSymbol(DataTypeConstant.CUBRID_DT_TIME, "time", "time");
         timeSymbol.getNickNames().add("time");
         CUBRIDDATA_TYPES.add(timeSymbol);

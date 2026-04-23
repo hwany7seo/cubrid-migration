@@ -257,6 +257,10 @@ public class FK extends DBObject {
     public boolean isChangedReferentialAction() {
         return this.changedReferentialAction;
     }
+    
+	public String getRefColumns(String fkColumn) {
+		return col2RefMapping.get(fkColumn);
+	}
 
     /**
      * Copy attributes from source

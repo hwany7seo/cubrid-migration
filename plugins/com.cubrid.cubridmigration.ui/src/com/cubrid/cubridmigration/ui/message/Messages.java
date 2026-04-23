@@ -95,6 +95,8 @@ public class Messages extends NLS {
     public static String btnDestLocalDumpDes;
     public static String btnDestOnlineCUBRIDDB;
     public static String btnDestOnlineCUBRIDDBDes;
+    public static String btnDestOnlineCoraDB;
+    public static String btnDestOnlineCoraDBDes;
     public static String btnDestSQLFiles;
     public static String btnDestSQLFilesDes;
     public static String btnDestXLSFiles;
@@ -353,6 +355,7 @@ public class Messages extends NLS {
     public static String errOtherMigrationRunning;
     public static String errSequenceName;
     public static String failedLogDialogSaveErrMsg;
+    public static String fileWarningMessage;
     public static String fileRepositoryEmptyWarning;
     public static String groupNameExisted;
     public static String groupNameInvalid;
@@ -865,6 +868,71 @@ public class Messages extends NLS {
     public static String verifySQLDialogExecuteErrorMess;
     public static String wizardCancelMsg;
     public static String wizardTitle;
+    public static String graphWizardTitle;
+    
+    //For Graph
+	public static String addGraphSQLDialogGroupTitle;
+	public static String addGraphSQLDialogMessage1;
+	public static String addGraphSQLDialogMessage2;
+	public static String addGraphSQLDialogTitle1;
+	public static String addGraphSQLDialogTitle2;
+	
+	public static String btnDestGraphDump;
+	public static String btnDestGraphDumpDes;
+	
+	public static String btnDestOnlineGraph;
+	public static String btnDestOnlineGraphes;
+
+	public static String btnSrcOnlineGraphDB;
+	public static String btnSrcOnlineGraphDBDes;
+
+	public static String btnSrcOnlineTurbo;
+	public static String btnSrcOnlineTurboDes;
+	
+	public static String colPropertyName;
+	
+	public static String colSourceDBObject;
+	
+	public static String colEdgeSource;
+	public static String colEdgeTarget;
+	public static String colEdgeName;
+	public static String colEdgeImportCount;
+
+	public static String errColumnNotSelected;
+	
+	public static String errInvalidData;
+	
+	public static String errNoTableSelected;
+	public static String errNoTableSelectedDes;
+	
+	public static String msgColumnList;
+	public static String msgColumnName;
+	
+	public static String msgDestSelectOnlineGRAPHDB;
+	public static String msgDestSelectOnlineGRAPHDBDes;
+	
+	public static String msgErrColumnNotSelected;
+	
+	public static String msgErrInvalidData;
+	
+	public static String msgGDBTypes;
+	public static String msgGraph;
+
+	public static String msgMenuChangeName;
+	public static String msgMenuDeleteEdge;
+	public static String msgMenuEndVertex;
+	public static String msgMenuStartVertex;
+	public static String msgMenuRedo;
+	public static String msgMenuUndo;
+	
+	public static String msgGDBColumn;
+	public static String msgRDBColumn;
+
+	public static String msgTableList;
+	
+	public static String msgVertex;
+	
+	public static String twowayEdge;
 
     static {
         NLS.initializeMessages(Messages.class.getName(), Messages.class);

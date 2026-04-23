@@ -30,6 +30,11 @@
                   label="%newMigration"
                   style="push">
             </command>
+            <command
+                  commandId="com.cubrid.cubridmigration.ui.command.NewGraphMigration"
+                  label="%newGraphMigration"
+                  style="push">
+            </command>
             <separator
                   name="com.cubrid.cubridmigration.ui.menu.migration.separator3"
                   visible="true">
@@ -90,6 +95,15 @@
                mode="FORCE_TEXT"
                style="push"
                tooltip="%ttCreateNewMigration">
+         </command>
+         <command
+               commandId="com.cubrid.cubridmigration.ui.command.NewGraphMigration"
+               icon="icon/tb/mnu_new_wizard.png"
+               id="com.cubrid.cubridmigration.subtoolbar.newGraphMigrationWizard"
+               label="%newGraphMigration"
+               mode="FORCE_TEXT"
+               style="push"
+               tooltip="%ttCreateNewGraphMigration">
          </command>
          <separator
                name="com.cubrid.cubridmigration.ui.menu.migration.separator3"

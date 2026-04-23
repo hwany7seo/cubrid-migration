@@ -61,10 +61,7 @@ Export-Package:
    com.cubrid.cubridmigration.core.engine,
    com.cubrid.cubridmigration.cubrid",
  com.cubrid.cubridmigration.core.engine.listener,
- com.cubrid.cubridmigration.core.engine.report;
-  uses:="com.cubrid.cubridmigration.core.engine.config,
-   com.cubrid.cubridmigration.core.dbobject,
-   com.cubrid.cubridmigration.core.engine.event",
+ com.cubrid.cubridmigration.core.engine.report;uses:="com.cubrid.cubridmigration.core.engine.config,com.cubrid.cubridmigration.core.dbobject,com.cubrid.cubridmigration.core.engine.event",
  com.cubrid.cubridmigration.core.engine.scheduler;uses:="com.cubrid.cubridmigration.core.engine.task,com.cubrid.cubridmigration.core.engine",
  com.cubrid.cubridmigration.core.engine.task;
   uses:="com.cubrid.cubridmigration.core.engine.task.imp,
@@ -83,10 +80,7 @@ Export-Package:
    com.cubrid.cubridmigration.core.engine",
  com.cubrid.cubridmigration.core.engine.template.reader;uses:="com.cubrid.cubridmigration.core.engine.config,org.xml.sax.helpers,org.xml.sax",
  com.cubrid.cubridmigration.core.engine.template.writer;uses:="com.cubrid.cubridmigration.core.engine.config",
- com.cubrid.cubridmigration.core.export;
-  uses:="com.cubrid.cubridmigration.core.engine.config,
-   com.cubrid.cubridmigration.core.dbobject,
-   com.cubrid.cubridmigration.core.dbtype",
+ com.cubrid.cubridmigration.core.export;uses:="com.cubrid.cubridmigration.core.engine.config,com.cubrid.cubridmigration.core.dbobject,com.cubrid.cubridmigration.core.dbtype",
  com.cubrid.cubridmigration.core.hadoop;uses:="org.apache.hadoop.fs",
  com.cubrid.cubridmigration.core.io,
  com.cubrid.cubridmigration.core.mapping;uses:="com.cubrid.cubridmigration.core.mapping.model",
@@ -124,6 +118,7 @@ Export-Package:
    com.cubrid.cubridmigration.core.trans,
    com.cubrid.cubridmigration.core.mapping.model",
  com.cubrid.cubridmigration.cubrid.trans.converter;uses:="com.cubrid.cubridmigration.core.engine.config,com.cubrid.cubridmigration.core.trans",
+ com.cubrid.cubridmigration.graph.dbobj,
  com.cubrid.cubridmigration.mariadb.trans,
  com.cubrid.cubridmigration.mssql;
   uses:="com.cubrid.cubridmigration.core.dbobject,
@@ -169,8 +164,8 @@ Export-Package:
    com.cubrid.cubridmigration.core.dbmetadata,
    com.cubrid.cubridmigration.core.connection,
    com.cubrid.cubridmigration.core.export",
-   com.cubrid.cubridmigration.oracle.parser,
-   com.cubrid.cubridmigration.oracle.trans;
+ com.cubrid.cubridmigration.oracle.parser,
+ com.cubrid.cubridmigration.oracle.trans;
   uses:="com.cubrid.cubridmigration.core.engine.config,
    com.cubrid.cubridmigration.core.dbobject,
    com.cubrid.cubridmigration.core.mapping,
@@ -178,16 +173,13 @@ Export-Package:
    com.cubrid.cubridmigration.core.mapping.model,
    com.cubrid.cubridmigration.cubrid.trans",
  com.cubrid.cubridmigration.tibero;uses:="com.cubrid.cubridmigration.core.dbobject,com.cubrid.cubridmigration.core.dbtype,com.cubrid.cubridmigration.core.sql",
- com.cubrid.cubridmigration.tibero.export;
-  uses:="com.cubrid.cubridmigration.core.export,
-   com.cubrid.cubridmigration.core.dbobject,
-   com.cubrid.cubridmigration.core.dbtype",
+ com.cubrid.cubridmigration.tibero.export;uses:="com.cubrid.cubridmigration.core.export,com.cubrid.cubridmigration.core.dbobject,com.cubrid.cubridmigration.core.dbtype",
  com.cubrid.cubridmigration.tibero.export.handler;uses:="com.cubrid.cubridmigration.core.dbobject,com.cubrid.cubridmigration.core.export.handler,com.cubrid.cubridmigration.core.export",
  com.cubrid.cubridmigration.tibero.meta;
   uses:="com.cubrid.cubridmigration.core.dbobject,
-  com.cubrid.cubridmigration.core.dbmetadata,
-  com.cubrid.cubridmigration.core.connection,
-  com.cubrid.cubridmigration.core.export",
+   com.cubrid.cubridmigration.core.dbmetadata,
+   com.cubrid.cubridmigration.core.connection,
+   com.cubrid.cubridmigration.core.export",
  com.cubrid.cubridmigration.tibero.trans;
   uses:="com.cubrid.cubridmigration.core.engine.config,
    com.cubrid.cubridmigration.core.dbobject,

@@ -32,6 +32,8 @@ package com.cubrid.cubridmigration.core.engine.config;
 
 import org.apache.commons.collections4.CollectionUtils;
 
+import com.cubrid.cubridmigration.core.dbobject.Table;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +50,8 @@ public class SourceEntryTableConfig extends SourceTableConfig {
     private boolean createPartition;
     private boolean isEnableExpOpt;
     private boolean startFromTargetMax;
+	//graphDB option
+	private Boolean isSelected = false;
 
     /** Whether the source table has a Primary Key */
     private boolean hasPK;
@@ -290,4 +294,38 @@ public class SourceEntryTableConfig extends SourceTableConfig {
     public void setHasPK(boolean hasPK) {
         this.hasPK = hasPK;
     }
+    
+    public Boolean isSelected() {
+		return isSelected;
+	}
+	
+	/**
+	 * default is false
+	 */
+	public void setSelected(boolean isSelected) {
+		this.isSelected = isSelected;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof SourceEntryTableConfig) {
+			SourceEntryTableConfig setc = (SourceEntryTableConfig) obj;
+			if (this.getName().equals(setc.getName())) {
+				return true;
+			} else {
+				return false;
+			}
+				
+		} else if (obj instanceof Table) {
+			Table tbl = (Table) obj;
+			if (this.getName().equals(tbl.getName())) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return super.equals(obj);
+		}
+	}
+
 }

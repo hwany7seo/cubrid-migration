@@ -100,7 +100,9 @@ public class Application implements IApplication {
             String wsPath = PathUtils.getWorkspace();
             URL localWs = new URL("file", null, wsPath);
             Location instanceLoc = Platform.getInstanceLocation();
-            instanceLoc.set(localWs, true);
+            if (!instanceLoc.isSet()) {
+            	instanceLoc.set(localWs, true);
+            }
         } catch (Exception err) {
             err.printStackTrace();
         }

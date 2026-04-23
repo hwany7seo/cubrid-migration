@@ -38,6 +38,7 @@ import com.cubrid.cubridmigration.core.dbmetadata.AbstractJDBCSchemaFetcher;
 import com.cubrid.cubridmigration.core.export.DBExportHelper;
 import com.cubrid.cubridmigration.core.sql.SQLHelper;
 import com.cubrid.cubridmigration.cubrid.CUBRIDDatabase;
+import com.cubrid.cubridmigration.graph.GraphDatabase;
 import com.cubrid.cubridmigration.informix.InformixDatabase;
 import com.cubrid.cubridmigration.mariadb.MariaDBDatabase;
 import com.cubrid.cubridmigration.mssql.MSSQLDatabase;
@@ -74,9 +75,11 @@ public abstract class DatabaseType {
     public static final DatabaseType INFORMIX = new InformixDatabase();
 
     public static final DatabaseType TIBERO = new TiberoDatabase();
+    
+    public static final DatabaseType GRAPH_CORADB = new GraphDatabase();
 
     private static final DatabaseType[] DTS =
-            new DatabaseType[] {MYSQL, CUBRID, ORACLE, MSSQL, MARIADB, INFORMIX, TIBERO};
+            new DatabaseType[] {MYSQL, CUBRID, ORACLE, MSSQL, MARIADB, INFORMIX, TIBERO, GRAPH_CORADB};
 
     /**
      * Retrieves all Database types

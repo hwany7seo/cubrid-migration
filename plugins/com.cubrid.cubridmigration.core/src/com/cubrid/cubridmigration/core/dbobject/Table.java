@@ -52,6 +52,21 @@ public class Table extends TableOrView {
     private long tableRowCount;
     private String createSql;
     private boolean isReuseOID = false;
+    
+    //for GraphDB
+	private boolean isSelected = true;
+	
+	private long oid;
+	private int importedKeysCount;
+	private int exportedKeysCount;
+	
+	public boolean isSelected() {
+		return isSelected;
+	}
+
+	public void setSelected(boolean isSelected) {
+		this.isSelected = isSelected;
+	}
 
     public boolean isReuseOID() {
         return isReuseOID;
@@ -309,4 +324,49 @@ public class Table extends TableOrView {
     public boolean hasPK() {
         return pk != null && CollectionUtils.isNotEmpty(pk.getPkColumns());
     }
+    
+    /**
+	 * getImportedKeysCount
+	 *
+	 * @return the importedKeysCount
+	 */
+	public int getImportedKeysCount() {
+		return importedKeysCount;
+	}
+
+	/**
+	 * setImportedKeysCount
+	 *
+	 * @param importedKeysCount
+	 */
+	public void setImportedKeysCount(int importedKeysCount) {
+		this.importedKeysCount = importedKeysCount;
+	}
+
+	/**
+	 * getExportedKeysCount
+	 *
+	 * @return the exportedKeysCount
+	 */
+	public int getExportedKeysCount() {
+		return exportedKeysCount;
+	}
+
+	/**
+	 * setExportedKeysCount
+	 *
+	 * @param exportedKeysCount
+	 */
+	public void setExportedKeysCount(int exportedKeysCount) {
+		this.exportedKeysCount = exportedKeysCount;
+	}
+	
+	public long getOid() {
+		return oid;
+	}
+
+	public void setOid(long oid) {
+		this.oid = oid;
+	}
+
 }

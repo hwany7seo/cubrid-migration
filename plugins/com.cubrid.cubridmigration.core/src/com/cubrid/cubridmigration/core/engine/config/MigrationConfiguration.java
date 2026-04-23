@@ -70,6 +70,7 @@ import com.cubrid.cubridmigration.core.trans.DBTransformHelper;
 import com.cubrid.cubridmigration.core.trans.MigrationTransFactory;
 import com.cubrid.cubridmigration.cubrid.CUBRIDDataTypeHelper;
 import com.cubrid.cubridmigration.cubrid.CUBRIDSQLHelper;
+import com.cubrid.cubridmigration.graph.dbobj.GraphDictionary;
 import com.cubrid.cubridmigration.mysql.MysqlXmlDumpSource;
 import com.cubrid.cubridmigration.oracle.parser.PlConvOracleToCubrid;
 import com.cubrid.cubridmigration.oracle.parser.ProcedureDDL;
@@ -115,6 +116,7 @@ public class MigrationConfiguration {
     public static final int DEST_SQL = 2;
     public static final int DEST_XLS = 3;
     public static final int DEST_ONLINE = 4;
+    public static final int DEST_GRAPH = 5;
 
     public static final int SOURCE_TYPE_CUBRID = DatabaseType.CUBRID.getID();
     public static final int SOURCE_TYPE_MYSQL = DatabaseType.MYSQL.getID();
@@ -123,6 +125,7 @@ public class MigrationConfiguration {
     public static final int SOURCE_TYPE_MARIADB = DatabaseType.MARIADB.getID();
     public static final int SOURCE_TYPE_INFORMIX = DatabaseType.INFORMIX.getID();
     public static final int SOURCE_TYPE_TIBERO = DatabaseType.TIBERO.getID();
+    
 
     public static final int SOURCE_TYPE_XML_1 = 101;
     public static final int SOURCE_TYPE_SQL = 102;
@@ -283,6 +286,8 @@ public class MigrationConfiguration {
     private boolean isOldScript = false;
 
     private boolean isTarSchemaDuplicate = false;
+    
+    private GraphDictionary graphDict = new GraphDictionary();
 
     /**
      * Add a CSV file to exporting list.
@@ -5724,4 +5729,13 @@ public class MigrationConfiguration {
             return params == null ? "" : params.getConUser();
         }
     }
+    
+	public GraphDictionary getGraphDictionary(){
+		return graphDict;
+	}
+	
+	public void setGraphDict(GraphDictionary graphDict){
+		this.graphDict = graphDict;
+	}
+    
 }

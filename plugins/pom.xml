@@ -23,6 +23,7 @@
 				<module>com.cubrid.cubridmigration.core</module>
 				<module>com.cubrid.cubridmigration.plugin</module>
 				<module>com.cubrid.cubridmigration.ui</module>
+				<module>com.coradb.migration.ui</module>
 			</modules>
 		</profile>
 		<profile>
