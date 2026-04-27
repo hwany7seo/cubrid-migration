@@ -69,6 +69,7 @@ import com.cubrid.cubridmigration.ui.common.dialog.DetailMessageDialog;
 import com.cubrid.cubridmigration.ui.database.IJDBCConnectionFilter;
 import com.cubrid.cubridmigration.ui.database.JDBCConnectionMgrView;
 import com.cubrid.cubridmigration.ui.message.Messages;
+import com.cubrid.cubridmigration.ui.wizard.GraphMigrationWizard;
 import com.cubrid.cubridmigration.ui.wizard.MigrationWizard;
 import com.cubrid.cubridmigration.ui.wizard.dialog.CSVSettingsDialog;
 import com.cubrid.cubridmigration.ui.wizard.page.MigrationWizardPage;
@@ -96,7 +97,7 @@ public class GraphSelectDestinationPage extends
 		private final JDBCConnectionMgrView conMgrView;
 
 		private OnlineTargetDBView() {
-			conMgrView = new JDBCConnectionMgrView(MigrationWizard.getSupportedTarDBTypes(),
+			conMgrView = new JDBCConnectionMgrView(GraphMigrationWizard.getSupportedTarDBTypes(),
 					new IJDBCConnectionFilter() {
 
 						//GDB filter source online. need rewrite
@@ -137,7 +138,11 @@ public class GraphSelectDestinationPage extends
 			setDescription(Messages.msgDestSelectOnlineGRAPHDBDes);
 			final MigrationConfiguration config = getMigrationWizard().getMigrationConfig();
 			List<Integer> dts = new ArrayList<Integer>();
-			dts.add(config.getDestType());
+			if (config.getDestType() == MigrationConfiguration.DEST_GRAPH) {
+				dts.add(MigrationConfiguration.SOURCE_TYPE_CUBRID);
+			} else {
+				dts.add(config.getDestType());
+			}
 			conMgrView.setSupportedDBType(dts);
 			conMgrView.init(config.getTargetConParams(), null);
 		}

@@ -61,6 +61,10 @@ import com.cubrid.cubridmigration.core.export.DBExportHelper;
 import com.cubrid.cubridmigration.cubrid.CUBRIDDataTypeHelper;
 import com.cubrid.cubridmigration.cubrid.CUBRIDSQLHelper;
 import com.cubrid.cubridmigration.cubrid.dbobj.CUBRIDTrigger;
+import com.cubrid.cubridmigration.graph.GraphDataTypeHelper;
+import com.cubrid.jdbc.proxy.driver.CUBRIDPreparedStatementProxy;
+import com.cubrid.jdbc.proxy.driver.CUBRIDResultSetProxy;
+
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

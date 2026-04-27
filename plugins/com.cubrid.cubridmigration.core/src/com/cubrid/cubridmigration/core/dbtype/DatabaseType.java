@@ -76,10 +76,10 @@ public abstract class DatabaseType {
 
     public static final DatabaseType TIBERO = new TiberoDatabase();
     
-    public static final DatabaseType GRAPH_CORADB = new GraphDatabase();
+    public static final DatabaseType CORADB = new GraphDatabase();
 
     private static final DatabaseType[] DTS =
-            new DatabaseType[] {MYSQL, CUBRID, ORACLE, MSSQL, MARIADB, INFORMIX, TIBERO, GRAPH_CORADB};
+            new DatabaseType[] {MYSQL, CUBRID, ORACLE, MSSQL, MARIADB, INFORMIX, TIBERO, CORADB};
 
     /**
      * Retrieves all Database types

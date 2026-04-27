@@ -59,7 +59,7 @@ public class DBConstant {
     public static final String JDBC_CLASS_MARIADB = "org.mariadb.jdbc.Driver";
     public static final String JDBC_CLASS_INFORMIX = "com.informix.jdbc.IfxDriver";
     public static final String JDBC_CLASS_TIBERO = "com.tmax.tibero.jdbc.TbDriver";
-    public static final String JDBC_CLASS_CORADB = "coradb.jdbc.driver.CoraDBDriver";
+    public static final String JDBC_CLASS_CORADB = "coradb.jdbc.driver.CORADBDriver";
 
     public static final String DEF_PORT_MSSQL = "1433";
     public static final String DEF_PORT_MYSQL = "3306";

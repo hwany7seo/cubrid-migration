@@ -125,6 +125,7 @@ public class MigrationConfiguration {
     public static final int SOURCE_TYPE_MARIADB = DatabaseType.MARIADB.getID();
     public static final int SOURCE_TYPE_INFORMIX = DatabaseType.INFORMIX.getID();
     public static final int SOURCE_TYPE_TIBERO = DatabaseType.TIBERO.getID();
+    public static final int SOURCE_TYPE_CORADB = DatabaseType.CORADB.getID();
     
 
     public static final int SOURCE_TYPE_XML_1 = 101;
@@ -138,6 +139,7 @@ public class MigrationConfiguration {
     public static final String MYSQL = "mysql";
     public static final String ORACLE = "oracle";
     public static final String TIBERO = "tibero";
+    public static final String CORADB = "coradb";
 
     public static final int RPT_LEVEL_BRIEF = 0;
     public static final int RPT_LEVEL_ERROR = 1;

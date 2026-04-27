@@ -19,13 +19,17 @@ import com.cubrid.cubridmigration.graph.meta.GraphSchemaFetcher;
 
 public class GraphDatabase extends DatabaseType {
 
+	public static int dbVersion;
+	
 	public GraphDatabase() {
 		super(DBConstant.DBTYPE_CORADB,
 				DBConstant.DB_NAMES[DBConstant.DBTYPE_CORADB],
 				new String[] { DBConstant.JDBC_CLASS_CORADB },
-				DBConstant.DEF_PORT_CUBRID, new GraphSchemaFetcher(),
-				new GraphExportHelper(), new GraphConnHelper(), false);
-		//GDB GraphDatabase constructor
+				DBConstant.DEF_PORT_CUBRID, 
+				new GraphSchemaFetcher(),
+				new GraphExportHelper(), 
+				new GraphConnHelper(), 
+				true);
 	}
 
 	@Override
@@ -43,49 +47,56 @@ public class GraphDatabase extends DatabaseType {
 	private static class GraphConnHelper implements IConnHelper {
 
 		public String makeUrl(ConnParameters connParameters) {
-			//GDB GraphDatabase make URL
-			String neo4jUrlPattern = "jdbc:neo4j:bolt://%s:%s/?database=%s";
-			String url = String.format(neo4jUrlPattern,
-					connParameters.getHost(), connParameters.getPort(), connParameters.getDbName());
-			return url;
+			String cubridJdbcURLPattern = "jdbc:CoraDB:%s:%s:%s:::";
+            String url =
+                    String.format(
+                            cubridJdbcURLPattern,
+                            connParameters.getHost(),
+                            connParameters.getPort(),
+                            connParameters.getDbName());
+            String charSet = connParameters.getCharset();
+            if (StringUtils.isNotBlank(charSet)) {
+                url += "?charset=" + charSet;
+            }
+            return url;
 		}
 
 		public Connection createConnection(ConnParameters conParam)
 				throws SQLException {
-			//GDB GraphDatabase create connection
 			try {
-				Driver driver = conParam.getDriver();
-				if (driver == null) {
-					throw new RuntimeException("JDBC driver can't be null.");
-				}
-				Properties props = new Properties();
-				props.put("username", conParam.getConUser());
-				props.put("password", conParam.getConPassword());
-				
-				Connection conn;
-				if (StringUtils.isBlank(conParam.getUserJDBCURL())) {
-					conn = driver.connect(makeUrl(conParam), props);
-				} else {
-					conn = driver.connect(conParam.getUserJDBCURL(), props);
-				}
-				
-				if (conn == null) {
-					throw new SQLException("Can't connect database server");
-				}
-				
-                checkDatabase(conn);
-			    
-				return conn;
-			} catch (SQLException e) {
-				throw e;
-			} catch (Exception e) { 
-				throw new RuntimeException(e);
-			} 
+                Driver driver = conParam.getDriver();
+                if (driver == null) {
+                    throw new RuntimeException("JDBC driver can't be null.");
+                }
+                // can't get connection throw DriverManger
+                Properties props = new Properties();
+                props.put("user", conParam.getConUser());
+                props.put("password", conParam.getConPassword());
+                props.put("charset", conParam.getCharset());
+                Connection conn;
+                if (StringUtils.isBlank(conParam.getUserJDBCURL())) {
+                    conn = driver.connect(makeUrl(conParam), props);
+                } else {
+                    conn = driver.connect(conParam.getUserJDBCURL(), props);
+                }
+                if (conn == null) {
+                    throw new SQLException("Can not connect database server.");
+                }
+                dbVersion =
+                        conn.getMetaData().getDatabaseMajorVersion() * 10
+                                + conn.getMetaData().getDatabaseMinorVersion();
+                conn.setAutoCommit(false);
+                return conn;
+            } catch (SQLException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
 		}
 		
 		private void checkDatabase(Connection conn) 
 		        throws SQLException {
-            try {
+			try {
                 DatabaseMetaData metaData = conn.getMetaData();
                 if (metaData != null) {
                     String projectVersion= metaData.getDatabaseProductVersion();

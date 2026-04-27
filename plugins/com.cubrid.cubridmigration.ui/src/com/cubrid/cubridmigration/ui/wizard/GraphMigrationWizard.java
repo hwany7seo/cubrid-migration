@@ -68,6 +68,7 @@ import com.cubrid.cubridmigration.ui.wizard.page.ConfirmationPage;
 import com.cubrid.cubridmigration.ui.wizard.graph.page.GraphConfirmationPage;
 import com.cubrid.cubridmigration.ui.wizard.graph.page.GraphMappingPage;
 import com.cubrid.cubridmigration.ui.wizard.graph.page.GraphSelectDestinationPage;
+import com.cubrid.cubridmigration.ui.wizard.graph.page.GraphSelectSourcePage;
 import com.cubrid.cubridmigration.ui.wizard.graph.page.GraphSelectSrcTarTypesPage;
 import com.cubrid.cubridmigration.ui.wizard.graph.page.GraphTableSelectPage;
 import com.cubrid.cubridmigration.ui.wizard.page.ObjectMappingPage;
@@ -111,7 +112,7 @@ public class GraphMigrationWizard extends MigrationWizard {
 	 */
 	public static Set<Integer> getSupportedTarDBTypes() {
 		Set<Integer> supportedDBs = new HashSet<Integer>(4);
-		supportedDBs.add(DatabaseType.GRAPH_CORADB.getID());
+		supportedDBs.add(DatabaseType.CORADB.getID());
 		return supportedDBs;
 	}
 
@@ -185,7 +186,7 @@ public class GraphMigrationWizard extends MigrationWizard {
 	public void addPages() {
 		addPage(new GraphSelectSrcTarTypesPage("0"));
 
-		addPage(new SelectSourcePage("1"));
+		addPage(new GraphSelectSourcePage("1"));
 		addPage(new GraphSelectDestinationPage("2"));
 
 		graphTableSelPage = new GraphTableSelectPage("3");
@@ -203,10 +204,7 @@ public class GraphMigrationWizard extends MigrationWizard {
 	 */
 	public boolean canFinish() {
 		final IWizardPage currentPage = getContainer().getCurrentPage();
-		if (currentPage instanceof SQLMigrationConfirmPage
-				|| currentPage instanceof ConfirmationPage
-				|| currentPage instanceof CSVImportConfirmPage
-				|| currentPage instanceof GraphConfirmationPage) {
+		if (currentPage instanceof GraphConfirmationPage) {
 			return true;
 		}
 		return false;

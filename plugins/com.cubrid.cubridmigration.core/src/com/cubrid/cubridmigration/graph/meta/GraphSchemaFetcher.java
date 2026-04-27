@@ -40,12 +40,12 @@ public class GraphSchemaFetcher extends AbstractJDBCSchemaFetcher {
 	}
 	
 	public DatabaseType getDBType() {
-		return DatabaseType.GRAPH_CORADB;
+		return DatabaseType.CORADB;
 	}
 
 	@Override
 	protected DBExportHelper getExportHelper() {
-		return DatabaseType.GRAPH_CORADB.getExportHelper();
+		return DatabaseType.CORADB.getExportHelper();
 	}
 	
 	

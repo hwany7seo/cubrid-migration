@@ -564,6 +564,8 @@ public class Messages extends NLS {
     public static String msgDestOutputFilesSettingDes;
     public static String msgDestSelectOnlineCUBRIDDB;
     public static String msgDestSelectOnlineCUBRIDDBDes;
+    public static String msgDestSelectOnlineCoraDB;
+    public static String msgDestSelectOnlineCoraDBDes;
     public static String msgDestType;
     public static String msgDirectory;
     public static String msgDoRemapColumns;
