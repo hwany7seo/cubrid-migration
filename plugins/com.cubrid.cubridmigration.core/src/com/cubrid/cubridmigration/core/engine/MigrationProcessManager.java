@@ -43,6 +43,7 @@ import com.cubrid.cubridmigration.core.engine.exporter.impl.JDBCExporter;
 import com.cubrid.cubridmigration.core.engine.exporter.impl.MYSQLDumpXMLExporter;
 import com.cubrid.cubridmigration.core.engine.exporter.impl.PerformMYSQLXMLDataReader;
 import com.cubrid.cubridmigration.core.engine.importer.IMigrationImporter;
+import com.cubrid.cubridmigration.core.engine.importer.impl.GraphJDBCImporter;
 import com.cubrid.cubridmigration.core.engine.importer.impl.JDBCImporter;
 import com.cubrid.cubridmigration.core.engine.importer.impl.LoadFileImporter;
 import com.cubrid.cubridmigration.core.engine.report.IMigrationReporter;
@@ -215,6 +216,8 @@ public class MigrationProcessManager {
             importer = new LoadFileImporter(context);
         } else if (config.targetIsOnline()) {
             importer = new JDBCImporter(context);
+        } else if (config.getDestType() == MigrationConfiguration.DEST_GRAPH) {
+        	importer = new GraphJDBCImporter(context);
         } else {
             // importer = new LoadDBImporter(mrManager);
             throw new BreakMigrationException("Offline migration is not supported any more.");

@@ -5375,7 +5375,8 @@ public class MigrationConfiguration {
                 || (sourceType == SOURCE_TYPE_MSSQL)
                 || (sourceType == SOURCE_TYPE_MARIADB)
                 || (sourceType == SOURCE_TYPE_INFORMIX)
-                || (sourceType == SOURCE_TYPE_TIBERO);
+                || (sourceType == SOURCE_TYPE_TIBERO)
+        		|| (sourceType == SOURCE_TYPE_CORADB);
     }
 
     /**
@@ -5430,7 +5431,8 @@ public class MigrationConfiguration {
      * @return the targetDBIsOnline
      */
     public boolean targetIsOnline() {
-        return destType == DEST_ONLINE;
+        return destType == DEST_ONLINE
+        		|| destType == DEST_GRAPH;
     }
 
     /**

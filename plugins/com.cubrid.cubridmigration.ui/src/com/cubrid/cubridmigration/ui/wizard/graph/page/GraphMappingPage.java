@@ -1,8 +1,19 @@
 package com.cubrid.cubridmigration.ui.wizard.graph.page;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
+import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.options.Direction;
+import org.eclipse.elk.core.util.BasicProgressMonitor;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.eclipse.jface.dialogs.PageChangedEvent;
 import org.eclipse.jface.dialogs.PageChangingEvent;
 import org.eclipse.jface.viewers.CellEditor;
@@ -23,6 +34,7 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -46,8 +58,8 @@ import org.eclipse.zest.core.widgets.GraphConnection;
 import org.eclipse.zest.core.widgets.GraphItem;
 import org.eclipse.zest.core.widgets.GraphNode;
 import org.eclipse.zest.core.widgets.ZestStyles;
-import org.eclipse.zest.layouts.LayoutStyles;
-import org.eclipse.zest.layouts.algorithms.GridLayoutAlgorithm;
+import org.eclipse.zest.layouts.LayoutAlgorithm;
+import org.eclipse.zest.layouts.interfaces.LayoutContext;
 
 import com.cubrid.cubridmigration.core.dbobject.Column;
 import com.cubrid.cubridmigration.core.engine.config.MigrationConfiguration;
@@ -75,6 +87,25 @@ enum workTypeEnum {
 }
 
 public class GraphMappingPage extends MigrationWizardPage {
+	/** ELK layered layout algorithm id (see org.eclipse.elk.alg.layered) */
+	private static final String ELK_LAYERED_ALGORITHM = "org.eclipse.elk.layered";
+	private static final RecursiveGraphLayoutEngine ELK_LAYOUT_ENGINE = new RecursiveGraphLayoutEngine();
+
+	/**
+	 * Zest requires a non-null {@link LayoutAlgorithm}; actual coordinates come from ELK in {@link #applyElkLayout()}.
+	 */
+	private static final LayoutAlgorithm NO_OP_ZEST_LAYOUT = new LayoutAlgorithm() {
+		@Override
+		public void setLayoutContext(LayoutContext context) {
+			// no-op
+		}
+
+		@Override
+		public void applyLayout(boolean clean) {
+			// no-op: positions applied after refresh via ELK
+		}
+	};
+
 	public static final Image CHECK_IMAGE = MigrationUIPlugin.getImage("icon/checked.gif");
 	public static final Image UNCHECK_IMAGE = MigrationUIPlugin.getImage("icon/unchecked.gif");
 	
@@ -160,7 +191,8 @@ public class GraphMappingPage extends MigrationWizardPage {
 	
 		graphViewer = new GraphViewer(parent, SWT.BORDER);	
 		graphViewer.setConnectionStyle(ZestStyles.CONNECTIONS_DIRECTED);
-		graphViewer.setLayoutAlgorithm(new GridLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING));
+		graphViewer.setLayoutAlgorithm(NO_OP_ZEST_LAYOUT, false);
+
 		
 		graphViewer.getGraphControl().setMenu(popupMenu);
 		
@@ -254,7 +286,7 @@ public class GraphMappingPage extends MigrationWizardPage {
 				
 				dateTimeTextHandler();
 				
-				graphViewer.refresh();
+				//refreshGraph();
 			}
 		});
 		
@@ -282,8 +314,6 @@ public class GraphMappingPage extends MigrationWizardPage {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {}
 		});
-		
-		graphViewer.applyLayout();
 	}
 	
 	@SuppressWarnings("unused")
@@ -341,7 +371,7 @@ public class GraphMappingPage extends MigrationWizardPage {
 				
 				redoUndoHandler();
 				
-				graphViewer.refresh();
+				refreshGraph();
 			}
 			
 			@Override
@@ -412,7 +442,7 @@ public class GraphMappingPage extends MigrationWizardPage {
 				
 				redoUndoHandler();
 				
-				graphViewer.refresh();
+				refreshGraph();
 			}
 			
 			@Override
@@ -441,7 +471,7 @@ public class GraphMappingPage extends MigrationWizardPage {
 					}
 				}
 				
-				graphViewer.refresh();
+				refreshGraph();
 			}
 
 			@Override
@@ -458,8 +488,6 @@ public class GraphMappingPage extends MigrationWizardPage {
 			public void widgetSelected(SelectionEvent e) {
 				executeUndo(workBuffer.undo());
 				redoUndoHandler();
-				
-				graphViewer.refresh();
 			}
 			
 			@Override
@@ -474,8 +502,6 @@ public class GraphMappingPage extends MigrationWizardPage {
 			public void widgetSelected(SelectionEvent e) {
 				executeRedo(workBuffer.redo());
 				redoUndoHandler();
-				
-				graphViewer.refresh();
 			}
 			
 			@Override
@@ -671,6 +697,189 @@ public class GraphMappingPage extends MigrationWizardPage {
 		gdbTable.refresh();
 		rdbTable.refresh();
 		
+	}
+
+	/** Refreshes graph figures and reapplies ELK layered positions on Zest nodes. */
+	private void refreshGraph() {
+		graphViewer.refresh();
+		applyElkLayout();
+	}
+
+	/**
+	 * Builds an ELK graph from current vertices/edges, runs layered layout, and copies x/y to {@link GraphNode}.
+	 */
+	private void applyElkLayout() {
+		if (graphViewer == null || graph == null || graphViewer.getControl().isDisposed()) {
+			return;
+		}
+		Object input = graphViewer.getInput();
+		if (!(input instanceof List)) {
+			return;
+		}
+		@SuppressWarnings("unchecked")
+		List<Vertex> vertexList = (List<Vertex>) input;
+		if (vertexList.isEmpty()) {
+			return;
+		}
+
+		ElkNode root = ElkGraphUtil.createGraph();
+//		root.setIdentifier("graphMappingRoot");
+
+		Map<String, ElkNode> labelToElk = new HashMap<>();
+
+		GC gc = new GC(graphViewer.getControl());
+		try {
+			gc.setFont(graphViewer.getControl().getFont());
+			for (Vertex v : vertexList) {
+				ElkNode n = ElkGraphUtil.createNode(root);
+				String label = v.getVertexLabel();
+				if (label == null) {
+					label = "";
+				}
+				n.setIdentifier(label);
+				org.eclipse.swt.graphics.Point extent = gc.textExtent(label);
+				double w = Math.max(80, extent.x + 24);
+				double h = Math.max(40, extent.y + 16);
+				n.setDimensions(w, h);
+				labelToElk.put(label, n);
+			}
+		} finally {
+			gc.dispose();
+		}
+
+		if (gdbDict != null) {
+			List<Edge> edges = gdbDict.getMigratedEdgeList();
+			if (edges != null) {
+				for (Edge edge : edges) {
+					ElkNode src = labelToElk.get(edge.getStartVertexName());
+					ElkNode tgt = labelToElk.get(edge.getEndVertexName());
+					if (src != null && tgt != null) {
+						ElkGraphUtil.createSimpleEdge(src, tgt);
+					}
+				}
+			}
+		}
+
+		root.setProperty(CoreOptions.ALGORITHM, ELK_LAYERED_ALGORITHM);
+		root.setProperty(CoreOptions.DIRECTION, Direction.DOWN);
+		root.setProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS, 64.0);
+
+		ELK_LAYOUT_ENGINE.layout(root, new BasicProgressMonitor());
+
+		Map<String, double[]> layoutXY = new HashMap<>();
+		for (Vertex v : vertexList) {
+			String lbl = v.getVertexLabel();
+			if (lbl == null) {
+				lbl = "";
+			}
+			ElkNode en = labelToElk.get(lbl);
+			if (en != null) {
+				layoutXY.put(lbl, new double[] { en.getX(), en.getY() });
+			}
+		}
+
+		List<Edge> edgeListForIsolate = gdbDict != null ? gdbDict.getMigratedEdgeList() : null;
+		adjustPositionsForIsolatedVertices(layoutXY, labelToElk, vertexList, edgeListForIsolate);
+
+		for (Object item : graph.getNodes()) {
+			if (!(item instanceof GraphNode)) {
+				continue;
+			}
+			GraphNode gNode = (GraphNode) item;
+			Object data = gNode.getData();
+			if (!(data instanceof Vertex)) {
+				continue;
+			}
+			Vertex v = (Vertex) data;
+			String vl = v.getVertexLabel();
+			if (vl == null) {
+				vl = "";
+			}
+			double[] xy = layoutXY.get(vl);
+			if (xy != null) {
+				gNode.setLocation(xy[0], xy[1]);
+			}
+		}
+	}
+
+	/**
+	 * ELK layered는 간선이 없는 노드를 한데 몰아 (0,0) 근처에 겹쳐 배치하는 경우가 많아,
+	 * 엔드포인트가 있는 서브그래프의 경계 오른쪽(또는 전체가 고립이면 원점 기준 그리드)으로 옮깁니다.
+	 */
+	private static void adjustPositionsForIsolatedVertices(Map<String, double[]> layoutXY, Map<String, ElkNode> labelToElk,
+			List<Vertex> vertexList, List<Edge> edges) {
+		Set<String> endpointLabels = new HashSet<>();
+		if (edges != null) {
+			for (Edge edge : edges) {
+				String s = edge.getStartVertexName();
+				String t = edge.getEndVertexName();
+				if (s != null) {
+					endpointLabels.add(s);
+				}
+				if (t != null) {
+					endpointLabels.add(t);
+				}
+			}
+		}
+
+		boolean hasConnectedLayout = false;
+		double connMinY = Double.POSITIVE_INFINITY;
+		double connMaxX = Double.NEGATIVE_INFINITY;
+
+		for (Vertex v : vertexList) {
+			String lbl = v.getVertexLabel();
+			if (lbl == null) {
+				lbl = "";
+			}
+			if (!endpointLabels.contains(lbl)) {
+				continue;
+			}
+			ElkNode en = labelToElk.get(lbl);
+			if (en == null) {
+				continue;
+			}
+			hasConnectedLayout = true;
+			double x = en.getX();
+			double y = en.getY();
+			double w = en.getWidth();
+			connMinY = Math.min(connMinY, y);
+			connMaxX = Math.max(connMaxX, x + w);
+		}
+
+		final double isoGapX = 48;
+		final double isoGapY = 16;
+		final double isoColW = 140;
+		final double isoRowH = 56;
+		final int isoCols = 3;
+
+		int isoIdx = 0;
+		for (Vertex v : vertexList) {
+			String lbl = v.getVertexLabel();
+			if (lbl == null) {
+				lbl = "";
+			}
+			if (endpointLabels.contains(lbl)) {
+				continue;
+			}
+			if (!layoutXY.containsKey(lbl)) {
+				continue;
+			}
+			double px;
+			double py;
+			if (hasConnectedLayout) {
+				int col = isoIdx % isoCols;
+				int row = isoIdx / isoCols;
+				px = connMaxX + isoGapX + col * isoColW;
+				py = connMinY + row * (isoRowH + isoGapY);
+			} else {
+				int col = isoIdx % isoCols;
+				int row = isoIdx / isoCols;
+				px = col * isoColW;
+				py = row * (isoRowH + isoGapY);
+			}
+			layoutXY.put(lbl, new double[] { px, py });
+			isoIdx++;
+		}
 	}
 	
 	public void createTableView(Composite parent) {
@@ -954,6 +1163,7 @@ public class GraphMappingPage extends MigrationWizardPage {
 	
 	public void showGraphData(List<Vertex> vertexList) {
 		graphViewer.setInput(vertexList);
+		refreshGraph();
 	}
 	
 	//GDB GraphMappingPage -> afterShowCurrentPage
@@ -1048,7 +1258,7 @@ public class GraphMappingPage extends MigrationWizardPage {
 			}
 		}
 		
-		graphViewer.refresh();
+		refreshGraph();
 	}
 	
 	private void executeRedo(Work work) {
@@ -1084,7 +1294,7 @@ public class GraphMappingPage extends MigrationWizardPage {
 			}
 		}
 
-		graphViewer.refresh();
+		refreshGraph();
 	}
 	
 	private void changeVertexName(String nowName, String originalName) {

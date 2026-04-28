@@ -149,7 +149,8 @@ public class GraphSelectSourcePage extends
 					new IJDBCConnectionFilter() {
 
 						public boolean doFilter(ConnParameters cp) {
-							return getMigrationWizard().getMigrationConfig().getSourceType() != cp.getDatabaseType().getID();
+							boolean ret = getMigrationWizard().getMigrationConfig().getSourceType() != cp.getDatabaseType().getID();
+							return ret;
 						}
 
 					});

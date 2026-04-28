@@ -153,6 +153,7 @@ public class MigrationWizard extends Wizard implements IMigrationWizardStatus {
         supportedDBs.add(DatabaseType.MSSQL.getID());
         supportedDBs.add(DatabaseType.MARIADB.getID());
         supportedDBs.add(DatabaseType.INFORMIX.getID());
+        supportedDBs.add(DatabaseType.CORADB.getID());
         return supportedDBs;
     }
 
@@ -164,6 +165,7 @@ public class MigrationWizard extends Wizard implements IMigrationWizardStatus {
     public static Set<Integer> getSupportedTarDBTypes() {
         Set<Integer> supportedDBs = new HashSet<Integer>(4);
         supportedDBs.add(DatabaseType.CUBRID.getID());
+        supportedDBs.add(DatabaseType.CORADB.getID());
         return supportedDBs;
     }
 

@@ -62,9 +62,8 @@ import com.cubrid.cubridmigration.cubrid.CUBRIDDataTypeHelper;
 import com.cubrid.cubridmigration.cubrid.CUBRIDSQLHelper;
 import com.cubrid.cubridmigration.cubrid.dbobj.CUBRIDTrigger;
 import com.cubrid.cubridmigration.graph.GraphDataTypeHelper;
-import com.cubrid.jdbc.proxy.driver.CUBRIDPreparedStatementProxy;
-import com.cubrid.jdbc.proxy.driver.CUBRIDResultSetProxy;
-
+//import com.cubrid.jdbc.proxy.driver.CUBRIDPreparedStatementProxy;
+//import com.cubrid.jdbc.proxy.driver.CUBRIDResultSetProxy;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -103,6 +102,7 @@ public final class CUBRIDSchemaFetcher extends AbstractJDBCSchemaFetcher {
     ;
 
     private CUBRIDDataTypeHelper cubDTHelper = CUBRIDDataTypeHelper.getInstance(null);
+	private GraphDataTypeHelper graphDTHelper = GraphDataTypeHelper.getInstance(null);
 
     private final int COMMENT_SUPPORT_VERSION = 100;
     private final int USERSCHEMA_VERSION = 112;
@@ -513,6 +513,10 @@ public final class CUBRIDSchemaFetcher extends AbstractJDBCSchemaFetcher {
 
                     tables.put(tableName, table);
                 }
+                
+//				if ((conn.getMetaData().getDatabaseMajorVersion() * 10) + conn.getMetaData().getDatabaseMinorVersion() >= 112) {
+//					buildTableOid(conn, table);
+//				}
 
                 String attrName = rs.getString("attr_name");
                 boolean isShared = "SHARED".equals(rs.getString("attr_type"));
@@ -541,7 +545,7 @@ public final class CUBRIDSchemaFetcher extends AbstractJDBCSchemaFetcher {
                     }
                     column.setPrecision(prec);
                     column.setScale(scale);
-
+                    
                     String isNull = rs.getString("is_nullable");
                     column.setNullable(isYes(isNull));
 
@@ -1762,9 +1766,11 @@ public final class CUBRIDSchemaFetcher extends AbstractJDBCSchemaFetcher {
                         ""
                                 + conn.getMetaData().getDatabaseMajorVersion()
                                 + conn.getMetaData().getDatabaseMinorVersion());
+        
+        Map<String, Table> tables;
+        
         if (ver >= 112) {
-            Map<String, Table> tables =
-                    buildCUBRIDTablesWithUserSchema(conn, catalog, schema, filter);
+            tables = buildCUBRIDTablesWithUserSchema(conn, catalog, schema, filter);
             buildCUBRIDTableColumnsWithUserSchema(conn, schema, tables);
             buildCUBRIDTableSerialsWithUserSchema(conn, tables);
             buildCUBRIDTablePKsWithUserSchema(conn, tables);
@@ -1772,13 +1778,18 @@ public final class CUBRIDSchemaFetcher extends AbstractJDBCSchemaFetcher {
             buildCUBRIDTableIndexesWithUserSchema(conn, tables);
 
         } else {
-            Map<String, Table> tables = buildCUBRIDTables(conn, catalog, schema, filter);
+            tables = buildCUBRIDTables(conn, catalog, schema, filter);
             buildCUBRIDTableColumns(conn, tables);
             buildCUBRIDTableSerials(conn, tables);
             buildCUBRIDTablePKs(conn, tables);
             buildCUBRIDTableFKs(conn, tables, schema, catalog);
             buildCUBRIDTableIndexes(conn, tables);
         }
+        
+    	for (Table table : tables.values()) {
+			setImportedKeysCount(conn, catalog, schema, table);
+			setExportedKeysCount(conn, catalog, schema, table);
+		}
     }
 
     /**
@@ -2587,4 +2598,75 @@ public final class CUBRIDSchemaFetcher extends AbstractJDBCSchemaFetcher {
         // cubrid schema fetcher have it's own view build method
         return null;
     }
+    
+//    private void buildTableOid(Connection conn, Table table) {
+//		String sql = "SELECT class_of, class_name FROM _db_class where is_system_class not in (1) and class_name=?";
+//		
+//		CUBRIDPreparedStatementProxy stmt = null;
+//		CUBRIDResultSetProxy rs = null;
+//		
+//		try {
+//			stmt = new CUBRIDPreparedStatementProxy(conn.prepareStatement(sql));
+//			
+//			stmt.setString(1, table.getName());
+//			
+//			rs = (CUBRIDResultSetProxy) stmt.executeQuery();
+//			
+//			while (rs.next()) {
+//				long oidValue = oidToLong(rs.getOID(1).getOID());
+//				
+//				table.setOid(oidValue);
+//			}
+//		} catch (SQLException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} finally {
+//			Closer.close(rs);
+//			Closer.close(stmt);
+//		}
+//	}
+//	
+//	private long oidToLong(byte[] oid) {
+//	      int page_id = 0;
+//	      short slot_id = 0;
+//	      short volume_id = 0;
+//	      long ret = 0;
+//
+//	      int startIndex = 0;
+//	      int endIndex = 4;
+//	      
+//	      /*page ID*/
+//	      for(int i = startIndex; i< endIndex; i++){
+//	          page_id <<= 8;
+//	          page_id |= (oid[i] & 0xff);
+//	      }
+//	      startIndex = 4;
+//	      endIndex = startIndex + 2;
+//	      /*slot ID*/
+//	     for(int i = startIndex; i < endIndex; i++){
+//	        slot_id <<= 8;
+//	        slot_id |= (oid[i] & 0xff);
+//	     }
+//	      startIndex = 6;
+//	      endIndex = startIndex + 2;
+//	      /*volume ID*/
+//	      for (int i = startIndex; i < endIndex; i++){
+//	        volume_id <<=8;
+//	        volume_id |= (oid[i] & 0xff);
+//	      }
+//	      
+//	      ret <<=16;
+////	      ret |= volume_data & 0xffff;
+//	      ret |= volume_id & 0xffff;
+//
+//	      ret <<=16;
+////	      ret |= slot_data & 0xffff;
+//	      ret|= slot_id & 0xffff;
+//
+//	      ret <<=32;
+////	      ret |= page_data & 0xffffffff;
+//	      ret |= page_id & 0xffffffff;
+//
+//	      return ret;
+//	}
 }
