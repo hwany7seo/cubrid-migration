@@ -46,6 +46,8 @@ import com.cubrid.cubridmigration.core.dbobject.Table;
 import com.cubrid.cubridmigration.core.dbobject.Trigger;
 import com.cubrid.cubridmigration.core.dbobject.View;
 import com.cubrid.cubridmigration.core.engine.config.SourceTableConfig;
+import com.cubrid.cubridmigration.graph.dbobj.Edge;
+import com.cubrid.cubridmigration.graph.dbobj.Vertex;
 
 import java.util.List;
 
@@ -190,5 +192,21 @@ public interface IMigrationImporter {
      * @param records List<Record>
      * @return success count
      */
+    
     public int importRecords(SourceTableConfig stc, List<Record> records);
+
+    //for Graph
+    public void createVertex(Vertex v);
+	
+	public int importVertexs(Vertex v, List<Record> records);
+	
+	public int importVertexsCsv(Vertex v);
+    
+	public void createEdge(Edge e);
+	
+    public int importEdges(Edge e, List<Record> records);
+    
+    public int importEdgeCsv(Edge e);
+    
+    public int importQuickScript();
 }

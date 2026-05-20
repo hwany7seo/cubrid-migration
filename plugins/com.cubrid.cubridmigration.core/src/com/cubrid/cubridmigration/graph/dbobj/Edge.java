@@ -273,29 +273,33 @@ public class Edge extends DBObject {
 	}
 
 	public void setHasDateTimeFilter(boolean hasTimeFilter) {
-//		if (hasTimeFilter == false) {
-//			removeDateTimeFilter();
-//		}
+		if (hasTimeFilter == false) {
+			removeDateTimeFilter();
+		}
 		
 		this.hasDateTimeFilter = hasTimeFilter;
 	}	
 	
-//	private void removeDateTimeFilter() {
-//		for (Column col : getColumnList()) {
-//			if (col.isConditionColumn() == true) {
-//				col.setConditionColumn(false);
-//				break;
-//			}
-//		}
-//	}
-//	
-//	public Column getConditionColumn() {
-//		for (Column col : columnList) {
-//			if (col.isConditionColumn()) {
-//				return col;
-//			}
-//		}
-//		
-//		return null;
-//	}
+	private void removeDateTimeFilter() {
+		for (Column col : getColumnList()) {
+			if (col.isConditionColumn() == true) {
+				col.setConditionColumn(false);
+				break;
+			}
+		}
+	}
+	
+	public Column getConditionColumn() {
+		for (Column col : columnList) {
+			if (col.isConditionColumn()) {
+				return col;
+			}
+		}
+		
+		return null;
+	}
+	
+	public String getQuotedObjName(String objectName) {
+        return new StringBuffer("[").append(objectName).append("]").toString();
+    }
 }

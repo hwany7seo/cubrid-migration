@@ -35,6 +35,7 @@ import com.cubrid.cubridmigration.core.dbobject.PK;
 import com.cubrid.cubridmigration.core.dbtype.DatabaseType;
 import com.cubrid.cubridmigration.core.export.DBExportHelper;
 import com.cubrid.cubridmigration.core.export.IExportDataHandler;
+import com.cubrid.cubridmigration.graph.dbobj.Edge;
 import com.cubrid.cubridmigration.informix.export.handler.InformixBSONTypeHandler;
 import com.cubrid.cubridmigration.informix.export.handler.InformixBooleanTypeHandler;
 import com.cubrid.cubridmigration.informix.export.handler.InformixJSONTypeHandler;
@@ -97,5 +98,11 @@ public class InformixExportHelper extends DBExportHelper {
     public String getPagedSelectSQL(String sql, long pageSize, long exportedRecords, PK pk) {
         // TODO Auto-generated method stub
         return sql;
+    }
+
+    @Override
+    public String getGraphSelectSQL(Edge e, boolean targetIsCSV) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

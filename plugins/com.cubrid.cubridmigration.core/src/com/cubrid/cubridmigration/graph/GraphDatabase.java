@@ -34,13 +34,11 @@ public class GraphDatabase extends DatabaseType {
 
 	@Override
 	public SQLHelper getSQLHelper(String version) {
-		//GDB GraphDatabase getSQLHelper
 		return GraphSQLHelper.getInstance(version);
 	}
 
 	@Override
 	public DBDataTypeHelper getDataTypeHelper(String version) {
-		//GDB GraphDatabase data type helper
 		return null;
 	}
 

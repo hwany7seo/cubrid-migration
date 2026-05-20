@@ -61,6 +61,10 @@ public abstract class DBObject implements Serializable {
     public static final String OBJ_TYPE_RECORD = "record";
     public static final String OBJ_TYPE_SYNONYM = "synonym";
     public static final String OBJ_TYPE_GRANT = "grant";
+    
+    public final static String OBJ_GRAPH_TYPE_VERTEX = "Vertex";
+	public final static String OBJ_GRAPH_TYPE_EDGE = "Edge";
+	public final static String OBJ_GRAPH_TYPE_INDEX= "Index";
 
     /**
      * Retrieves the Object's name

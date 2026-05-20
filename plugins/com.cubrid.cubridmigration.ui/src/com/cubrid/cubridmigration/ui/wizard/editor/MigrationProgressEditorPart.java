@@ -30,6 +30,7 @@
  */
 package com.cubrid.cubridmigration.ui.wizard.editor;
 
+import com.cubrid.common.log.LogUtil;
 import com.cubrid.common.ui.swt.table.ObjectArrayRowTableLabelProvider;
 import com.cubrid.common.ui.swt.table.TableViewerBuilder;
 import com.cubrid.cubridmigration.core.common.TimeZoneUtils;
@@ -68,6 +69,7 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
+import org.slf4j.Logger;
 
 import java.util.Date;
 import java.util.Timer;
@@ -85,6 +87,9 @@ public class MigrationProgressEditorPart extends EditorPart implements ISaveable
      *
      * @author Kevin Cao
      */
+	
+	private static final Logger LOG = LogUtil.getLogger(MigrationProgressEditorPart.class);
+	
     protected class MigrationMonitor implements IMigrationMonitor {
         private long startTime = 0;
 
@@ -166,8 +171,6 @@ public class MigrationProgressEditorPart extends EditorPart implements ISaveable
     // private static final String NA_STRING = "--";
 
     public static final String ID = MigrationProgressEditorPart.class.getName();
-
-    // private final static Logger LOG = LogUtil.getLogger(MigrationProgressEditorPart.class);
 
     protected ProgressBar pbTotal;
     protected Button btnStop;
@@ -444,6 +447,7 @@ public class MigrationProgressEditorPart extends EditorPart implements ISaveable
             controller.startMigration(
                     new MigrationMonitor(), migrationProgressEditorInput.getStartMode());
         } catch (RuntimeException ex) {
+        	LOG.error("RuntimeException : " + ex.getMessage());
             updateUIWhenMigrationStartFailed();
         }
     }

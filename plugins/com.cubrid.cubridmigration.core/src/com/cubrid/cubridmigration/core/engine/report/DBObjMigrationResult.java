@@ -50,6 +50,8 @@ public class DBObjMigrationResult implements Serializable {
     private boolean succeed = false;
     private String ddl;
     private String error;
+    
+	private String sourceObj;
 
     public String getDdl() {
         return ddl;
@@ -98,4 +100,13 @@ public class DBObjMigrationResult implements Serializable {
     public void setSucceed(boolean succeed) {
         this.succeed = succeed;
     }
+    
+	public String getSourceObj() {
+		return sourceObj;
+	}
+
+	public void setSourceObj(String sourceObj) {
+		this.sourceObj = sourceObj;
+	}
+
 }

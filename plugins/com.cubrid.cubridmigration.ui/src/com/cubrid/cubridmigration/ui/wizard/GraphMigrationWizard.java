@@ -61,34 +61,15 @@ import com.cubrid.cubridmigration.ui.script.MigrationScriptManager;
 import com.cubrid.cubridmigration.ui.script.dialog.ScheduleMigrationTaskDialog;
 import com.cubrid.cubridmigration.ui.wizard.dialog.MigrationRunModeDialog;
 import com.cubrid.cubridmigration.ui.wizard.editor.MigrationProgressEditorInput;
-import com.cubrid.cubridmigration.ui.wizard.page.CSVImportConfirmPage;
-import com.cubrid.cubridmigration.ui.wizard.page.CSVSelectPage;
-import com.cubrid.cubridmigration.ui.wizard.page.CSVTargetDBSelectPage;
-import com.cubrid.cubridmigration.ui.wizard.page.ConfirmationPage;
 import com.cubrid.cubridmigration.ui.wizard.graph.page.GraphConfirmationPage;
 import com.cubrid.cubridmigration.ui.wizard.graph.page.GraphMappingPage;
 import com.cubrid.cubridmigration.ui.wizard.graph.page.GraphSelectDestinationPage;
 import com.cubrid.cubridmigration.ui.wizard.graph.page.GraphSelectSourcePage;
 import com.cubrid.cubridmigration.ui.wizard.graph.page.GraphSelectSrcTarTypesPage;
 import com.cubrid.cubridmigration.ui.wizard.graph.page.GraphTableSelectPage;
-import com.cubrid.cubridmigration.ui.wizard.page.ObjectMappingPage;
-import com.cubrid.cubridmigration.ui.wizard.page.SQLMigrationConfirmPage;
-import com.cubrid.cubridmigration.ui.wizard.page.SQLSelectPage;
-import com.cubrid.cubridmigration.ui.wizard.page.SQLTargetDBSelectPage;
-import com.cubrid.cubridmigration.ui.wizard.page.SelectDestinationPage;
-import com.cubrid.cubridmigration.ui.wizard.page.SelectSourcePage;
-import com.cubrid.cubridmigration.ui.wizard.page.SelectSrcTarTypesPage;
 
-/**
- * 
- * Migration Wizard
- * 
- * @author moulinwang fulei caoyilin
- * @version 1.0 - 2009-10-10
- * @version 2.0 - 2011-09-21
- * @version 3.0 - 2012-07
- */
 public class GraphMigrationWizard extends MigrationWizard {
+	
 	private static final int[] IDX_GRAPH = new int[] {0, 1, 2, 3, 4, 5};
 
 	private static final Logger LOG = LogUtil.getLogger(GraphMigrationWizard.class);
@@ -442,6 +423,7 @@ public class GraphMigrationWizard extends MigrationWizard {
 					saveSchema);
 		} else {
 			migrationScript.setName(migrationConfig.getName());
+			migrationScript.setGraphMode(true);
 			MigrationTemplateWriter.save(migrationConfig,
 					migrationScript.getAbstractConfigFileName(), saveSchema);
 			MigrationScriptManager.getInstance().save();
@@ -485,11 +467,12 @@ public class GraphMigrationWizard extends MigrationWizard {
 			}
 			
 			String id;
-			id = MigrationWizardFactory.getProgressEditorPartID(migrationConfig.getSourceType());
+			id = MigrationWizardFactory.getProgressEditorPartID(migrationConfig.getSourceType(), migrationConfig.getDestType());
 			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(
 					new MigrationProgressEditorInput(getMigrationConfig(), migrationScript), id);
 			
 		} catch (PartInitException e) {
+		    LOG.debug("startMigration exception : " + e.getMessage());
 			MessageDialog.openError(PlatformUI.getWorkbench().getDisplay().getActiveShell(),
 					Messages.msgError, Messages.msgStartMigrationFailed);
 		}

@@ -215,9 +215,11 @@ public class MigrationProcessManager {
         if (config.targetIsFile()) {
             importer = new LoadFileImporter(context);
         } else if (config.targetIsOnline()) {
-            importer = new JDBCImporter(context);
-        } else if (config.getDestType() == MigrationConfiguration.DEST_GRAPH) {
-        	importer = new GraphJDBCImporter(context);
+            if (config.getDestType() == MigrationConfiguration.DEST_GRAPH) {
+                importer = new GraphJDBCImporter(context);
+            } else {
+                importer = new JDBCImporter(context);
+            }
         } else {
             // importer = new LoadDBImporter(mrManager);
             throw new BreakMigrationException("Offline migration is not supported any more.");

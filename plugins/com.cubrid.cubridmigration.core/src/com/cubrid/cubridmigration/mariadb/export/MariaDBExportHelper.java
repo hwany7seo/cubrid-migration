@@ -36,6 +36,7 @@ import com.cubrid.cubridmigration.core.dbtype.DatabaseType;
 import com.cubrid.cubridmigration.core.export.DBExportHelper;
 import com.cubrid.cubridmigration.core.export.IExportDataHandler;
 import com.cubrid.cubridmigration.core.export.handler.NumberTypeHandler;
+import com.cubrid.cubridmigration.graph.dbobj.Edge;
 import com.cubrid.cubridmigration.mariadb.export.handler.MariaDBBitTypeHandler;
 import com.cubrid.cubridmigration.mariadb.export.handler.MariaDBDateTypeHandler;
 import com.cubrid.cubridmigration.mariadb.export.handler.MariaDBTimestampTypeHandler;
@@ -185,5 +186,11 @@ public class MariaDBExportHelper extends DBExportHelper {
      */
     public DatabaseType getDBType() {
         return DatabaseType.MARIADB;
+    }
+
+    @Override
+    public String getGraphSelectSQL(Edge e, boolean targetIsCSV) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

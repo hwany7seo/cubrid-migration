@@ -41,9 +41,11 @@ import com.cubrid.cubridmigration.core.dbobject.View;
 import com.cubrid.cubridmigration.core.engine.config.MigrationConfiguration;
 import com.cubrid.cubridmigration.core.engine.event.CreateObjectEvent;
 import com.cubrid.cubridmigration.core.engine.event.ExportCSVEvent;
+import com.cubrid.cubridmigration.core.engine.event.ExportGraphRecordEvent;
 import com.cubrid.cubridmigration.core.engine.event.ExportRecordsEvent;
 import com.cubrid.cubridmigration.core.engine.event.IMigrationErrorEvent;
 import com.cubrid.cubridmigration.core.engine.event.ImportCSVEvent;
+import com.cubrid.cubridmigration.core.engine.event.ImportGraphRecordsEvent;
 import com.cubrid.cubridmigration.core.engine.event.ImportRecordsEvent;
 import com.cubrid.cubridmigration.core.engine.event.ImportSQLsEvent;
 import com.cubrid.cubridmigration.core.engine.event.MigrationCanceledEvent;
@@ -111,6 +113,7 @@ public abstract class DefaultMigrationReporter implements IMigrationReporter {
         brief.setStartMode(startMode);
         brief.setScriptName(config.getName());
         brief.setSourceType(config.getSourceType());
+        brief.setDestType(config.getDestType());
         // brief.setReportFile(fileName);
         if (config.targetIsFile()) {
             brief.setOutputDir(config.getFileRepositroyPath());
@@ -234,7 +237,13 @@ public abstract class DefaultMigrationReporter implements IMigrationReporter {
             report.addImportCSVEvent((ImportCSVEvent) event);
         } else if (event instanceof MigrationCanceledEvent) {
             report.getBrief().setStatus(MigrationBriefReport.MS_CANCELED);
-        }
+        } else if (event instanceof ExportGraphRecordEvent) {
+			ExportGraphRecordEvent ev = (ExportGraphRecordEvent) event;
+			report.addGraphExpMigRecResult(ev);
+		} else if (event instanceof ImportGraphRecordsEvent) {
+			ImportGraphRecordsEvent ev = (ImportGraphRecordsEvent) event;
+			report.addGraphImpMigRecResult(ev);
+		}
     }
 
     private String setDBObjectResultDDL(CreateObjectEvent ev) {

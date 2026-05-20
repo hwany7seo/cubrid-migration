@@ -50,6 +50,9 @@ import com.cubrid.cubridmigration.core.engine.config.SourceViewConfig;
 import com.cubrid.cubridmigration.core.engine.exception.BreakMigrationException;
 import com.cubrid.cubridmigration.core.engine.task.IMigrationTask;
 import com.cubrid.cubridmigration.core.engine.task.MigrationTaskFactory;
+import com.cubrid.cubridmigration.graph.dbobj.Edge;
+import com.cubrid.cubridmigration.graph.dbobj.GraphDictionary;
+import com.cubrid.cubridmigration.graph.dbobj.Vertex;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -95,9 +98,17 @@ public class MigrationTasksScheduler {
 
         PathUtils.changeLocalFilePath(config);
         clearTargetDB();
+        
+        if (config.targetIsGraph()) {
+        	greaphSchedule();
+        	return;
+        }
+        
+        
         createSchema();
         createTables();
         createViews();
+        
         if (config.targetIsOnline()
                 && Integer.parseInt(config.getTargetDBVersion()) < USERSCHEMA_VERSION) {
             createNoSupportSynonyms();
@@ -176,6 +187,38 @@ public class MigrationTasksScheduler {
 
         clearObjectsDir();
     }
+    
+	private void greaphSchedule() {
+//		if (targetIsCSV) {
+//			createHeaderTask();
+//		}
+
+		// step 1~4: create vertexes
+		// step1 : first, second, intermediate vertex
+	    createGraphStep0(); // create (0)
+	    await();
+		createGraphStep1(); // recode (1 ~ 4)
+		createGraphStep2();
+		createGraphStep3();
+		createGraphStep4();
+		await();
+
+		// step 5~8 create edges
+		createGraphStep5();
+		await();
+		createGraphStep6();
+		await();
+		createGraphStep8();
+		await();
+		createGraphStep7();
+		await();
+		createGraphStep9();
+		await();
+		createGraphStep10();
+		await();
+		createGraphStep11();
+		await();
+	}
 
     /** Update auto_increment columns current values */
     private void updateAutoIncColumnsCurrentValue() {
@@ -697,4 +740,180 @@ public class MigrationTasksScheduler {
     public void setContext(MigrationContext context) {
         this.context = context;
     }
+    
+    protected void createHeaderTask() {
+		MigrationConfiguration config = context.getConfig();
+		GraphDictionary gdbDict = config.getGraphDictionary();
+
+		List<Vertex> vertexList = gdbDict.getMigratedVertexList();
+		List<Edge> edgeList = gdbDict.getMigratedEdgeList();
+
+		executeTask2(taskFactory.createQuickScriptTask());
+
+		for (Vertex v : vertexList) {
+			executeTask2(taskFactory.createVertexCSVHeaderTask(v));
+		}
+
+		for (Edge e : edgeList) {
+			executeTask2(taskFactory.createEdgeCSVHeaderTask(e));
+		}
+	}
+    
+    protected void createGraphStep0() {
+        MigrationConfiguration config = context.getConfig();
+        GraphDictionary gdict = config.getGraphDictionary();
+        List<Vertex> migratedVertexList = gdict.getMigratedVertexList();
+        List<Edge> migratedEdgeList = gdict.getMigratedEdgeList();
+
+        for (Vertex v : migratedVertexList) {
+            executeTask(taskFactory.createImportVertexTask(v));
+        }
+        
+        for (Edge e : migratedEdgeList) {
+            executeTask(taskFactory.createImportEdgeTask(e));
+        }
+    }
+    
+	protected void createGraphStep1() {
+		MigrationConfiguration config = context.getConfig();
+		GraphDictionary gdict = config.getGraphDictionary();
+		List<Vertex> migratedVertexList = gdict.getMigratedVertexList();
+
+		for (Vertex v : migratedVertexList) {
+			if (v.getVertexType() <= Vertex.INTERMEDIATE_TYPE) {
+				if (v.getHasPK()) {
+					executeTask2(taskFactory.createVertexExportTask(v));
+				}
+			}
+		}
+	}
+
+	protected void createGraphStep2() {
+		MigrationConfiguration config = context.getConfig();
+		GraphDictionary gdict = config.getGraphDictionary();
+		List<Vertex> migratedVertexList = gdict.getMigratedVertexList();
+
+		for (Vertex v : migratedVertexList) {
+			if (v.getVertexType() == Vertex.FIRST_TYPE) {
+				if (!v.getHasPK()) {
+					executeTask2(taskFactory.createVertexExportTask(v));
+				}
+			}
+		}
+	}
+
+	protected void createGraphStep3() {
+		MigrationConfiguration config = context.getConfig();
+		GraphDictionary gdict = config.getGraphDictionary();
+		List<Vertex> migratedVertexList = gdict.getMigratedVertexList();
+
+		for (Vertex v : migratedVertexList) {
+			if (v.getVertexType() == Vertex.SECOND_TYPE) {
+				if (!v.getHasPK()) {
+					executeTask2(taskFactory.createVertexExportTask(v));
+				}
+			}
+		}
+	}
+
+	protected void createGraphStep4() {
+		MigrationConfiguration config = context.getConfig();
+		GraphDictionary gdict = config.getGraphDictionary();
+		List<Vertex> migratedVertexList = gdict.getMigratedVertexList();
+
+		for (Vertex v : migratedVertexList) {
+			if (v.getVertexType() == Vertex.INTERMEDIATE_TYPE) {
+				if (!v.getHasPK()) {
+					executeTask2(taskFactory.createVertexExportTask(v));
+				}
+			}
+		}
+	}
+
+	protected void createGraphStep5() {
+		MigrationConfiguration config = context.getConfig();
+		GraphDictionary gdict = config.getGraphDictionary();
+		List<Vertex> migratedVertexList = gdict.getMigratedVertexList();
+
+		for (Vertex v : migratedVertexList) {
+			if (v.getVertexType() == Vertex.RECURSIVE_TYPE) {
+				executeTask2(taskFactory.createVertexExportTask(v));
+			}
+		}
+	}
+
+	protected void createGraphStep6() {
+		MigrationConfiguration config = context.getConfig();
+		GraphDictionary gdict = config.getGraphDictionary();
+		List<Edge> migratedEdgeList = gdict.getMigratedEdgeList();
+
+		for (Edge e : migratedEdgeList) {
+			if (e.getEdgeType() == Edge.SECOND_FK_TYPE) {
+				executeTask2(taskFactory.GraphEdgeExportTask(e));
+			}
+		}
+	}
+
+	protected void createGraphStep7() {
+		MigrationConfiguration config = context.getConfig();
+		GraphDictionary gdict = config.getGraphDictionary();
+		List<Edge> migratedEdgeList = gdict.getMigratedEdgeList();
+
+		for (Edge e : migratedEdgeList) {
+			if (e.getEdgeType() == Edge.INTERMEDIATE_FK_TYPE) {
+				executeTask2(taskFactory.GraphEdgeExportTask(e));
+			}
+		}
+	}
+
+	protected void createGraphStep8() {
+		MigrationConfiguration config = context.getConfig();
+		GraphDictionary gdict = config.getGraphDictionary();
+		List<Edge> migratedEdgeList = gdict.getMigratedEdgeList();
+
+		for (Edge e : migratedEdgeList) {
+			if (e.getEdgeType() == Edge.RECURSIVE_TYPE) {
+				executeTask2(taskFactory.GraphEdgeExportTask(e));
+			}
+		}
+	}
+
+	protected void createGraphStep9() {
+		// create custom edge
+		MigrationConfiguration cfg = context.getConfig();
+		GraphDictionary gdbDict = cfg.getGraphDictionary();
+		List<Edge> migratedEdgeList = gdbDict.getMigratedEdgeList();
+
+		for (Edge e : migratedEdgeList) {
+			if (e.getEdgeType() == Edge.JOINTABLE_TYPE) {
+				executeTask2(taskFactory.GraphEdgeExportTask(e));
+			}
+		}
+	}
+
+	protected void createGraphStep10() {
+		// create custom edge
+		MigrationConfiguration cfg = context.getConfig();
+		GraphDictionary gdbDict = cfg.getGraphDictionary();
+		List<Edge> migratedEdgeList = gdbDict.getMigratedEdgeList();
+
+		for (Edge e : migratedEdgeList) {
+			if (e.getEdgeType() == Edge.CUSTOM_TYPE) {
+				executeTask2(taskFactory.GraphEdgeExportTask(e));
+			}
+		}
+	}
+
+	protected void createGraphStep11() {
+		// create two-way edge
+		MigrationConfiguration cfg = context.getConfig();
+		GraphDictionary gdbDict = cfg.getGraphDictionary();
+		List<Edge> migratedEdgeList = gdbDict.getMigratedEdgeList();
+
+		for (Edge e : migratedEdgeList) {
+			if (e.getEdgeType() == Edge.TWO_WAY_TYPE || e.getEdgeType() == Edge.JOIN_TWO_WAY_TYPE) {
+				executeTask2(taskFactory.GraphEdgeExportTask(e));
+			}
+		}
+	}
 }

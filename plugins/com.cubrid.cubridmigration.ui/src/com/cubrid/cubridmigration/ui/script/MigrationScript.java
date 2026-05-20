@@ -52,6 +52,7 @@ public class MigrationScript implements Serializable, Cloneable {
     private int cronMode = 0;
 
     private String reservationID;
+    private boolean isGraph;
 
     /**
      * @return clone object
@@ -84,6 +85,10 @@ public class MigrationScript implements Serializable, Cloneable {
     public String getParent() {
         return parent;
     }
+    
+    public boolean IsGraphMode() {
+        return isGraph;
+    }
 
     public void setConfigFileName(String configFileName) {
         this.configFileName = configFileName;
@@ -111,5 +116,9 @@ public class MigrationScript implements Serializable, Cloneable {
 
     public void setReservationID(String reservationID) {
         this.reservationID = reservationID;
+    }
+    
+    public void setGraphMode(boolean isGraph) {
+        this.isGraph = isGraph;
     }
 }

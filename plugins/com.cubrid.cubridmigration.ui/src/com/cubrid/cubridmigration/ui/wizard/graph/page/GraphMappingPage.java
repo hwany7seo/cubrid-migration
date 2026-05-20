@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
+import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
@@ -536,11 +537,11 @@ public class GraphMappingPage extends MigrationWizardPage {
 			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-//				if (selectedObject instanceof Vertex) {
-//					((Vertex) selectedObject).setHasDateTimeFilter(false);
-//				} else if (selectedObject instanceof Edge) {
-//					((Edge) selectedObject).setHasDateTimeFilter(false);
-//				}
+				if (selectedObject instanceof Vertex) {
+					((Vertex) selectedObject).setHasDateTimeFilter(false);
+				} else if (selectedObject instanceof Edge) {
+					((Edge) selectedObject).setHasDateTimeFilter(false);
+				}
 				
 				dateTimeTextHandler();
 				filterHandler();
@@ -763,6 +764,7 @@ public class GraphMappingPage extends MigrationWizardPage {
 		root.setProperty(CoreOptions.ALGORITHM, ELK_LAYERED_ALGORITHM);
 		root.setProperty(CoreOptions.DIRECTION, Direction.DOWN);
 		root.setProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS, 64.0);
+		root.setProperty(CoreOptions.PADDING, new ElkPadding(4));
 
 		ELK_LAYOUT_ENGINE.layout(root, new BasicProgressMonitor());
 
@@ -780,6 +782,7 @@ public class GraphMappingPage extends MigrationWizardPage {
 
 		List<Edge> edgeListForIsolate = gdbDict != null ? gdbDict.getMigratedEdgeList() : null;
 		adjustPositionsForIsolatedVertices(layoutXY, labelToElk, vertexList, edgeListForIsolate);
+		normalizeLayoutToTopLeft(layoutXY);
 
 		for (Object item : graph.getNodes()) {
 			if (!(item instanceof GraphNode)) {
@@ -802,10 +805,6 @@ public class GraphMappingPage extends MigrationWizardPage {
 		}
 	}
 
-	/**
-	 * ELK layered는 간선이 없는 노드를 한데 몰아 (0,0) 근처에 겹쳐 배치하는 경우가 많아,
-	 * 엔드포인트가 있는 서브그래프의 경계 오른쪽(또는 전체가 고립이면 원점 기준 그리드)으로 옮깁니다.
-	 */
 	private static void adjustPositionsForIsolatedVertices(Map<String, double[]> layoutXY, Map<String, ElkNode> labelToElk,
 			List<Vertex> vertexList, List<Edge> edges) {
 		Set<String> endpointLabels = new HashSet<>();
@@ -879,6 +878,28 @@ public class GraphMappingPage extends MigrationWizardPage {
 			}
 			layoutXY.put(lbl, new double[] { px, py });
 			isoIdx++;
+		}
+	}
+
+	private static void normalizeLayoutToTopLeft(Map<String, double[]> layoutXY) {
+		if (layoutXY.isEmpty()) {
+			return;
+		}
+		double minX = Double.POSITIVE_INFINITY;
+		double minY = Double.POSITIVE_INFINITY;
+		for (double[] xy : layoutXY.values()) {
+			minX = Math.min(minX, xy[0]);
+			minY = Math.min(minY, xy[1]);
+		}
+		if (minX == Double.POSITIVE_INFINITY) {
+			return;
+		}
+		final double margin = 8;
+		double dx = margin - minX;
+		double dy = margin - minY;
+		for (Map.Entry<String, double[]> e : layoutXY.entrySet()) {
+			double[] xy = e.getValue();
+			e.setValue(new double[] { xy[0] + dx, xy[1] + dy });
 		}
 	}
 	

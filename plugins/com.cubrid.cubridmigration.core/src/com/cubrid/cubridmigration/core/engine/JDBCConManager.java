@@ -79,7 +79,13 @@ public class JDBCConManager implements ICanDispose {
         }
         try {
             ConnParameters cp = config.getTargetConParams().clone();
-            IConnHelper chelper = DatabaseType.CUBRID.getConHelper();
+            IConnHelper chelper;
+            if (config.getDestType() == MigrationConfiguration.DEST_GRAPH) {
+                chelper = DatabaseType.CORADB.getConHelper();                
+            } else {
+                chelper = DatabaseType.CUBRID.getConHelper();
+            }
+            
             Connection tc = chelper.createConnection(cp); // NOPMD
             return tc;
         } catch (Exception e) {

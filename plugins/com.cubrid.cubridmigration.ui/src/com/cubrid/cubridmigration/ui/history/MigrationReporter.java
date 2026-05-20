@@ -35,6 +35,7 @@ import com.cubrid.cubridmigration.core.engine.exception.BreakMigrationException;
 import com.cubrid.cubridmigration.core.engine.report.DefaultMigrationReporter;
 import com.cubrid.cubridmigration.core.engine.report.MigrationReport;
 import com.cubrid.cubridmigration.ui.message.Messages;
+import com.cubrid.cubridmigration.ui.wizard.graph.page.GraphConfirmationPage;
 import com.cubrid.cubridmigration.ui.wizard.page.CSVImportConfirmPage;
 import com.cubrid.cubridmigration.ui.wizard.page.ConfirmationPage;
 import com.cubrid.cubridmigration.ui.wizard.page.SQLMigrationConfirmPage;
@@ -67,6 +68,8 @@ public class MigrationReporter extends DefaultMigrationReporter implements IEdit
             report.setConfigSummary(SQLMigrationConfirmPage.getConfigSummary(config));
         } else if (config.sourceIsCSV()) {
             report.setConfigSummary(CSVImportConfirmPage.getConfigSummary(config));
+        } else if (config.targetIsGraph()) {
+        	report.setConfigSummary(GraphConfirmationPage.getConfigSummary(config, null));
         } else {
             report.setConfigSummary(ConfirmationPage.getConfigSummary(config, null));
         }

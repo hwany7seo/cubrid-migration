@@ -51,6 +51,7 @@ import com.cubrid.cubridmigration.ui.common.UICommonTool;
 import com.cubrid.cubridmigration.ui.history.CSVImportReportEditorPart;
 import com.cubrid.cubridmigration.ui.history.MigrationReportEditorPart;
 import com.cubrid.cubridmigration.ui.history.MigrationReporter;
+import com.cubrid.cubridmigration.ui.history.R2GMigrationReportEditorPart;
 import com.cubrid.cubridmigration.ui.history.SQLImportReportEditorPart;
 import com.cubrid.cubridmigration.ui.history.dialog.OpenWizardWithHistoryDialog;
 import com.cubrid.cubridmigration.ui.message.Messages;
@@ -58,6 +59,7 @@ import com.cubrid.cubridmigration.ui.script.MigrationScript;
 import com.cubrid.cubridmigration.ui.wizard.dialog.MigrationWizardDialog;
 import com.cubrid.cubridmigration.ui.wizard.editor.CSVProgressEditorPart;
 import com.cubrid.cubridmigration.ui.wizard.editor.MigrationProgressEditorPart;
+import com.cubrid.cubridmigration.ui.wizard.editor.R2GMigrationProgressEditorPart;
 import com.cubrid.cubridmigration.ui.wizard.editor.SQLProgressEditorPart;
 import com.cubrid.cubridmigration.ui.wizard.dialog.GraphMigrationWizardDialog;
 
@@ -96,7 +98,12 @@ public final class MigrationWizardFactory {
         if (MigrationWizardFactory.migrationIsRunning()) {
             return;
         }
-        Wizard wizard = new MigrationWizard(script);
+        Wizard wizard; 
+        if (script.IsGraphMode()) {
+            wizard = new MigrationWizard(script);
+        } else {
+            wizard = new GraphMigrationWizard(script);
+        }
         Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
         MigrationWizardDialog dialog = new MigrationWizardDialog(shell, wizard);
         openWizardDlg(dialog);
@@ -155,7 +162,7 @@ public final class MigrationWizardFactory {
 
         openWizardDlg(dialog);
     }
-    
+
     public static void newGraphMigrationWizard() {
         if (migrationIsRunning()) {
             return;
@@ -168,7 +175,6 @@ public final class MigrationWizardFactory {
 
         openWizardDlg(dialog);
     }
-
 
     /** Create a new SQL migration wizard */
     public static void newSQLWizard() {
@@ -189,26 +195,24 @@ public final class MigrationWizardFactory {
         }
         Shell activeShell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
 
-        MigrationWizardDialog dialog =
-                new MigrationWizardDialog(activeShell, new MigrationWizard());
+        MigrationWizardDialog dialog = new MigrationWizardDialog(activeShell, new MigrationWizard());
         openWizardDlg(dialog);
     }
 
     /**
-     * Open migration wizard with all error schemas and error data.Only supports tables and records.
-     * If only PK/FK/index was failed, the objects will not be auto selected.
+     * Open migration wizard with all error schemas and error data.Only supports
+     * tables and records. If only PK/FK/index was failed, the objects will not be
+     * auto selected.
      *
-     * @param rpt MigrationReport
+     * @param rpt    MigrationReport
      * @param config MigrationConfiguration
      */
-    private static void openWizardWithAllError(
-            final MigrationReport rpt, MigrationConfiguration config) {
+    private static void openWizardWithAllError(final MigrationReport rpt, MigrationConfiguration config) {
         if (config.sourceIsOnline() || config.sourceIsXMLDump()) {
             List<DBObjMigrationResult> list = rpt.getDbObjectsResult();
             for (DBObjMigrationResult rst : list) {
                 if (rst.isSucceed()) {
-                    SourceEntryTableConfig setc =
-                            config.getExpEntryTableCfg(rst.getObjOwner(), rst.getObjName());
+                    SourceEntryTableConfig setc = config.getExpEntryTableCfg(rst.getObjOwner(), rst.getObjName());
                     if (setc != null) {
                         setc.setCreateNewTable(false);
                         continue;
@@ -224,8 +228,7 @@ public final class MigrationWizardFactory {
                 if (rst.getExpCount() != rst.getImpCount()) {
                     continue;
                 }
-                SourceEntryTableConfig setc =
-                        config.getExpEntryTableCfg(rst.getSrcSchema(), rst.getSource());
+                SourceEntryTableConfig setc = config.getExpEntryTableCfg(rst.getSrcSchema(), rst.getSource());
                 if (setc != null) {
                     setc.setMigrateData(false);
                     continue;
@@ -274,16 +277,14 @@ public final class MigrationWizardFactory {
     /**
      * Open migration wizard with error data.
      *
-     * @param rpt MigrationReport
+     * @param rpt    MigrationReport
      * @param config MigrationConfiguration
      */
-    private static void openWizardWithErrorData(
-            final MigrationReport rpt, MigrationConfiguration config) {
+    private static void openWizardWithErrorData(final MigrationReport rpt, MigrationConfiguration config) {
         if (config.sourceIsOnline() || config.sourceIsXMLDump()) {
             final List<RecordMigrationResult> recMigResults = rpt.getRecMigResults();
             for (RecordMigrationResult rst : recMigResults) {
-                SourceEntryTableConfig setc =
-                        config.getExpEntryTableCfg(rst.getSrcSchema(), rst.getSource());
+                SourceEntryTableConfig setc = config.getExpEntryTableCfg(rst.getSrcSchema(), rst.getSource());
                 if (setc != null) {
                     if (rst.getExpCount() == rst.getImpCount() && setc.isMigrateData()) {
                         setc.setMigrateData(false);
@@ -387,10 +388,8 @@ public final class MigrationWizardFactory {
         // Get open mode
         int handlingMode = 0;
         if (rpt.hasError()
-                || (rpt.getBrief() != null
-                        && rpt.getBrief().getStatus() == MigrationBriefReport.MS_CANCELED)) {
-            OpenWizardWithHistoryDialog dlg =
-                    new OpenWizardWithHistoryDialog(shell, config.targetIsOnline());
+                || (rpt.getBrief() != null && rpt.getBrief().getStatus() == MigrationBriefReport.MS_CANCELED)) {
+            OpenWizardWithHistoryDialog dlg = new OpenWizardWithHistoryDialog(shell, config.targetIsOnline());
             if (dlg.open() != IDialogConstants.OK_ID) {
                 return;
             }
@@ -411,11 +410,10 @@ public final class MigrationWizardFactory {
     /**
      * Open migration wizard with re-migrating error files.
      *
-     * @param rpt MigrationReport
+     * @param rpt    MigrationReport
      * @param config MigrationConfiguration
      */
-    private static void openWizardWithErrorFiles(
-            MigrationReport rpt, MigrationConfiguration config) {
+    private static void openWizardWithErrorFiles(MigrationReport rpt, MigrationConfiguration config) {
         config.setSourceType(MigrationConfiguration.SOURCE_TYPE_SQL);
         // Clear old settings
         config.setSqlFiles(null);
@@ -432,9 +430,7 @@ public final class MigrationWizardFactory {
             }
         }
         if (config.getSqlFiles().isEmpty()) {
-            MessageDialog.openError(
-                    Display.getCurrent().getActiveShell(),
-                    Messages.msgError,
+            MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.msgError,
                     Messages.errErrorFileNotFound);
         }
         final String fileName = PathUtils.getBaseTempDir() + System.currentTimeMillis() + ".xml";
@@ -449,8 +445,10 @@ public final class MigrationWizardFactory {
      * @param sourceType @see MigrationConfiguration.SOURCE_TYPE
      * @return editor part ID
      */
-    public static String getReportEditorPartID(int sourceType) {
-        if (sourceType == MigrationConfiguration.SOURCE_TYPE_CSV) {
+    public static String getReportEditorPartID(int sourceType, int targetType) {
+        if (targetType == MigrationConfiguration.DEST_GRAPH) {
+            return R2GMigrationReportEditorPart.ID;
+        } else if (sourceType == MigrationConfiguration.SOURCE_TYPE_CSV) {
             return CSVImportReportEditorPart.ID;
         } else if (sourceType == MigrationConfiguration.SOURCE_TYPE_SQL) {
             return SQLImportReportEditorPart.ID;
@@ -464,8 +462,10 @@ public final class MigrationWizardFactory {
      * @param sourceType @see MigrationConfiguration.SOURCE_TYPE
      * @return editor part ID
      */
-    public static String getProgressEditorPartID(int sourceType) {
-        if (sourceType == MigrationConfiguration.SOURCE_TYPE_CSV) {
+    public static String getProgressEditorPartID(int sourceType, int targetType) {
+        if (targetType == MigrationConfiguration.DEST_GRAPH) {
+            return R2GMigrationProgressEditorPart.ID;
+        } else if (sourceType == MigrationConfiguration.SOURCE_TYPE_CSV) {
             return CSVProgressEditorPart.ID;
         } else if (sourceType == MigrationConfiguration.SOURCE_TYPE_SQL) {
             return SQLProgressEditorPart.ID;

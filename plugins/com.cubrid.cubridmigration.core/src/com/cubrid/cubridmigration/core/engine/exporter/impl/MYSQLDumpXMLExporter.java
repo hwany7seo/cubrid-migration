@@ -38,6 +38,8 @@ import com.cubrid.cubridmigration.core.engine.event.MigrationErrorEvent;
 import com.cubrid.cubridmigration.core.engine.exception.BreakMigrationException;
 import com.cubrid.cubridmigration.core.engine.exporter.MigrationExporter;
 import com.cubrid.cubridmigration.core.io.RmInvalidXMLCharReader;
+import com.cubrid.cubridmigration.graph.dbobj.Edge;
+import com.cubrid.cubridmigration.graph.dbobj.Vertex;
 
 import org.xml.sax.Attributes;
 
@@ -295,4 +297,16 @@ public class MYSQLDumpXMLExporter extends MigrationExporter {
     public void setHandler(PerformMYSQLXMLDataReader handler) {
         this.handler = handler;
     }
+
+	@Override
+	public void exportGraphVertexRecords(Vertex v, RecordExportedListener oneNewRecord) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void exportGraphEdgeRecords(Edge e, RecordExportedListener oneNewRecord) {
+		// TODO Auto-generated method stub
+		
+	}
 }

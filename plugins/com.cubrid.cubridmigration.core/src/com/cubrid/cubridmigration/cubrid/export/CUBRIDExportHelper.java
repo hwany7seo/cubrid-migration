@@ -58,6 +58,7 @@ import com.cubrid.cubridmigration.core.export.handler.TimestampLTZTypeHandler;
 import com.cubrid.cubridmigration.core.export.handler.TimestampTZTypeHandler;
 import com.cubrid.cubridmigration.core.export.handler.TimestampTypeHandler;
 import com.cubrid.cubridmigration.cubrid.export.handler.CUBRIDSetTypeHandler;
+import com.cubrid.cubridmigration.graph.dbobj.Edge;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -321,6 +322,12 @@ public class CUBRIDExportHelper extends DBExportHelper {
         } finally {
             Closer.close(conn);
         }
+        return null;
+    }
+
+    @Override
+    public String getGraphSelectSQL(Edge e, boolean targetIsCSV) {
+        // TODO Auto-generated method stub
         return null;
     }
 }

@@ -102,4 +102,5 @@ public abstract class Importer implements IMigrationImporter {
     public void createTriggers(Trigger trigger) {
         throw new NormalMigrationException("Trigger migration is not supported.");
     }
+    
 }

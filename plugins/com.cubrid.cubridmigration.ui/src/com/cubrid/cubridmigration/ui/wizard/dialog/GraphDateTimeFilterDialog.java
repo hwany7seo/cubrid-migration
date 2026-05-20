@@ -336,11 +336,11 @@ public class GraphDateTimeFilterDialog extends Dialog {
 	}
 	
 	private void setDateTimeFilter() {
-//		if (selectedObject instanceof Vertex) {
-//			((Vertex) selectedObject).setHasDateTimeFilter(true);
-//		} else {
+		if (selectedObject instanceof Vertex) {
+			((Vertex) selectedObject).setHasDateTimeFilter(true);
+		} else {
 			((Edge) selectedObject).setHasDateTimeFilter(true);
-//		}
+		}
 	}
 	
 	@Override

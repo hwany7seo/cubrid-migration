@@ -97,6 +97,10 @@ public class CUBRIDSQLHelper extends SQLHelper {
     public static CUBRIDSQLHelper getInstance(String version) {
         return HELPER;
     }
+    
+    public static CUBRIDSQLHelper getInstance() {
+        return HELPER;
+    }
 
     private CUBRIDSQLHelper() {
         // Hide constructor.

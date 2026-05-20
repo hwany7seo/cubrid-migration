@@ -106,6 +106,16 @@ public class MigrationReportUIController {
                 Messages.colTotalElapsed,
                 Messages.colOwnerName
             };
+    
+	public static final String[] GRAPH_TABLE_HEADER_OVERVIEW = 
+			new String[] {
+				Messages.colObjects,
+				Messages.colExpCount,
+				Messages.colImpCount,
+				Messages.colFailed,
+				Messages.colProgress
+			};
+
 
     public static final String[] TABLE_HEADER_OBJ_NAME_CHANGE =
             new String[] {Messages.colType, Messages.colSourceObject, Messages.colTargetObject};

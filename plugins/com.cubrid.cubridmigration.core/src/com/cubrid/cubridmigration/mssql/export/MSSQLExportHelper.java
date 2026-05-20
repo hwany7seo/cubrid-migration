@@ -34,6 +34,7 @@ import com.cubrid.cubridmigration.core.dbobject.PK;
 import com.cubrid.cubridmigration.core.dbtype.DatabaseType;
 import com.cubrid.cubridmigration.core.export.DBExportHelper;
 import com.cubrid.cubridmigration.core.export.handler.CharTypeHandler;
+import com.cubrid.cubridmigration.graph.dbobj.Edge;
 import com.cubrid.cubridmigration.mssql.MSSQLDataTypeHelper;
 import com.cubrid.cubridmigration.mssql.MSSQLSQLHelper;
 
@@ -443,5 +444,11 @@ public class MSSQLExportHelper extends DBExportHelper {
      */
     public DatabaseType getDBType() {
         return DatabaseType.MSSQL;
+    }
+
+    @Override
+    public String getGraphSelectSQL(Edge e, boolean targetIsCSV) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

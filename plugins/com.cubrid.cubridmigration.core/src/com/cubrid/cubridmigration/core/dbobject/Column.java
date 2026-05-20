@@ -93,7 +93,9 @@ public class Column extends DBObject {
     private boolean isSelected = true;
     private boolean isConditionColumn = false;
     
-
+    private String fromDate;
+    private String toDate;
+    
     public Column() {
         // do nothing
     }
@@ -440,4 +442,20 @@ public class Column extends DBObject {
 	public void setConditionColumn(boolean isConditionColumn) {
 		this.isConditionColumn = isConditionColumn;
 	}
+	
+	public String getFromDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(String fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public String getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(String toDate) {
+        this.toDate = toDate;
+    }
 }

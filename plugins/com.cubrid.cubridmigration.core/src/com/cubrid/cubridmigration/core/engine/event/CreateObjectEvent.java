@@ -43,6 +43,8 @@ import com.cubrid.cubridmigration.core.dbobject.Synonym;
 import com.cubrid.cubridmigration.core.dbobject.Table;
 import com.cubrid.cubridmigration.core.dbobject.Trigger;
 import com.cubrid.cubridmigration.core.dbobject.View;
+import com.cubrid.cubridmigration.graph.dbobj.Edge;
+import com.cubrid.cubridmigration.graph.dbobj.Vertex;
 
 /**
  * CreateObjectFailEvent Description
@@ -152,6 +154,10 @@ public class CreateObjectEvent extends MigrationEvent implements IMigrationError
                     .append("]");
         } else if (dbObject instanceof Grant) {
             sb.append("grant[").append(dbObject.getName()).append("]");
+        } else if (dbObject instanceof Vertex) {
+            sb.append("Vertex[").append(((Vertex) dbObject).getVertexLabel()).append("]");
+        } else if (dbObject instanceof Edge) {
+            sb.append("Edge[").append(((Edge) dbObject).getEdgeLabel()).append("]");
         }
         if (error != null) {
             sb.append(" unsuccessfully." + " Detail:" + error.getMessage());

@@ -27,40 +27,27 @@
  * OF SUCH DAMAGE. 
  *
  */
-package com.cubrid.cubridmigration.core.engine.event;
+package com.cubrid.cubridmigration.core.engine.task.imp;
 
-import com.cubrid.cubridmigration.graph.dbobj.Edge;
+import java.util.ArrayList;
+import java.util.List;
 
-public class StartEdgeTableEvent extends
-		CreateObjectEvent {
+import com.cubrid.cubridmigration.core.dbobject.Record;
+import com.cubrid.cubridmigration.core.engine.task.ImportTask;
+import com.cubrid.cubridmigration.graph.dbobj.Vertex;
 
-	private final Edge edge;
+public class GraphVertexImportTask extends
+		ImportTask {
 
-	public StartEdgeTableEvent(Edge e) {
-		super(e);
-		edge = e;
+	private final Vertex vertex;
+	private final List<Record> records;
+
+	public GraphVertexImportTask(Vertex v, List<Record> records) {
+		this.vertex = v;
+		this.records = new ArrayList<Record>(records);
 	}
 
-	public Edge getEdge() {
-		return edge;
-	}
-
-	/**
-	 * To String
-	 * 
-	 * @return String
-	 */
-	public String toString() {
-		return "Begin to export records of table[" + edge.getEdgeLabel()
-				+ "] for GraphDB Edges.";
-	}
-
-	/**
-	 * The event's importance level
-	 * 
-	 * @return level
-	 */
-	public int getLevel() {
-		return 2;
+	protected void executeImport() {
+		importer.importVertexs(vertex, records);
 	}
 }

@@ -40,6 +40,7 @@ import com.cubrid.cubridmigration.core.export.handler.DateTypeHandler;
 import com.cubrid.cubridmigration.core.export.handler.NumberTypeHandler;
 import com.cubrid.cubridmigration.core.export.handler.TimeTypeHandler;
 import com.cubrid.cubridmigration.core.export.handler.TimestampTypeHandler;
+import com.cubrid.cubridmigration.graph.dbobj.Edge;
 import com.cubrid.cubridmigration.mysql.export.handler.MySQLYearTypeHandler;
 
 import org.slf4j.Logger;
@@ -222,5 +223,11 @@ public class MySQLExportHelper extends DBExportHelper {
      */
     public DatabaseType getDBType() {
         return DatabaseType.MYSQL;
+    }
+
+    @Override
+    public String getGraphSelectSQL(Edge e, boolean targetIsCSV) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

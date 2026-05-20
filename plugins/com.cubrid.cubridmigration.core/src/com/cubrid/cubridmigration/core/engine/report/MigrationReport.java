@@ -51,8 +51,10 @@ import com.cubrid.cubridmigration.core.engine.config.SourceSynonymConfig;
 import com.cubrid.cubridmigration.core.engine.config.SourceTableConfig;
 import com.cubrid.cubridmigration.core.engine.config.SourceViewConfig;
 import com.cubrid.cubridmigration.core.engine.event.ExportCSVEvent;
+import com.cubrid.cubridmigration.core.engine.event.ExportGraphRecordEvent;
 import com.cubrid.cubridmigration.core.engine.event.ExportRecordsEvent;
 import com.cubrid.cubridmigration.core.engine.event.ImportCSVEvent;
+import com.cubrid.cubridmigration.core.engine.event.ImportGraphRecordsEvent;
 import com.cubrid.cubridmigration.core.engine.event.ImportRecordsEvent;
 import com.cubrid.cubridmigration.core.engine.event.ImportSQLsEvent;
 
@@ -94,6 +96,12 @@ public class MigrationReport implements Serializable {
                 DBObject.OBJ_TYPE_GRANT,
                 DBObject.OBJ_TYPE_RECORD
             };
+    
+	private final static String[] OVERVIEW_GRAPH_TYPES = 
+			new String[] {
+				DBObject.OBJ_GRAPH_TYPE_VERTEX, 
+				DBObject.OBJ_GRAPH_TYPE_EDGE
+			};
 
     /**
      * get DBObj Name
@@ -261,6 +269,57 @@ public class MigrationReport implements Serializable {
             break;
         }
     }
+    
+    /**
+	 * add Export Migration Record Result
+	 * 
+	 * @param event ExportRecordsEvent
+	 */
+	public void addGraphExpMigRecResult(ExportGraphRecordEvent event) {
+		if (event.getVertex() != null) {
+			RecordMigrationResult result = getRecMigResults(null, DBObject.OBJ_GRAPH_TYPE_VERTEX, null);
+			result.setExpCount(result.getExpCount() + event.getRecordCount());
+			if (result.getTotalCount() < result.getExpCount()) {
+				result.setTotalCount(result.getExpCount());
+			}
+			if (result.getEndExportTime() < event.getEventTime().getTime()) {
+				result.setEndExportTime(event.getEventTime().getTime());
+			}
+		} 
+		return;
+	}
+	
+	/**
+	 * add Import Migration Record Result
+	 * 
+	 * @param event ImportRecordsEvent
+	 */
+	public void addGraphImpMigRecResult(ImportGraphRecordsEvent event) {
+		RecordMigrationResult result;
+		if (event.getEdge() != null) {
+			result = getRecMigResults(null, DBObject.OBJ_GRAPH_TYPE_EDGE, null);
+		} else {
+			result = getRecMigResults(null, DBObject.OBJ_GRAPH_TYPE_VERTEX, null);
+		}
+
+		if (event.isSuccess()) {
+			//Temp
+			if (result.getSource() == DBObject.OBJ_GRAPH_TYPE_EDGE) {
+				result.setExpCount(result.getExpCount() + event.getRecordCount());
+				result.setTotalCount(result.getExpCount());
+			}
+			result.setImpCount(result.getImpCount() + event.getRecordCount());
+		}
+		if (result.getStartImportTime() == 0) {
+			result.setStartImportTime(event.getEventTime().getTime());
+		}
+		if (result.getEndImportTime() < event.getEventTime().getTime()) {
+			result.setEndImportTime(event.getEventTime().getTime());
+		}
+		if (StringUtils.isNotBlank(event.getErrorFile())) {
+			addErrorSQLFile(event.getErrorFile());
+		}
+	}
 
     /**
      * create a new DBObjectMigrationResult object
@@ -420,6 +479,53 @@ public class MigrationReport implements Serializable {
         }
         return result;
     }
+    
+    public List<MigrationOverviewResult> getGraphOverviewResults() {
+		Map<String, MigrationOverviewResult> map = new HashMap<String, MigrationOverviewResult>();
+		//Records overview
+		MigrationOverviewResult vRecMor = map.get(DBObject.OBJ_GRAPH_TYPE_VERTEX);
+		if (vRecMor == null) {
+			vRecMor = new MigrationOverviewResult();
+			map.put(DBObject.OBJ_GRAPH_TYPE_VERTEX, vRecMor);
+			vRecMor.setObjType(DBObject.OBJ_GRAPH_TYPE_VERTEX);
+		}
+		for (RecordMigrationResult rs : recMigResults) {
+			if (rs.getSource().equals(DBObject.OBJ_GRAPH_TYPE_VERTEX)) {
+				vRecMor.incExpCount(rs.getExpCount());
+				vRecMor.incImpCount(rs.getImpCount());
+				vRecMor.incTotalCount(rs.getTotalCount());
+			}
+		}
+		
+		MigrationOverviewResult eRecMor = map.get(DBObject.OBJ_GRAPH_TYPE_EDGE);
+		if (eRecMor == null) {
+			eRecMor = new MigrationOverviewResult();
+			map.put(DBObject.OBJ_GRAPH_TYPE_EDGE, eRecMor);
+			eRecMor.setObjType(DBObject.OBJ_GRAPH_TYPE_EDGE);
+		}
+		for (RecordMigrationResult rs : recMigResults) {
+			if (rs.getSource().equals(DBObject.OBJ_GRAPH_TYPE_EDGE)) {
+				eRecMor.incExpCount(rs.getExpCount());
+				eRecMor.incImpCount(rs.getImpCount());
+				eRecMor.incTotalCount(rs.getTotalCount());
+			}
+		}
+		
+		//build result list by a order.
+		List<MigrationOverviewResult> result = new ArrayList<MigrationOverviewResult>();
+		for (String type : OVERVIEW_GRAPH_TYPES) {
+			MigrationOverviewResult mor = map.get(type);
+			if (mor == null) {
+				mor = new MigrationOverviewResult();
+				mor.setObjType(type);
+				mor.setExpCount(0);
+				mor.setImpCount(0);
+				mor.setTotalCount(0);
+			}
+			result.add(mor);
+		}
+		return result;
+	}
 
     public List<RecordMigrationResult> getRecMigResults() {
         return recMigResults;

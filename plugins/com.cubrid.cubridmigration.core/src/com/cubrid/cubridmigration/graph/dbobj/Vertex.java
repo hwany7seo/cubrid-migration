@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.cubrid.cubridmigration.core.dbobject.Column;
 import com.cubrid.cubridmigration.core.dbobject.DBObject;
@@ -21,7 +23,7 @@ public class Vertex extends DBObject {
     
 	private int id;
 
-//	private boolean hasDateTimeFilter = false;
+	private boolean hasDateTimeFilter = false;
 
 	//GDB is selected for select page
 	private boolean isNameChanged;
@@ -40,6 +42,7 @@ public class Vertex extends DBObject {
 	private String condition;
 	private String ddl = "-";
 	private String sourceDBObject;
+	private String uniqueIDName;
 	
 	private long oid;
 	private PK pk;
@@ -52,6 +55,21 @@ public class Vertex extends DBObject {
 		return columnList;
 	}
 	public void setColumnList(List<Column> columnList) {
+	    if (columnList != null) {
+	        Set<String> existingNames = columnList.stream()
+	                .map(Column::getName)
+	                .collect(Collectors.toSet());
+	        String newColumnName = "_u_id";
+	        while (existingNames.contains(newColumnName)) {
+	            newColumnName = "_" + newColumnName;
+	        }
+	        Column newColumn = new Column();
+	        newColumn.setName(newColumnName);
+	        newColumn.setDataType("BIGINT");
+	        setUniqueIDName(newColumnName);
+	        
+	        columnList.add(0, newColumn);
+	    }
 		this.columnList = columnList;
 	}
 	public void addColumn(Column col) {
@@ -221,34 +239,42 @@ public class Vertex extends DBObject {
 		return sourceDBObject;
 	}
 	
-//	public boolean hasDateTimeFilter() {
-//		return hasDateTimeFilter;
-//	}
-//
-//	public void setHasDateTimeFilter(boolean hasTimeFilter) {
-//		if (hasTimeFilter == false) {
-//			removeDateTimeFilter();
-//		}
-//		
-//		this.hasDateTimeFilter = hasTimeFilter;
-//	}
-//	
-//	private void removeDateTimeFilter() {
-//		for (Column col : getColumnList()) {
-//			if (col.isConditionColumn() == true) {
-//				col.setConditionColumn(false);
-//				break;
-//			}
-//		}
-//	}
-//	
-//	public Column getConditionColumn() {
-//		for (Column col : columnList) {
-//			if (col.isConditionColumn()) {
-//				return col;
-//			}
-//		}
-//		
-//		return null;
-//	}
+	public boolean hasDateTimeFilter() {
+		return hasDateTimeFilter;
+	}
+
+	public void setHasDateTimeFilter(boolean hasTimeFilter) {
+		if (hasTimeFilter == false) {
+			removeDateTimeFilter();
+		}
+		
+		this.hasDateTimeFilter = hasTimeFilter;
+	}
+	
+	private void removeDateTimeFilter() {
+		for (Column col : getColumnList()) {
+			if (col.isConditionColumn() == true) {
+				col.setConditionColumn(false);
+				break;
+			}
+		}
+	}
+	
+	public Column getConditionColumn() {
+		for (Column col : columnList) {
+			if (col.isConditionColumn()) {
+				return col;
+			}
+		}
+		
+		return null;
+	}
+	
+	public void setUniqueIDName(String id) {
+	    this.uniqueIDName = id;
+	}
+	
+	public String getUniqueIDName() {
+	    return uniqueIDName;
+	}
 }

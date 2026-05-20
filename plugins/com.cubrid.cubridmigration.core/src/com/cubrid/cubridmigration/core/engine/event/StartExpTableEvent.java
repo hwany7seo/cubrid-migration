@@ -56,7 +56,7 @@ public class StartExpTableEvent extends MigrationEvent {
      * @return String
      */
     public String toString() {
-        return "Begin to export records of table[" + sourceTable.getName() + "].";
+        return "Begin to export records of table[" + sourceTable.getName() + "]. for StartExpTableEvent";
     }
 
     /**

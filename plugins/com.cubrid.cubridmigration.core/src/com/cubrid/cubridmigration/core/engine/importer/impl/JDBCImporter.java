@@ -61,6 +61,8 @@ import com.cubrid.cubridmigration.core.engine.importer.Importer;
 import com.cubrid.cubridmigration.core.trans.DBTransformHelper;
 import com.cubrid.cubridmigration.cubrid.CUBRIDSQLHelper;
 import com.cubrid.cubridmigration.cubrid.stmt.CUBRIDParameterSetter;
+import com.cubrid.cubridmigration.graph.dbobj.Edge;
+import com.cubrid.cubridmigration.graph.dbobj.Vertex;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -71,7 +73,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * OnlineImporter responses to import database objects to target through JDBC driver.
+ * OnlineImporter responses to import database objects to target through JDBC
+ * driver.
  *
  * @author Kevin Cao
  * @version 1.0 - 2011-8-3 created by Kevin Cao
@@ -102,8 +105,8 @@ public class JDBCImporter extends Importer {
         try {
             stmt = conn.createStatement();
             stmt.execute(sql);
-        } catch (SQLException ex) {
-            throw new NormalMigrationException(ex);
+        } catch (Exception e) {
+            throw new NormalMigrationException(e);
         } finally {
             DBUtils.commit(conn);
             Closer.close(stmt);
@@ -134,8 +137,7 @@ public class JDBCImporter extends Importer {
      * @param view View
      */
     public void createView(View view) {
-        String viewDDL =
-                CUBRIDSQLHelper.getInstance(null).getViewDDL(view, config.isAddUserSchema());
+        String viewDDL = CUBRIDSQLHelper.getInstance(null).getViewDDL(view, config.isAddUserSchema());
         view.setDDL(viewDDL);
         try {
             executeDDL(viewDDL);
@@ -151,8 +153,7 @@ public class JDBCImporter extends Importer {
      * @param view View
      */
     public void alterView(View view) {
-        String viewAlterDDL =
-                CUBRIDSQLHelper.getInstance(null).getViewAlterDDL(view, config.isAddUserSchema());
+        String viewAlterDDL = CUBRIDSQLHelper.getInstance(null).getViewAlterDDL(view, config.isAddUserSchema());
         view.setAlterDDL(viewAlterDDL);
         try {
             if (!viewAlterDDL.equals(CUBRIDSQLHelper.SQL_NULL)) {
@@ -170,14 +171,8 @@ public class JDBCImporter extends Importer {
      * @param pk primary key
      */
     public void createPK(PK pk) {
-        String ddl =
-                CUBRIDSQLHelper.getInstance(null)
-                        .getPKDDL(
-                                pk.getTable().getOwner(),
-                                pk.getTable().getName(),
-                                pk.getName(),
-                                pk.getPkColumns(),
-                                config.isAddUserSchema());
+        String ddl = CUBRIDSQLHelper.getInstance(null).getPKDDL(pk.getTable().getOwner(), pk.getTable().getName(),
+                pk.getName(), pk.getPkColumns(), config.isAddUserSchema());
         pk.setDDL(ddl);
         try {
             executeDDL(ddl);
@@ -193,13 +188,8 @@ public class JDBCImporter extends Importer {
      * @param fk foreign key
      */
     public void createFK(FK fk) {
-        String ddl =
-                CUBRIDSQLHelper.getInstance(null)
-                        .getFKDDL(
-                                fk.getTable().getOwner(),
-                                fk.getTable().getName(),
-                                fk,
-                                config.isAddUserSchema());
+        String ddl = CUBRIDSQLHelper.getInstance(null).getFKDDL(fk.getTable().getOwner(), fk.getTable().getName(), fk,
+                config.isAddUserSchema());
         fk.setDDL(ddl);
         try {
             executeDDL(ddl);
@@ -215,14 +205,8 @@ public class JDBCImporter extends Importer {
      * @param index Index
      */
     public void createIndex(Index index) {
-        String ddl =
-                CUBRIDSQLHelper.getInstance(null)
-                        .getIndexDDL(
-                                index.getTable().getOwner(),
-                                index.getTable().getName(),
-                                index,
-                                "",
-                                config.isAddUserSchema());
+        String ddl = CUBRIDSQLHelper.getInstance(null).getIndexDDL(index.getTable().getOwner(),
+                index.getTable().getName(), index, "", config.isAddUserSchema());
         index.setDDL(ddl);
         try {
             executeDDL(ddl);
@@ -287,9 +271,7 @@ public class JDBCImporter extends Importer {
      */
     @Override
     public void createPlcsqlProcedureHeader(PlcsqlProcedure pd) {
-        String ddl =
-                CUBRIDSQLHelper.getInstance(null)
-                        .getPlcsqlProcedureHeaderDDL(pd, config.isAddUserSchema());
+        String ddl = CUBRIDSQLHelper.getInstance(null).getPlcsqlProcedureHeaderDDL(pd, config.isAddUserSchema());
         try {
             executeDDL(ddl);
             createObjectSuccess(pd);
@@ -305,9 +287,7 @@ public class JDBCImporter extends Importer {
      */
     @Override
     public void createPlcsqlProcedureBody(PlcsqlProcedure pd) {
-        String ddl =
-                CUBRIDSQLHelper.getInstance(null)
-                        .getPlcsqlProcedureDDL(pd, config.isAddUserSchema());
+        String ddl = CUBRIDSQLHelper.getInstance(null).getPlcsqlProcedureDDL(pd, config.isAddUserSchema());
         try {
             executeDDL(ddl);
             createObjectSuccess(pd);
@@ -323,9 +303,7 @@ public class JDBCImporter extends Importer {
      */
     @Override
     public void createPlcsqlFunctionHeader(PlcsqlFunction ft) {
-        String ddl =
-                CUBRIDSQLHelper.getInstance(null)
-                        .getPlcsqlFunctionHeaderDDL(ft, config.isAddUserSchema());
+        String ddl = CUBRIDSQLHelper.getInstance(null).getPlcsqlFunctionHeaderDDL(ft, config.isAddUserSchema());
         try {
             executeDDL(ddl);
             createObjectSuccess(ft);
@@ -341,9 +319,7 @@ public class JDBCImporter extends Importer {
      */
     @Override
     public void createPlcsqlFunctionBody(PlcsqlFunction ft) {
-        String ddl =
-                CUBRIDSQLHelper.getInstance(null)
-                        .getPlcsqlFunctionDDL(ft, config.isAddUserSchema());
+        String ddl = CUBRIDSQLHelper.getInstance(null).getPlcsqlFunctionDDL(ft, config.isAddUserSchema());
         try {
             executeDDL(ddl);
             createObjectSuccess(ft);
@@ -355,7 +331,7 @@ public class JDBCImporter extends Importer {
     /**
      * Import records ,if connection lost, it will be retry 3 times.
      *
-     * @param stc Table
+     * @param stc     Table
      * @param records List<Record>
      * @return success count
      */
@@ -389,8 +365,7 @@ public class JDBCImporter extends Importer {
     private boolean isConnectionCutDown(SQLException ex) {
         String message = ex.getMessage();
         return message.indexOf("Connection or Statement might be closed") >= 0
-                || message.indexOf("Cannot communicate with the broker") >= 0
-                || ex.getErrorCode() == -2019
+                || message.indexOf("Cannot communicate with the broker") >= 0 || ex.getErrorCode() == -2019
                 || ex.getErrorCode() == -21003 && ex.getErrorCode() == -2003;
     }
 
@@ -407,8 +382,7 @@ public class JDBCImporter extends Importer {
             nameBuf.append(tt.getTargetOwner()).append(".");
         }
 
-        nameBuf.append(CUBRIDSQLHelper.getInstance(null).getQuotedObjName(tt.getTarget()))
-                .append(" (");
+        nameBuf.append(CUBRIDSQLHelper.getInstance(null).getQuotedObjName(tt.getTarget())).append(" (");
         StringBuffer valueBuf = new StringBuffer(" values (");
         List<SourceColumnConfig> columns = tt.getColumnConfigList();
         int len = columns.size();
@@ -430,13 +404,12 @@ public class JDBCImporter extends Importer {
     /**
      * Import with no retry.
      *
-     * @param stc Table
+     * @param stc     Table
      * @param records List<Record>
      * @return success record count
      * @throws SQLException when SQL error
      */
-    private int simpleImportRecords(SourceTableConfig stc, List<Record> records)
-            throws SQLException {
+    private int simpleImportRecords(SourceTableConfig stc, List<Record> records) throws SQLException {
         // Auto commit is false by default.
         Connection conn = connectionManager.getTargetConnection(); // NOPMD
         PreparedStatement stmt = null; // NOPMD
@@ -474,12 +447,8 @@ public class JDBCImporter extends Importer {
                     result += rs;
                 }
                 if (result != records.size()) {
-                    eventHandler.handleEvent(
-                            new ImportRecordsEvent(
-                                    stc,
-                                    records.size() - result,
-                                    new NormalMigrationException(ERROR_RECORD_MSG),
-                                    null));
+                    eventHandler.handleEvent(new ImportRecordsEvent(stc, records.size() - result,
+                            new NormalMigrationException(ERROR_RECORD_MSG), null));
                 }
                 if (result > 0) {
                     eventHandler.handleEvent(new ImportRecordsEvent(stc, result));
@@ -516,8 +485,8 @@ public class JDBCImporter extends Importer {
     /**
      * Create a target record by source record
      *
-     * @param stc SourceTableConfig
-     * @param tt Target Table
+     * @param stc  SourceTableConfig
+     * @param tt   Target Table
      * @param rrec source record
      * @return Target record
      */
@@ -536,14 +505,8 @@ public class JDBCImporter extends Importer {
             }
             Object targetValue;
             try {
-                targetValue =
-                        dbHelper.convertValueToTargetDBValue(
-                                config,
-                                recordMap,
-                                scc,
-                                cv.getColumn(),
-                                targetColumn,
-                                cv.getValue());
+                targetValue = dbHelper.convertValueToTargetDBValue(config, recordMap, scc, cv.getColumn(), targetColumn,
+                        cv.getValue());
             } catch (UserDefinedHandlerException ex) {
                 targetValue = cv.getValue();
                 eventHandler.handleEvent(new SingleRecordErrorEvent(rrec, ex));
@@ -562,5 +525,47 @@ public class JDBCImporter extends Importer {
         } catch (RuntimeException e) {
             createObjectFailed(dummySchema, e);
         }
+    }
+
+    @Override
+    public int importQuickScript() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public void createVertex(Vertex v) {
+        // TODO Auto-generated method stub
+        return;
+    }
+
+    @Override
+    public int importVertexs(Vertex v, List<Record> records) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public void createEdge(Edge e) {
+        // TODO Auto-generated method stub
+        return;
+    }
+
+    @Override
+    public int importEdges(Edge e, List<Record> records) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int importVertexsCsv(Vertex v) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int importEdgeCsv(Edge e) {
+        // TODO Auto-generated method stub
+        return 0;
     }
 }

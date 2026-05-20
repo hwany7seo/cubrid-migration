@@ -521,7 +521,7 @@ public class MigrationWizard extends Wizard implements IMigrationWizardStatus {
                 return;
             }
             String id =
-                    MigrationWizardFactory.getProgressEditorPartID(migrationConfig.getSourceType());
+                    MigrationWizardFactory.getProgressEditorPartID(migrationConfig.getSourceType(), migrationConfig.getDestType());
             PlatformUI.getWorkbench()
                     .getActiveWorkbenchWindow()
                     .getActivePage()

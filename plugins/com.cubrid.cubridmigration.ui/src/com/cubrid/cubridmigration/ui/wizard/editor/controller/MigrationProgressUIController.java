@@ -41,14 +41,18 @@ import com.cubrid.cubridmigration.core.engine.config.SourceEntryTableConfig;
 import com.cubrid.cubridmigration.core.engine.config.SourceTableConfig;
 import com.cubrid.cubridmigration.core.engine.event.CreateObjectEvent;
 import com.cubrid.cubridmigration.core.engine.event.ExportCSVEvent;
+import com.cubrid.cubridmigration.core.engine.event.ExportGraphRecordEvent;
 import com.cubrid.cubridmigration.core.engine.event.ExportRecordsEvent;
 import com.cubrid.cubridmigration.core.engine.event.ExportSQLEvent;
 import com.cubrid.cubridmigration.core.engine.event.ImportCSVEvent;
+import com.cubrid.cubridmigration.core.engine.event.ImportGraphRecordsEvent;
 import com.cubrid.cubridmigration.core.engine.event.ImportRecordsEvent;
 import com.cubrid.cubridmigration.core.engine.event.ImportSQLsEvent;
 import com.cubrid.cubridmigration.core.engine.event.MigrationErrorEvent;
 import com.cubrid.cubridmigration.core.engine.event.MigrationEvent;
 import com.cubrid.cubridmigration.cubrid.CUBRIDTimeUtil;
+import com.cubrid.cubridmigration.graph.dbobj.Edge;
+import com.cubrid.cubridmigration.graph.dbobj.Vertex;
 import com.cubrid.cubridmigration.ui.database.SchemaFetcherWithProgress;
 import com.cubrid.cubridmigration.ui.history.MigrationReporter;
 import com.cubrid.cubridmigration.ui.message.Messages;
@@ -88,6 +92,7 @@ public class MigrationProgressUIController {
     protected MigrationProcessManager mpm;
 
     protected String[][] tableItems;
+	protected String[][] edgeItems;
 
     protected int expCountCache = 0;
 
@@ -209,6 +214,18 @@ public class MigrationProgressUIController {
                     return factor;
                 }
             }
+        } else if (event instanceof ImportGraphRecordsEvent) {
+			ImportGraphRecordsEvent ire = (ImportGraphRecordsEvent) event;
+			if (ire.isSuccess()) {
+				if (ire.getRecordCount() <= commitCount) {
+					impCountCache = impCountCache + ire.getRecordCount();
+				}
+				if (impCountCache >= commitCount) {
+					int factor = impCountCache / commitCount;
+					impCountCache = impCountCache % commitCount;
+					return factor;
+				}
+			}
         }
         return 0;
     }
@@ -279,6 +296,56 @@ public class MigrationProgressUIController {
         }
         return tableItems;
     }
+    
+    public String[][] getGraphVertexProgressTableInput() {
+		List<Vertex> expStcs = new ArrayList<Vertex>();
+		expStcs.addAll(config.getGraphDictionary().getMigratedVertexList());
+		int index = 0;
+		tableItems = new String[expStcs.size()][6];
+		for (Vertex v : expStcs) {
+			Table tbl;
+			
+			if (!v.isNameChanged()) {
+				tbl = config.getSrcTableSchema(v.getOwner(), v.getTableName());
+			} else {
+				tbl = config.getSrcTableSchema(v.getOwner(), v.getVertexLabel());
+			}
+			
+			if (config.isImplicitEstimate()) {
+				tableItems[index] = new String[] {v.getVertexLabel(), NA_STRING, NA_STRING, NA_STRING,
+						NA_STRING, v.getOwner()};
+			} else if (tbl == null || tbl.getTableRowCount() == 0) {
+				tableItems[index] = new String[] {v.getVertexLabel(), NA_STRING, NA_STRING, NA_STRING,
+						NA_STRING, v.getOwner()};
+			} else {
+				tableItems[index] = new String[] {v.getVertexLabel(),
+						String.valueOf(tbl.getTableRowCount()), "0", "0", "0%", v.getOwner()};
+			}
+			index++;
+		}
+		
+		return tableItems;
+	}
+	
+	public String[][] getGraphEdgeProgressTableInput() {
+		List<Edge> expStcs = new ArrayList<Edge>();
+		expStcs.addAll(config.getGraphDictionary().getMigratedEdgeList());
+		int index = 0;
+		edgeItems = new String[expStcs.size()][5];
+		for (Edge e : expStcs) {
+			Table tbl = config.getSrcTableSchema(e.getOwner(), e.getStartVertexName());
+			if (config.isImplicitEstimate()) {
+				edgeItems[index] = new String[] {e.getStartVertexName(), e.getEndVertexName(), e.getEdgeLabel(), NA_STRING, e.getOwner()};
+			} else if (tbl == null || tbl.getTableRowCount() == 0) {
+				edgeItems[index] = new String[] {e.getStartVertexName(), e.getEndVertexName(), e.getEdgeLabel(), NA_STRING, e.getOwner()};
+			} else {
+				edgeItems[index] = new String[] {e.getStartVertexName(), e.getEndVertexName(), e.getEdgeLabel(), "0", e.getOwner()};
+			}
+			index++;
+		}
+		
+		return edgeItems;
+	}
 
     /**
      * @return the progress bar's total progress value
@@ -336,7 +403,10 @@ public class MigrationProgressUIController {
         } else if (event instanceof ImportSQLsEvent) {
             ImportSQLsEvent ire = (ImportSQLsEvent) event;
             return !ire.isSuccess();
-        }
+        } else if (event instanceof ImportGraphRecordsEvent) {
+			ImportGraphRecordsEvent ire = (ImportGraphRecordsEvent) event;
+			return !ire.isSuccess();
+		}
         return event instanceof MigrationErrorEvent;
     }
 
@@ -350,7 +420,8 @@ public class MigrationProgressUIController {
     public boolean ifShouldUpdateExportStatus(MigrationEvent event) {
         return (event instanceof ExportRecordsEvent)
                 || (event instanceof ExportCSVEvent)
-                || (event instanceof ExportSQLEvent);
+                || (event instanceof ExportSQLEvent)
+                || (event instanceof ExportGraphRecordEvent) ;
     }
 
     /**
@@ -370,6 +441,9 @@ public class MigrationProgressUIController {
         if (event instanceof ImportRecordsEvent) {
             return ((ImportRecordsEvent) event).isSuccess();
         }
+        if (event instanceof ImportGraphRecordsEvent) {
+			return ((ImportGraphRecordsEvent) event).isSuccess();
+		}
         return false;
     }
 
@@ -530,6 +604,48 @@ public class MigrationProgressUIController {
         }
         return item;
     }
+    
+    public String[] updateEdgeExpData(String tableName, long exp) {
+		if (exp <= 0) {
+			return new String[] {};
+		}
+		for (String[] item : edgeItems) {
+			if (item[0].equals(tableName)) {
+				return getEdgeItemForExpData(exp, item);
+			}
+		}
+		return new String[] {};
+	}
+	
+	public String[] updateEdgeExpData(String owner, String tableName, long exp) {
+		if (exp <= 0) {
+			return new String[] {};
+		}
+		for (String[] item : edgeItems) {
+			
+			// for Single Schema 
+			if (item[3] == null || "null".equalsIgnoreCase(item[3])) {
+				return updateEdgeExpData(tableName, exp);
+			}
+			
+			if (item[0].equals(tableName) && item[3].equalsIgnoreCase(owner)) {
+				return getEdgeItemForExpData(exp, item);
+			}
+		}
+		return new String[] {};
+	}
+	
+	private String[] getEdgeItemForExpData(long exp, String[] item) {
+		long newExp = getCellValue(item[2]) + exp;
+		item[2] = String.valueOf(newExp);
+		if (!config.isImplicitEstimate()) {
+			long oldimp = getCellValue(item[3]);
+			item[4] = String.valueOf(Math.round(100 * (newExp + oldimp)
+					/ (2 * getCellValue(item[1]))))
+					+ "%";
+		}
+		return item;
+	}
 
     /**
      * Update import count of table
@@ -580,6 +696,35 @@ public class MigrationProgressUIController {
         }
         return item;
     }
+    
+    public String[] updateEdgeImpData(String EdgeFKName, long imp) {
+		for (String[] item : edgeItems) {
+			if (item[2].equals(EdgeFKName)) {
+				return getEdgeItemForImpData(imp, item);
+			}
+		}
+		return new String[] {};
+	}
+	
+	public String[] updateEdgeImpData(String owner, String EdgeFKName, long imp) {
+		
+		for (String[] item : edgeItems) {
+			// for Single Schema
+			if (item[4] == null || "null".equalsIgnoreCase(item[4])) {
+				return updateEdgeImpData(EdgeFKName, imp);
+			}
+			if (item[2].equals(EdgeFKName) && item[4].equalsIgnoreCase(owner)) {
+				return getEdgeItemForImpData(imp, item);
+			}
+		}
+		return new String[] {};
+	}
+	
+	private String[] getEdgeItemForImpData(long imp, String[] item) {
+		long newImp = getCellValue(item[3]) + imp;
+		item[3] = String.valueOf(newImp);
+		return item;
+	}
 
     /** Update the table's row count in a progress dialog. */
     public void updateTableRowCount() {

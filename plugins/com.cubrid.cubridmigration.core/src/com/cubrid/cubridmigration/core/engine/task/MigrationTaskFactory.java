@@ -63,6 +63,8 @@ import com.cubrid.cubridmigration.core.engine.task.exp.FKExportTask;
 import com.cubrid.cubridmigration.core.engine.task.exp.FunctionExportTask;
 import com.cubrid.cubridmigration.core.engine.task.exp.GrantExportTask;
 import com.cubrid.cubridmigration.core.engine.task.exp.GrantNoSupportExportTask;
+import com.cubrid.cubridmigration.core.engine.task.exp.GraphEdgeExportTask;
+import com.cubrid.cubridmigration.core.engine.task.exp.GraphVertexExportTask;
 import com.cubrid.cubridmigration.core.engine.task.exp.IndexExportTask;
 import com.cubrid.cubridmigration.core.engine.task.exp.PKExportTask;
 import com.cubrid.cubridmigration.core.engine.task.exp.PlcsqlFunctionBodyExportTask;
@@ -91,6 +93,12 @@ import com.cubrid.cubridmigration.core.engine.task.imp.ExecuteSQLTask;
 import com.cubrid.cubridmigration.core.engine.task.imp.FKImportTask;
 import com.cubrid.cubridmigration.core.engine.task.imp.FunctionImportTask;
 import com.cubrid.cubridmigration.core.engine.task.imp.GrantImportTask;
+import com.cubrid.cubridmigration.core.engine.task.imp.GraphEdgeCreateImportTask;
+import com.cubrid.cubridmigration.core.engine.task.imp.GraphEdgeHeaderImportTask;
+import com.cubrid.cubridmigration.core.engine.task.imp.GraphEdgeImportTask;
+import com.cubrid.cubridmigration.core.engine.task.imp.GraphVertexCreateImportTask;
+import com.cubrid.cubridmigration.core.engine.task.imp.GraphVertexHeaderImportTask;
+import com.cubrid.cubridmigration.core.engine.task.imp.GraphVertexImportTask;
 import com.cubrid.cubridmigration.core.engine.task.imp.IndexImportTask;
 import com.cubrid.cubridmigration.core.engine.task.imp.PKImportTask;
 import com.cubrid.cubridmigration.core.engine.task.imp.PlcsqlFunctionBodyImportTask;
@@ -100,6 +108,7 @@ import com.cubrid.cubridmigration.core.engine.task.imp.PlcsqlProcedureBodyImport
 import com.cubrid.cubridmigration.core.engine.task.imp.PlcsqlProcedureHeaderImportTask;
 import com.cubrid.cubridmigration.core.engine.task.imp.PlcsqlProcedureSourceAndDropDDLTask;
 import com.cubrid.cubridmigration.core.engine.task.imp.ProcedureImportTask;
+import com.cubrid.cubridmigration.core.engine.task.imp.QuickScriptImportTask;
 import com.cubrid.cubridmigration.core.engine.task.imp.RecordImportTask;
 import com.cubrid.cubridmigration.core.engine.task.imp.SQLImportTask;
 import com.cubrid.cubridmigration.core.engine.task.imp.SchemaFileListTask;
@@ -112,6 +121,8 @@ import com.cubrid.cubridmigration.core.engine.task.imp.UpdateAutoIncColCurrentVa
 import com.cubrid.cubridmigration.core.engine.task.imp.UpdateStatisticsTask;
 import com.cubrid.cubridmigration.core.engine.task.imp.ViewAlterImportTask;
 import com.cubrid.cubridmigration.core.engine.task.imp.ViewSchemaImportTask;
+import com.cubrid.cubridmigration.graph.dbobj.Edge;
+import com.cubrid.cubridmigration.graph.dbobj.Vertex;
 
 import java.util.List;
 
@@ -811,4 +822,59 @@ public class MigrationTaskFactory {
         initImportTask(task);
         return task;
     }
+    
+    public GraphVertexExportTask createVertexExportTask(Vertex v) {
+		GraphVertexExportTask task = new GraphVertexExportTask(context, v);
+		initExportTask(task, true);
+		return task;
+	}
+	
+    public ImportTask createImportVertexTask(Vertex v) {
+        ImportTask task = new GraphVertexCreateImportTask(v);
+        initImportTask(task);
+        return new ImportDataTaskDecorator(context, task);
+    }
+    
+	public ImportTask createImportVertexRecordsTask(Vertex v, List<Record> recordsTobeImport) {
+		ImportTask task = new GraphVertexImportTask(v, recordsTobeImport);
+		initImportTask(task);
+		return new ImportDataTaskDecorator(context, task);
+	}
+	
+	public GraphEdgeExportTask GraphEdgeExportTask(Edge e) {
+		GraphEdgeExportTask task = new GraphEdgeExportTask(context, e);
+		initExportTask(task, true);
+		return task;
+	}
+	
+	public ImportTask createImportEdgeTask(Edge e) {
+        ImportTask task = new GraphEdgeCreateImportTask(e);
+        initImportTask(task);
+        return new ImportDataTaskDecorator(context, task);
+    }
+	
+	public ImportTask createImportEdgeRecordsTask(Edge e, List<Record> recordsTobeImport) {
+		ImportTask task = new GraphEdgeImportTask(e, recordsTobeImport);
+		initImportTask(task);
+		return new ImportDataTaskDecorator(context, task);
+	}
+	
+	public ImportTask createQuickScriptTask() {
+		ImportTask task = new QuickScriptImportTask();
+		initImportTask(task);
+		return task;
+	}
+	
+	public ImportTask createEdgeCSVHeaderTask(Edge e) {
+		ImportTask task = new GraphEdgeHeaderImportTask(e);
+		initImportTask(task);
+		return task;
+	}
+	
+	public ImportTask createVertexCSVHeaderTask(Vertex v) {
+		ImportTask task = new GraphVertexHeaderImportTask(v);
+		initImportTask(task);
+		return task;
+	}
+	
 }
