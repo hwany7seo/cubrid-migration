@@ -52,7 +52,7 @@ public class StartEdgeTableEvent extends
 	 */
 	public String toString() {
 		return "Begin to export records of table[" + edge.getEdgeLabel()
-				+ "] for GraphDB Edges.";
+				+ "] type : " + edge.getEdgeType() + " for GraphDB Edges.";
 	}
 
 	/**

@@ -40,29 +40,28 @@ import com.cubrid.cubridmigration.core.engine.task.ExportTask;
 import com.cubrid.cubridmigration.core.engine.task.ImportTask;
 import com.cubrid.cubridmigration.graph.dbobj.Edge;
 
-public class GraphEdgeExportTask extends
+public class GraphEdgeSimpleExportTask extends
 		ExportTask {
 
 	protected Edge edge;
 	protected final MigrationContext mrManager;
+	protected int fkIndex;
 
-	public GraphEdgeExportTask(MigrationContext mrManager, Edge e) {
+	public GraphEdgeSimpleExportTask(MigrationContext mrManager, Edge e, int fkIndex) {
 		this.mrManager = mrManager;
 		this.edge = e;
+		this.fkIndex = fkIndex;
 	}
 
 	/**
 	 * Export source table's records
 	 */
 	protected void executeExportTask() {
-		exporter.exportGraphEdgeRecords(edge, new RecordExportedListener() {
+		exporter.exportGraphEdgeRecords(edge, fkIndex, new RecordExportedListener() {
 			public void processRecords(String sourceTableName, List<Record> records) {
-				int reccordCount = 0;
-				if (edge.getEdgeType() == Edge.JOINTABLE_TYPE && edge.getEdgeType() == Edge.JOIN_TWO_WAY_TYPE) {
-					reccordCount = records.size();
-					eventHandler.handleEvent(new ExportGraphRecordEvent(edge, reccordCount));
-				} 
-				ImportTask task = taskFactory.createImportEdgeRecordsTask(edge, records);
+				int reccordCount = records.size();
+				eventHandler.handleEvent(new ExportGraphRecordEvent(edge, reccordCount, fkIndex));
+				ImportTask task = taskFactory.createImportEdgeRecordsTask(edge, records, fkIndex);
 
 				importTaskExecutor = mrManager.getImportRecordExecutor();
 				importTaskExecutor.execute((Runnable) task);

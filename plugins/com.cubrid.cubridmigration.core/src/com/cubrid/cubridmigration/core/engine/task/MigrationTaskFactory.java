@@ -63,7 +63,8 @@ import com.cubrid.cubridmigration.core.engine.task.exp.FKExportTask;
 import com.cubrid.cubridmigration.core.engine.task.exp.FunctionExportTask;
 import com.cubrid.cubridmigration.core.engine.task.exp.GrantExportTask;
 import com.cubrid.cubridmigration.core.engine.task.exp.GrantNoSupportExportTask;
-import com.cubrid.cubridmigration.core.engine.task.exp.GraphEdgeExportTask;
+import com.cubrid.cubridmigration.core.engine.task.exp.GraphEdgeJoinExportTask;
+import com.cubrid.cubridmigration.core.engine.task.exp.GraphEdgeSimpleExportTask;
 import com.cubrid.cubridmigration.core.engine.task.exp.GraphVertexExportTask;
 import com.cubrid.cubridmigration.core.engine.task.exp.IndexExportTask;
 import com.cubrid.cubridmigration.core.engine.task.exp.PKExportTask;
@@ -841,8 +842,14 @@ public class MigrationTaskFactory {
 		return new ImportDataTaskDecorator(context, task);
 	}
 	
-	public GraphEdgeExportTask GraphEdgeExportTask(Edge e) {
-		GraphEdgeExportTask task = new GraphEdgeExportTask(context, e);
+	public GraphEdgeSimpleExportTask GraphSimpleEdgeExportTask(Edge e, int fkIndex) {
+	    GraphEdgeSimpleExportTask task = new GraphEdgeSimpleExportTask(context, e, fkIndex);
+        initExportTask(task, true);
+        return task;
+    }
+	
+	public GraphEdgeJoinExportTask GraphJoinEdgeExportTask(Edge e) {
+		GraphEdgeJoinExportTask task = new GraphEdgeJoinExportTask(context, e);
 		initExportTask(task, true);
 		return task;
 	}
@@ -853,8 +860,8 @@ public class MigrationTaskFactory {
         return new ImportDataTaskDecorator(context, task);
     }
 	
-	public ImportTask createImportEdgeRecordsTask(Edge e, List<Record> recordsTobeImport) {
-		ImportTask task = new GraphEdgeImportTask(e, recordsTobeImport);
+	public ImportTask createImportEdgeRecordsTask(Edge e, List<Record> recordsTobeImport, int fkIndex) {
+		ImportTask task = new GraphEdgeImportTask(e, recordsTobeImport, fkIndex);
 		initImportTask(task);
 		return new ImportDataTaskDecorator(context, task);
 	}

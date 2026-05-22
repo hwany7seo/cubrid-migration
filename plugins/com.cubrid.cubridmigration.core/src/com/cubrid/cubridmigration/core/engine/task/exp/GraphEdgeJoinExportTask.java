@@ -27,33 +27,57 @@
  * OF SUCH DAMAGE. 
  *
  */
-package com.cubrid.cubridmigration.core.engine.task.imp;
+package com.cubrid.cubridmigration.core.engine.task.exp;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.cubrid.cubridmigration.core.dbobject.Record;
+import com.cubrid.cubridmigration.core.engine.MigrationContext;
+import com.cubrid.cubridmigration.core.engine.RecordExportedListener;
+import com.cubrid.cubridmigration.core.engine.event.ExportGraphRecordEvent;
+import com.cubrid.cubridmigration.core.engine.event.StartEdgeTableEvent;
+import com.cubrid.cubridmigration.core.engine.task.ExportTask;
 import com.cubrid.cubridmigration.core.engine.task.ImportTask;
 import com.cubrid.cubridmigration.graph.dbobj.Edge;
 
-public class GraphEdgeImportTask extends
-		ImportTask {
+public class GraphEdgeJoinExportTask extends
+		ExportTask {
 
-	private final Edge edge;
-	private final List<Record> records;
-	private final int fkIndex;
+	protected Edge edge;
+	protected final MigrationContext mrManager;
 
-	public GraphEdgeImportTask(Edge e, List<Record> records, int fkIndex) {
+	public GraphEdgeJoinExportTask(MigrationContext mrManager, Edge e) {
+		this.mrManager = mrManager;
 		this.edge = e;
-		this.fkIndex = fkIndex;
-		if (records != null) {
-			this.records = new ArrayList<Record>(records);
-		} else {
-			this.records = null;
-		}
 	}
 
-	protected void executeImport() {
-		importer.importEdges(edge, records, fkIndex);
+	/**
+	 * Export source table's records
+	 */
+	protected void executeExportTask() {
+		exporter.exportGraphEdgeRecords(edge, -1, new RecordExportedListener() {
+			public void processRecords(String sourceTableName, List<Record> records) {
+				int reccordCount = 0;
+				reccordCount = records.size();
+				eventHandler.handleEvent(new ExportGraphRecordEvent(edge, reccordCount));
+				ImportTask task = taskFactory.createImportEdgeRecordsTask(edge, records, -1);
+
+				importTaskExecutor = mrManager.getImportRecordExecutor();
+				importTaskExecutor.execute((Runnable) task);
+				mrManager.getStatusMgr().addExpCount(null, edge.getEdgeLabel(), reccordCount);
+			}
+
+			public void startExportTable(String tableName) {
+				eventHandler.handleEvent(new StartEdgeTableEvent(edge));
+			}
+
+			public void endExportTable(String tableName) {
+				mrManager.getStatusMgr().setExpFinished(null, edge.getEdgeLabel());
+			}
+		});
+	}
+
+	public Edge getEdge() {
+		return edge;
 	}
 }

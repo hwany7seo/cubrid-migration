@@ -204,7 +204,7 @@ public interface IMigrationImporter {
     
 	public void createEdge(Edge e);
 	
-    public int importEdges(Edge e, List<Record> records);
+    public int importEdges(Edge e, List<Record> records, int fkIndex);
     
     public int importEdgeCsv(Edge e);
     

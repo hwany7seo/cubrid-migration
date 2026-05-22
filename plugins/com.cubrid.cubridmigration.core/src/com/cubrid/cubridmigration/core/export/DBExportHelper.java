@@ -893,6 +893,21 @@ public abstract class DBExportHelper implements IDependOnDatabaseType {
 //      }
         return buf.toString();
     }
+    
+    public String getGraphCoraDBSelectSQL(Edge e, int idx) {
+        StringBuffer buf = new StringBuffer(256);
+        buf.append("SELECT /*+ use_merge */");
+        buf.append(" n.").append(e.getStartVertex().getUniqueIDName()).append(",");
+        buf.append(" m.").append(e.getEndVertex().getUniqueIDName());
+        buf.append(" FROM ");
+        buf.append(e.getStartVertexName()).append(" n");
+        buf.append(" JOIN ").append(e.getEndVertexName()).append(" m");
+        buf.append(" ON ");
+        buf.append("n.").append(e.getFKColumnNames().get(idx)).append(" = ");
+        buf.append("m.").append(e.getREFColumnNames(e.getFKColumnNames().get(idx))).append(" ");
+
+        return buf.toString();
+    }
 
     public String getGraphSelectSQL(Edge e) {
         StringBuffer buf = new StringBuffer(256);

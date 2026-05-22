@@ -305,8 +305,7 @@ public class MYSQLDumpXMLExporter extends MigrationExporter {
 	}
 
 	@Override
-	public void exportGraphEdgeRecords(Edge e, RecordExportedListener oneNewRecord) {
-		// TODO Auto-generated method stub
+	public void exportGraphEdgeRecords(Edge e, int fkIndex, RecordExportedListener oneNewRecord) {
 		
 	}
 }

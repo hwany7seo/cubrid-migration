@@ -544,7 +544,7 @@ public class JDBCExporter extends MigrationExporter {
 		}
 	}
 
-	public void exportGraphEdgeRecords(Edge e, RecordExportedListener newRecordProcessor) {
+	public void exportGraphEdgeRecords(Edge e, int fkIndex, RecordExportedListener newRecordProcessor) {
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("[IN]exportGraphEdgeRecords()");
 		}
@@ -563,12 +563,7 @@ public class JDBCExporter extends MigrationExporter {
 			return;
 		}
 		
-		try {
-			newRecordProcessor.startExportTable(e.getEdgeLabel());
-			newRecordProcessor.processRecords(e.getEdgeLabel(), null);
-		} finally {
-			newRecordProcessor.endExportTable(e.getEdgeLabel());
-		}
+		exportGraphSimpleEdgeRecords(e, newRecordProcessor, fkIndex);
 	}
 	
 	protected void exportGraphJoinTableEdgeRecordForCSV(Edge e, RecordExportedListener newRecordProcessor) {
@@ -769,6 +764,62 @@ public class JDBCExporter extends MigrationExporter {
 		return buffer.toString();
 	}
 	
+	protected void exportGraphSimpleEdgeRecords(Edge e, RecordExportedListener newRecordProcessor, int fkIndx) { 
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("[IN]exportGraphVertexRecords()");
+        }
+        Table sTable = config.getTargetTableSchema(e.getOwner(), e.getEdgeLabel());
+        if (sTable == null) {
+            throw new NormalMigrationException("Table " + e.getEdgeLabel() + " was not found.");
+        }
+        final PK srcPK = sTable.getPk();
+        Connection conn = connManager.getTargetConnection(); //NOPMD
+        try {
+            final DBExportHelper expHelper = getSrcDBExportHelper();
+            DBExportHelper graphExHelper = getExportHelperType(expHelper);
+            PK pk = graphExHelper.supportFastSearchWithPK(conn) ? srcPK : null;
+            newRecordProcessor.startExportTable(e.getEdgeLabel());
+            List<Record> records = new ArrayList<Record>();
+            long totalExported = 0L;
+            long intPageCount = config.getPageFetchCount();
+            String sql = graphExHelper.getGraphCoraDBSelectSQL(e, fkIndx);
+            while (true) {
+                if (interrupted) {
+                    return;
+                }
+                long realPageCount = intPageCount;
+                if (!config.isImplicitEstimate()) {
+                    realPageCount = Math.min(sTable.getTableRowCount() - totalExported,
+                            intPageCount);
+                }
+                String pagesql;
+                
+                pagesql = graphExHelper.getPagedSelectSQL(sql, realPageCount, totalExported, pk);
+                
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("[SQL]PAGINATED=" + pagesql);
+                }
+                
+                long recordCountOfQuery;
+                
+                recordCountOfQuery = graphSimpleEdgeHandleSQL(conn, pagesql, e, sTable,
+                        records, newRecordProcessor);
+                totalExported = totalExported + recordCountOfQuery;                 
+                
+                //Stop fetching condition: no result;less then fetching count;great then total count
+                if (isLatestPage(sTable, totalExported, recordCountOfQuery)) {
+                    break;
+                }
+            }
+            if (!records.isEmpty()) {
+                newRecordProcessor.processRecords(e.getEdgeLabel(), records);
+            }
+        } finally {
+            newRecordProcessor.endExportTable(e.getEdgeLabel());
+            connManager.closeTar(conn);
+        }
+    }
+	
 	protected void exportGraphJoinEdgeRecords(Edge e, RecordExportedListener newRecordProcessor) { 
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("[IN]exportGraphVertexRecords()");
@@ -862,6 +913,43 @@ public class JDBCExporter extends MigrationExporter {
 			Closer.close(joc.getStmt());
 		}
 	}
+	
+	protected long graphSimpleEdgeHandleSQL(Connection conn, String sql, Edge edge, Table sTable, List<Record> records,
+            RecordExportedListener newRecsHandler) {
+        JDBCObjContainer joc = new JDBCObjContainer();
+        joc.setConn(conn);
+        try {
+            long totalExported = 0;
+            //Execute SQL with retry
+            joc = getResultSet(sql, null, joc);
+            if (joc.getRs() == null) {
+                return totalExported;
+            }
+            while (nextRecord(joc.getRs())) {
+                if (interrupted) {
+                    return totalExported;
+                }
+                totalExported++;
+                Record record;
+                
+//              if (config.targetIsCSV()) {
+//                  record = createGraphNewRecordForFkCSV(edge, edge.getColumnList(), joc.getRs());
+//              } else {
+                    record = createGraphNewRecord(sTable, edge.getColumnList(), joc.getRs());
+//              }
+                
+                if (record == null) {
+                    continue;
+                }
+                records.add(record);
+                handleGraphCommitForFkCSV(edge.getEdgeLabel(), newRecsHandler, edge, records);
+            }
+            return totalExported;
+        } finally {
+            Closer.close(joc.getRs());
+            Closer.close(joc.getStmt());
+        }
+    }
 	
 	protected long graphEdgeHandleSQL(Connection conn, String sql, Edge edge, Table sTable, List<Record> records,
 			RecordExportedListener newRecsHandler) {

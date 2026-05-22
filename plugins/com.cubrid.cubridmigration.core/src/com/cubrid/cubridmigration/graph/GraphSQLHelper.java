@@ -70,19 +70,20 @@ public class GraphSQLHelper extends SQLHelper {
     private String getCreateVertex(Vertex v) {
         StringBuffer buffer = new StringBuffer("CREATE VERTEX TABLE ");
         buffer.append(getQuotedObjName(v.getVertexLabel())).append(" (");
+        buffer.append(v.getUniqueIDName());
+        buffer.append(" BIGINT ");
+        buffer.append(" AUTO_INCREMENT ");
+        
         List<Column> columns = v.getColumnList();
         int len = columns.size();
         for (int i = 0; i < len; i++) {
             String columnName = columns.get(i).getName();
             String columnType = columns.get(i).getDataType();
-
-            if (i > 0) {
-                buffer.append(", ");
-            }
+            
+            buffer.append(", ");
 
             buffer.append(columnName).append(' ');
             buffer.append(columnType);
-
         }
         buffer.append(")");
         return buffer.toString();
@@ -92,6 +93,8 @@ public class GraphSQLHelper extends SQLHelper {
     private String getTargetInsertVertex(Vertex v) {
         int supportColumCount = 0;
         StringBuffer buffer = new StringBuffer("INSERT VERTEX INTO ").append(v.getVertexLabel()).append(" VALUES (");
+        buffer.append("NULL");
+        
         List<Column> columns = v.getColumnList();
         int len = columns.size();
         for (int i = 0; i < len; i++) {
@@ -101,10 +104,8 @@ public class GraphSQLHelper extends SQLHelper {
             }
 
             supportColumCount++;
-
-            if (i > 0) {
-                buffer.append(", ");
-            }
+            buffer.append(", ");
+            
             String columnName = columns.get(i).getName();
             columnName = columnName.replaceAll("\"", "");
             buffer.append(columnName).append(':');

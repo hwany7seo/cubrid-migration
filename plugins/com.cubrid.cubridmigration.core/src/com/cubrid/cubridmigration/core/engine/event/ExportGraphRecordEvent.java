@@ -38,18 +38,28 @@ public class ExportGraphRecordEvent extends
 	private final Vertex vertex;
 	private final Edge edge;
 	private final int recordCount;
+	private final int fkIndex;
 
 	public ExportGraphRecordEvent(Vertex vertex, int recordCount) {
 		this.vertex = vertex;
 		this.edge = null;
 		this.recordCount = recordCount;
+		this.fkIndex = -1;
 	}
 	
 	public ExportGraphRecordEvent(Edge edge, int recordCount) {
 		this.edge = edge;
 		this.vertex = null;
 		this.recordCount = recordCount;
+		this.fkIndex = -1;
 	}
+	
+	public ExportGraphRecordEvent(Edge edge, int recordCount, int fkIndex) {
+        this.edge = edge;
+        this.vertex = null;
+        this.recordCount = recordCount;
+        this.fkIndex = fkIndex;
+    }
 
 	public Vertex getVertex() {
 		return vertex;
@@ -80,15 +90,20 @@ public class ExportGraphRecordEvent extends
 			return "No record of table [" + name + "] For Graphdb to be exported.";
 		}
 		
+		StringBuffer sb = new StringBuffer();
+		
 		if (vertex != null) {
-			return new StringBuffer().append("Exported ").append(recordCount).append(
-					" Vertex records from table [").append(name).append(
-					"] successfully.").toString();
+			sb.append("Exported ").append(recordCount).append(" Vertex records from table [");
+			sb.append(name).append("] successfully.").toString();
 		} else {
-			return new StringBuffer().append("Exported ").append(recordCount).append(
-					" Edge records(FK) from table [").append(name).append(
-					"] successfully.").toString();
+			sb.append("Exported ").append(recordCount).append(" Edge records(FK)");
+			if (fkIndex >= 0) { 
+			    sb.append(")").append(fkIndex).append(")");
+			}
+			sb.append(" from table [").append(name).append("]");
+		    sb.append("type : ").append(edge.getEdgeType()).append(" successfully.").toString();
 		}
+		return sb.toString();
 	}
 
 	/**

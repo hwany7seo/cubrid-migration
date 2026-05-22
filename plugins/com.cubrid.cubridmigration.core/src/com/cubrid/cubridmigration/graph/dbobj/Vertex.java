@@ -63,12 +63,12 @@ public class Vertex extends DBObject {
 	        while (existingNames.contains(newColumnName)) {
 	            newColumnName = "_" + newColumnName;
 	        }
-	        Column newColumn = new Column();
-	        newColumn.setName(newColumnName);
-	        newColumn.setDataType("BIGINT");
+//	        Column newColumn = new Column();
+//	        newColumn.setName(newColumnName);
+//	        newColumn.setDataType("BIGINT");
 	        setUniqueIDName(newColumnName);
 	        
-	        columnList.add(0, newColumn);
+//	        columnList.add(0, newColumn);
 	    }
 		this.columnList = columnList;
 	}

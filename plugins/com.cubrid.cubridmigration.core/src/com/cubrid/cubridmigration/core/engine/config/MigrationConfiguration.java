@@ -640,7 +640,7 @@ public class MigrationConfiguration {
      * @param tt TargetTable
      */
     public void addTargetTableSchema(Table tt) {
-        if (srcCatalog != null) {
+        if (tarCatalog != null) {
             throw new RuntimeException("Schema was specified.");
         }
         targetTables.add(tt);
@@ -4813,7 +4813,7 @@ public class MigrationConfiguration {
     /**
      * set target catalog. target catalog can be null
      *
-     * @param tarCatalog
+     * @param   
      */
     public void setTarCatalog(Catalog tarCatalog) {
         this.tarCatalog = tarCatalog;

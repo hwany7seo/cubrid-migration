@@ -541,31 +541,26 @@ public class JDBCImporter extends Importer {
 
     @Override
     public int importVertexs(Vertex v, List<Record> records) {
-        // TODO Auto-generated method stub
         return 0;
     }
 
     @Override
     public void createEdge(Edge e) {
-        // TODO Auto-generated method stub
         return;
     }
 
     @Override
-    public int importEdges(Edge e, List<Record> records) {
-        // TODO Auto-generated method stub
+    public int importEdges(Edge e, List<Record> records, int fkIndex) {
         return 0;
     }
-
+    
     @Override
     public int importVertexsCsv(Vertex v) {
-        // TODO Auto-generated method stub
         return 0;
     }
 
     @Override
     public int importEdgeCsv(Edge e) {
-        // TODO Auto-generated method stub
         return 0;
     }
 }

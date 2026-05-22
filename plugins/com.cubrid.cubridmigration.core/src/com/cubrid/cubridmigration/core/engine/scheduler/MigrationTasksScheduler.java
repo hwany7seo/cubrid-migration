@@ -849,7 +849,9 @@ public class MigrationTasksScheduler {
 
 		for (Edge e : migratedEdgeList) {
 			if (e.getEdgeType() == Edge.SECOND_FK_TYPE) {
-				executeTask2(taskFactory.GraphEdgeExportTask(e));
+			    for (int i = 0; i < e.getfkCol2RefMappingSize(); i++) {
+			        executeTask2(taskFactory.GraphSimpleEdgeExportTask(e, i));
+			    }
 			}
 		}
 	}
@@ -861,7 +863,9 @@ public class MigrationTasksScheduler {
 
 		for (Edge e : migratedEdgeList) {
 			if (e.getEdgeType() == Edge.INTERMEDIATE_FK_TYPE) {
-				executeTask2(taskFactory.GraphEdgeExportTask(e));
+			    for (int i = 0; i < e.getfkCol2RefMappingSize(); i++) {
+                    executeTask2(taskFactory.GraphSimpleEdgeExportTask(e, i));
+                }
 			}
 		}
 	}
@@ -873,7 +877,9 @@ public class MigrationTasksScheduler {
 
 		for (Edge e : migratedEdgeList) {
 			if (e.getEdgeType() == Edge.RECURSIVE_TYPE) {
-				executeTask2(taskFactory.GraphEdgeExportTask(e));
+			    for (int i = 0; i < e.getfkCol2RefMappingSize(); i++) {
+                    executeTask2(taskFactory.GraphSimpleEdgeExportTask(e, i));
+                }
 			}
 		}
 	}
@@ -886,7 +892,7 @@ public class MigrationTasksScheduler {
 
 		for (Edge e : migratedEdgeList) {
 			if (e.getEdgeType() == Edge.JOINTABLE_TYPE) {
-				executeTask2(taskFactory.GraphEdgeExportTask(e));
+				executeTask2(taskFactory.GraphJoinEdgeExportTask(e));
 			}
 		}
 	}
@@ -898,9 +904,11 @@ public class MigrationTasksScheduler {
 		List<Edge> migratedEdgeList = gdbDict.getMigratedEdgeList();
 
 		for (Edge e : migratedEdgeList) {
-			if (e.getEdgeType() == Edge.CUSTOM_TYPE) {
-				executeTask2(taskFactory.GraphEdgeExportTask(e));
-			}
+		    if (e.getEdgeType() == Edge.CUSTOM_TYPE) {
+    		    for (int i = 0; i < e.getfkCol2RefMappingSize(); i++) {
+                    executeTask2(taskFactory.GraphJoinEdgeExportTask(e));
+                }
+		    }
 		}
 	}
 
@@ -912,7 +920,7 @@ public class MigrationTasksScheduler {
 
 		for (Edge e : migratedEdgeList) {
 			if (e.getEdgeType() == Edge.TWO_WAY_TYPE || e.getEdgeType() == Edge.JOIN_TWO_WAY_TYPE) {
-				executeTask2(taskFactory.GraphEdgeExportTask(e));
+				executeTask2(taskFactory.GraphJoinEdgeExportTask(e));
 			}
 		}
 	}

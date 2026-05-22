@@ -27,7 +27,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.TableColumn;
+import org.slf4j.Logger;
 
+import com.cubrid.common.log.LogUtil;
 import com.cubrid.cubridmigration.core.dbobject.Catalog;
 import com.cubrid.cubridmigration.core.dbobject.Column;
 import com.cubrid.cubridmigration.core.dbobject.FK;
@@ -48,6 +50,7 @@ import com.cubrid.cubridmigration.ui.wizard.page.MigrationWizardPage;
 //GDB select table page.
 public class GraphTableSelectPage extends MigrationWizardPage {
 
+    private static final Logger LOG = LogUtil.getLogger(GraphTableSelectPage.class);
 	private TableViewer tableViewer;
 	private TableViewer columnViewer;
 	private Map<String, List<Column>> columnData = new HashMap<String, List<Column>>();
@@ -247,21 +250,29 @@ public class GraphTableSelectPage extends MigrationWizardPage {
 			setErrorMessage(null);
             mw.refreshWizardStatus();
 			
-			Catalog sourceCatalog = mw.getSourceCatalog();
-			// Temp Code (should be rewritten for GraphDB.)
-			cfg.setSrcCatalog(sourceCatalog, !mw.isLoadMigrationScript());
-			
-			if (!cfg.hasObjects2Export()) {
-				cfg.setAll(true);
-			}
-			
-			List<Schema> schemaList = sourceCatalog.getSchemas();
-			
-			clearData();
-	//		showTableInformationForGdbms(schemaList);
-			showTableViewerData(schemaList);
-			
-			makeColumnViewerData(schemaList);
+            try {
+    			Catalog sourceCatalog = mw.getSourceCatalog();
+    			Catalog targetCatalog = mw.getTargetCatalog();
+    			// Temp Code (should be rewritten for GraphDB.)
+    			cfg.setSrcCatalog(sourceCatalog, isFirstVisible && !mw.isLoadMigrationScript());
+    			cfg.setTarCatalog(targetCatalog);
+    			
+    			if (!cfg.hasObjects2Export()) {
+    				cfg.setAll(true);
+    			}
+    			
+    	         List<Schema> schemaList = sourceCatalog.getSchemas();
+    	            
+	            clearData();
+//	            showTableInformationForGdbms(schemaList);
+	            showTableViewerData(schemaList);
+	            
+	            makeColumnViewerData(schemaList);
+
+            } catch (Exception e) {
+                LOG.error(LogUtil.getExceptionString(e));
+                throw e;
+            }
 			
 			isFirstVisible = false;
 		}

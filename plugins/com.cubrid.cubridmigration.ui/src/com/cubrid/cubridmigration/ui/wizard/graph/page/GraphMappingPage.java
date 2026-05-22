@@ -61,8 +61,12 @@ import org.eclipse.zest.core.widgets.GraphNode;
 import org.eclipse.zest.core.widgets.ZestStyles;
 import org.eclipse.zest.layouts.LayoutAlgorithm;
 import org.eclipse.zest.layouts.interfaces.LayoutContext;
+import org.slf4j.Logger;
 
+import com.cubrid.common.log.LogUtil;
+import com.cubrid.cubridmigration.core.dbobject.Catalog;
 import com.cubrid.cubridmigration.core.dbobject.Column;
+import com.cubrid.cubridmigration.core.dbtype.DatabaseType;
 import com.cubrid.cubridmigration.core.engine.config.MigrationConfiguration;
 import com.cubrid.cubridmigration.graph.dbobj.Edge;
 import com.cubrid.cubridmigration.graph.dbobj.GraphDictionary;
@@ -78,6 +82,7 @@ import com.cubrid.cubridmigration.ui.wizard.dialog.GraphDateTimeFilterDialog;
 import com.cubrid.cubridmigration.ui.wizard.dialog.GraphEdgeSettingDialog;
 import com.cubrid.cubridmigration.ui.wizard.dialog.GraphRenamingDialog;
 import com.cubrid.cubridmigration.ui.wizard.page.MigrationWizardPage;
+import com.cubrid.cubridmigration.ui.wizard.page.ObjectMappingPage;
 
 //GDB override ObjectMappingPage. GraphMappingPage seems to have a similar structure to ObjectMappingPage
 
@@ -88,6 +93,7 @@ enum workTypeEnum {
 }
 
 public class GraphMappingPage extends MigrationWizardPage {
+    private static final Logger LOG = LogUtil.getLogger(GraphMappingPage.class);
 	/** ELK layered layout algorithm id (see org.eclipse.elk.alg.layered) */
 	private static final String ELK_LAYERED_ALGORITHM = "org.eclipse.elk.layered";
 	private static final RecursiveGraphLayoutEngine ELK_LAYOUT_ENGINE = new RecursiveGraphLayoutEngine();
@@ -1196,11 +1202,24 @@ public class GraphMappingPage extends MigrationWizardPage {
 		
 		setErrorMessage(null);
 		
-		gdbDict = mConfig.getGraphDictionary();
+		try {
+//            Catalog sourceCatalog = mw.getSourceCatalog();
+//            Catalog targetCatalog = mw.getTargetCatalog();
+//            
+//            final MigrationConfiguration cfg = mw.getMigrationConfig();
+//            cfg.setSrcCatalog(sourceCatalog, isFirstVisible);
+//            cfg.setTarCatalog(targetCatalog);
+            
+            gdbDict = mConfig.getGraphDictionary();
+            gdbDict.printVertexAndEdge();
+            showGraphData(gdbDict.getMigratedVertexList());
+            
+		} catch (Exception e) {
+		    LOG.error(LogUtil.getExceptionString(e));
+            throw e;
+        }
 		
-		gdbDict.printVertexAndEdge();
-		
-		showGraphData(gdbDict.getMigratedVertexList());
+		isFirstVisible = false;
 	}
 	
 	protected void handlePageLeaving(PageChangingEvent event) {
