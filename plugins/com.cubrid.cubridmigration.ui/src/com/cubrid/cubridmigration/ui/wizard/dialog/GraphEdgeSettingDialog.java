@@ -30,13 +30,17 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
+import com.cubrid.common.ui.listener.CUBRIDNameVerifyListener;
+import com.cubrid.cubridmigration.core.datatype.DataTypeConstant;
 import com.cubrid.cubridmigration.core.dbobject.Column;
 import com.cubrid.cubridmigration.core.engine.config.MigrationConfiguration;
+import com.cubrid.cubridmigration.cubrid.CUBRIDDataTypeHelper;
 import com.cubrid.cubridmigration.graph.dbobj.Edge;
 import com.cubrid.cubridmigration.graph.dbobj.GraphDictionary;
 import com.cubrid.cubridmigration.graph.dbobj.Vertex;
 import com.cubrid.cubridmigration.graph.dbobj.WorkBuffer;
 import com.cubrid.cubridmigration.graph.dbobj.WorkController;
+import com.cubrid.cubridmigration.ui.message.Messages;
 
 public class GraphEdgeSettingDialog extends Dialog {
 	
@@ -125,7 +129,7 @@ public class GraphEdgeSettingDialog extends Dialog {
 	protected void constrainShellSize() {
 		super.constrainShellSize();
 		getShell().setMinimumSize(700, 500);
-		getShell().setText("Create New Edge");
+		getShell().setText(Messages.graphEdgeSettingTitle);
 	}
 	
 	@Override
@@ -145,7 +149,7 @@ public class GraphEdgeSettingDialog extends Dialog {
 		
 		Label lblStartVertex = new Label(startVertexContainer, SWT.NONE);
 		lblStartVertex.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
-		lblStartVertex.setText("start vertex: ");
+		lblStartVertex.setText(Messages.graphEdgeSettingStartVertexLabel);
 //		
 		Text lblStartVertexName = new Text(startVertexContainer, SWT.SINGLE | SWT.READ_ONLY);
 		lblStartVertex.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
@@ -157,7 +161,7 @@ public class GraphEdgeSettingDialog extends Dialog {
 //
 		Label lblEndVertex = new Label(endVertexContainer, SWT.NONE);
 		lblEndVertex.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
-		lblEndVertex.setText("end vertex: ");
+		lblEndVertex.setText(Messages.graphEdgeSettingEndVertexLabel);
 		
 		Text lblEndVertexName = new Text(endVertexContainer, SWT.SINGLE | SWT.READ_ONLY);
 		lblEndVertexName.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
@@ -169,11 +173,13 @@ public class GraphEdgeSettingDialog extends Dialog {
 		
 		Label lblEdgeName = new Label(edgeNameContainer, SWT.NONE);
 		lblEdgeName.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, true, false));
-		lblEdgeName.setText("set edge name: ");
+		lblEdgeName.setText(Messages.graphEdgeSettingEdgeName);
 		
 		txtEdgeName = new Text(edgeNameContainer, SWT.BORDER);
 		txtEdgeName.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		txtEdgeName.setTextLimit(CUBRIDDataTypeHelper.DB_OBJ_NAME_MAX_LENGTH);
 		txtEdgeName.setText("");
+		txtEdgeName.addVerifyListener(new CUBRIDNameVerifyListener());
 		
 		Group tableContainer = new Group(composite, SWT.NONE);
 		tableContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -438,7 +444,12 @@ public class GraphEdgeSettingDialog extends Dialog {
 		return true;
 	}
 	
-	private void saveData() {
+	private boolean saveData() {
+	    if (txtEdgeName.getText().isEmpty()) {
+	        MessageDialog.openError(getShell(), "warning", "Edge Name is Empty");
+	        return false;
+	    }
+	    
 		for (ColumnData col : columnDataList) {
 			if (col.getEndColumnName().equals("")) {
 				continue;
@@ -467,6 +478,25 @@ public class GraphEdgeSettingDialog extends Dialog {
 				
 				newEdge.addColumn(startCol);
 				newEdge.addColumn(endCol);
+			} else {
+			    if (newEdge.testEdgeProperty) {
+                    Column addCol = new Column("start_label");
+                    addCol.setDataType("VARCHAR(255)");
+                    addCol.setJdbcIDOfDataType(DataTypeConstant.CUBRID_DT_VARCHAR);
+                    newEdge.addColumn(addCol);
+                    addCol = new Column("start_id");
+                    addCol.setDataType("BIGINT");
+                    addCol.setJdbcIDOfDataType(DataTypeConstant.CUBRID_DT_BIGINT);
+                    newEdge.addColumn(addCol);
+                    addCol = new Column("end_label");
+                    addCol.setDataType("VARCHAR(255)");
+                    addCol.setJdbcIDOfDataType(DataTypeConstant.CUBRID_DT_VARCHAR);
+                    newEdge.addColumn(addCol);
+                    addCol = new Column("end_id");
+                    addCol.setDataType("BIGINT");
+                    addCol.setJdbcIDOfDataType(DataTypeConstant.CUBRID_DT_BIGINT);
+                    newEdge.addColumn(addCol);
+			    }
 			}
 			
 			startVertex.getEndVertexes().add(endVertex);
@@ -475,15 +505,18 @@ public class GraphEdgeSettingDialog extends Dialog {
 			
 			gdbDict.addMigratedEdgeList(newEdge);
 		}
+		return true;
 	}
 	
 	@Override
 	protected void okPressed() {
-		// TODO Auto-generated method stub
-		// return edge to graph view
-		
 		boolean flag = checkStatus();
-		saveData();
+		boolean ret = saveData();
+
+		if (!ret) {
+			return;
+		}
+
 		if (flag) {
 			super.okPressed();
 		}

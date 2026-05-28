@@ -80,7 +80,7 @@ public class GraphMigrationWizard extends MigrationWizard {
 	 * @return Set<Integer> of database type ids
 	 */
 	public static Set<Integer> getSupportedSrcDBTypes() {
-		Set<Integer> supportedDBs = new HashSet<Integer>(5);
+		Set<Integer> supportedDBs = new HashSet<Integer>(2);
 		supportedDBs.add(DatabaseType.CUBRID.getID());
 		supportedDBs.add(DatabaseType.ORACLE.getID());
 		return supportedDBs;
@@ -92,7 +92,7 @@ public class GraphMigrationWizard extends MigrationWizard {
 	 * @return Set<Integer> of database type ids
 	 */
 	public static Set<Integer> getSupportedTarDBTypes() {
-		Set<Integer> supportedDBs = new HashSet<Integer>(4);
+		Set<Integer> supportedDBs = new HashSet<Integer>(1);
 		supportedDBs.add(DatabaseType.CORADB.getID());
 		return supportedDBs;
 	}

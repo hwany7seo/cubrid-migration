@@ -32,6 +32,7 @@ package com.cubrid.cubridmigration.core.engine.exporter.impl;
 
 import com.cubrid.common.log.LogUtil;
 import com.cubrid.cubridmigration.core.common.Closer;
+import com.cubrid.cubridmigration.core.datatype.DataTypeConstant;
 import com.cubrid.cubridmigration.core.dbobject.Column;
 import com.cubrid.cubridmigration.core.dbobject.PK;
 import com.cubrid.cubridmigration.core.dbobject.Record;
@@ -788,10 +789,10 @@ public class JDBCExporter extends MigrationExporter {
                     return;
                 }
                 long realPageCount = intPageCount;
-                if (!config.isImplicitEstimate()) {
-                    realPageCount = Math.min(sTable.getTableRowCount() - totalExported,
-                            intPageCount);
-                }
+//                if (!config.isImplicitEstimate()) {
+//                    realPageCount = Math.min(sTable.getTableRowCount() - totalExported,
+//                            intPageCount);
+//                }
                 String pagesql;
                 
                 pagesql = graphExHelper.getPagedSelectSQL(sql, realPageCount, totalExported, pk);
@@ -935,7 +936,7 @@ public class JDBCExporter extends MigrationExporter {
 //              if (config.targetIsCSV()) {
 //                  record = createGraphNewRecordForFkCSV(edge, edge.getColumnList(), joc.getRs());
 //              } else {
-                    record = createGraphNewRecord(sTable, edge.getColumnList(), joc.getRs());
+                    record = createGraphEdgeNewRecord(sTable, edge, joc.getRs());
 //              }
                 
                 if (record == null) {
@@ -1019,6 +1020,54 @@ public class JDBCExporter extends MigrationExporter {
 		}
 		return null;
 	}
+	
+	protected Record createGraphEdgeNewRecord(Table st, Edge e, ResultSet rs) {
+        try {
+            Record record = new Record();
+            Column sCol = new Column();
+            sCol.setName(e.getStartVertex().getUniqueIDName());
+            sCol.setDataType("BIGINT");
+            sCol.setJdbcIDOfDataType(DataTypeConstant.CUBRID_DT_BIGINT);
+            Object value;
+            for (int i=1 ; i<3 ; i++) {
+                value = rs.getObject(i);
+                record.addColumnValue(sCol, value);
+            }
+            //add Edge record
+            if (e.testEdgeProperty) {
+                Column col = new Column("start_label");
+                col.setDataType("VARCHAR(255)");
+                col.setJdbcIDOfDataType(DataTypeConstant.CUBRID_DT_VARCHAR);
+                record.addColumnValue(col, e.getStartVertexName());
+                col = new Column("start_id");
+                col.setDataType("BIGINT");
+                col.setJdbcIDOfDataType(DataTypeConstant.CUBRID_DT_BIGINT);
+                record.addColumnValue(col, rs.getObject(1));
+                col = new Column("end_label");
+                col.setDataType("VARCHAR(255)");
+                col.setJdbcIDOfDataType(DataTypeConstant.CUBRID_DT_VARCHAR);
+                record.addColumnValue(col, e.getEndVertexName());
+                col = new Column("end_id");
+                col.setDataType("BIGINT");
+                col.setJdbcIDOfDataType(DataTypeConstant.CUBRID_DT_BIGINT);
+                record.addColumnValue(col, rs.getObject(2));
+            }
+            
+            return record;
+        } catch (NormalMigrationException ex) {
+            LOG.error("", ex);
+            eventHandler.handleEvent(new MigrationErrorEvent(ex));
+        } catch (SQLException ex) {
+            LOG.error("", ex);
+            eventHandler.handleEvent(new MigrationErrorEvent(new NormalMigrationException(
+                    "Transform table [" + st.getName() + "] record error.", ex)));
+        } catch (Exception ex) {
+            LOG.error("", e);
+            eventHandler.handleEvent(new MigrationErrorEvent(new NormalMigrationException(
+                    "Transform table [" + st.getName() + "] record error.", ex)));
+        }
+        return null;
+    }
 	
 //	protected Record createGraphNewRecordForVertexCSV(Vertex v, List<Column> cols, ResultSet rs) {
 //		try {

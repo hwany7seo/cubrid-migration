@@ -41,6 +41,7 @@ import com.cubrid.cubridmigration.core.dbtype.DatabaseType;
 import com.cubrid.cubridmigration.ui.MigrationUIPlugin;
 import com.cubrid.cubridmigration.ui.common.dialog.DetailMessageDialog;
 import com.cubrid.cubridmigration.ui.message.Messages;
+import com.cubrid.cubridmigration.ui.wizard.GraphMigrationWizard;
 import com.cubrid.cubridmigration.ui.wizard.MigrationWizard;
 
 import org.apache.commons.lang3.StringUtils;

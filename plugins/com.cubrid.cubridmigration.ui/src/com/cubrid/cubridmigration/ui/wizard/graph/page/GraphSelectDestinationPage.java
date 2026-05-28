@@ -172,8 +172,7 @@ public class GraphSelectDestinationPage extends MigrationWizardPage {
 					new IJDBCConnectionFilter() {
 						public boolean doFilter(ConnParameters cp) {
 							final MigrationConfiguration cfg = getMigrationWizard().getMigrationConfig();
-							if (cfg.getDestType() != MigrationConfiguration.DEST_GRAPH
-									|| cp.getDatabaseType().getID() != MigrationConfiguration.SOURCE_TYPE_CORADB) {
+							if (cp.getDatabaseType().getID() != MigrationConfiguration.SOURCE_TYPE_CORADB) {
 								return true;
 							}
 							return false;

@@ -55,6 +55,8 @@ public class Edge extends DBObject {
 	
 	boolean isHavePKStartVertex = false;
 	
+	public boolean testEdgeProperty = true;
+	
 	public Edge() {
 	}
 	

@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.slf4j.Logger;
 
 import com.cubrid.common.log.LogUtil;
+import com.cubrid.cubridmigration.core.datatype.DataTypeConstant;
 import com.cubrid.cubridmigration.core.dbobject.Catalog;
 import com.cubrid.cubridmigration.core.dbobject.Column;
 import com.cubrid.cubridmigration.core.dbobject.FK;
@@ -525,6 +526,10 @@ public class GraphTableSelectPage extends MigrationWizardPage {
 						
 						edge.addColumn(startCol);
 						edge.addColumn(endCol);
+					} else {
+					    if (edge.testEdgeProperty) {
+					        createEdgeColumns(edge);
+					    }
 					}
 					edge.setSourceDBObject();
 					
@@ -619,6 +624,10 @@ public class GraphTableSelectPage extends MigrationWizardPage {
 						
 						edge.addColumn(startCol);
 						edge.addColumn(endCol);
+					} else {
+					    if (edge.testEdgeProperty) {
+					        createEdgeColumns(edge);
+					    }
 					}
 					edge.setSourceDBObject();
 					
@@ -753,6 +762,10 @@ public class GraphTableSelectPage extends MigrationWizardPage {
 					
 					edge.addColumn(startCol);
 					edge.addColumn(endCol);
+				} else {
+				    if (edge.testEdgeProperty) {
+				        createEdgeColumns(edge);
+				    }
 				}
 				edge.setSourceDBObject();
 				
@@ -804,5 +817,24 @@ public class GraphTableSelectPage extends MigrationWizardPage {
 	private void clearData() {
 		tableList.clear();
 		columnData.clear();
+	}
+	
+	private void createEdgeColumns(Edge e) {
+	    Column col = new Column("start_label");
+	    col.setDataType("VARCHAR(255)");
+	    col.setJdbcIDOfDataType(DataTypeConstant.CUBRID_DT_VARCHAR);
+	    e.addColumn(col);
+	    col = new Column("start_id");
+        col.setDataType("BIGINT");
+        col.setJdbcIDOfDataType(DataTypeConstant.CUBRID_DT_BIGINT);
+        e.addColumn(col);
+        col = new Column("end_label");
+        col.setDataType("VARCHAR(255)");
+        col.setJdbcIDOfDataType(DataTypeConstant.CUBRID_DT_VARCHAR);
+        e.addColumn(col);
+        col = new Column("end_id");
+        col.setDataType("BIGINT");
+        col.setJdbcIDOfDataType(DataTypeConstant.CUBRID_DT_BIGINT);
+        e.addColumn(col);
 	}
 }

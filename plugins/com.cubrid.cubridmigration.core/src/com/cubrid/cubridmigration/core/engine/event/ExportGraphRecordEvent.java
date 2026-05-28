@@ -83,7 +83,7 @@ public class ExportGraphRecordEvent extends
 		if (vertex != null) {
 			name = vertex.getVertexLabel();
 		} else {
-			name = edge.getStartVertexName();
+			name = edge.getName();
 		}
 		
 		if (recordCount == 0) {
@@ -101,7 +101,7 @@ public class ExportGraphRecordEvent extends
 			    sb.append(")").append(fkIndex).append(")");
 			}
 			sb.append(" from table [").append(name).append("]");
-		    sb.append("type : ").append(edge.getEdgeType()).append(" successfully.").toString();
+		    sb.append(" (type : ").append(edge.getEdgeType()).append(") successfully.").toString();
 		}
 		return sb.toString();
 	}

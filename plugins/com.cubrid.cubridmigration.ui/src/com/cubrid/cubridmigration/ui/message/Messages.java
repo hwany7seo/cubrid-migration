@@ -936,6 +936,11 @@ public class Messages extends NLS {
 	
 	public static String twowayEdge;
 
+	public static String graphEdgeSettingTitle;
+	public static String graphEdgeSettingStartVertexLabel;
+    public static String graphEdgeSettingEndVertexLabel;
+    public static String graphEdgeSettingEdgeName;
+	
     static {
         NLS.initializeMessages(Messages.class.getName(), Messages.class);
     }

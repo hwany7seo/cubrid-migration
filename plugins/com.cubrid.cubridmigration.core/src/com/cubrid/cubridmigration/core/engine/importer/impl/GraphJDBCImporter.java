@@ -92,7 +92,6 @@ public class GraphJDBCImporter extends Importer {
         String sql = GraphSQLHelper.getInstance(null).getVertexDDL(v);
         try {
             executeDDL(sql);
-            addTargetTableInConfig(v);
             createObjectSuccess(v);
         } catch (RuntimeException e) {
             createObjectFailed(v, e);
@@ -293,11 +292,26 @@ public class GraphJDBCImporter extends Importer {
         StringBuffer buf = new StringBuffer();
         buf = new StringBuffer("INSERT EDGE" );
         buf.append(" FROM (SELECT ").append(e.getStartVertexName()).append(" FROM ").append(e.getStartVertexName());
-        buf.append(" WHERE ").append(e.getFKColumnNames().get(idx)).append(" = ? )");
+        buf.append(" WHERE ").append(e.getStartVertex().getUniqueIDName()).append(" = ? )");
         buf.append(" TO (SELECT ").append(e.getEndVertexName()).append(" FROM ").append(e.getEndVertexName());
-        buf.append(" WHERE ").append(e.getREFColumnNames(e.getFKColumnNames().get(idx))).append(" = ? )");
-        buf.append(" INTO ").append(e.getEdgeLabel()).append(" VALUES ()");
+        buf.append(" WHERE ").append(e.getEndVertex().getUniqueIDName()).append(" = ? )");
+        buf.append(" INTO ").append(e.getEdgeLabel()).append(" VALUES (");
+        
+        if (e.getColumnList().size() > 0) {
+            if (e.getColumnList() != null) {
 
+                for (int i = 0; i < e.getColumnList().size(); i++) {
+                    buf.append('?');
+
+                    if (i < e.getColumnList().size() - 1) {
+                        buf.append(", ");
+                    }
+                }
+            }
+        } 
+  
+        buf.append(")");
+  
         return buf.toString();
     }
 
@@ -481,13 +495,6 @@ public class GraphJDBCImporter extends Importer {
         config.addTargetTableSchema(table);
     }
     
-    private void addTargetTableInConfig(Vertex v) {
-        Table table = new Table();
-        table.setName(v.getName());
-        table.setColumns(v.getColumnList());
-        config.addTargetTableSchema(table);
-    }
-
     /**
      * Create a target record by source record
      * 

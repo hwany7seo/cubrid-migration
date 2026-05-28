@@ -1,12 +1,8 @@
 package com.cubrid.cubridmigration.graph;
 
-import java.sql.Timestamp;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.cubrid.cubridmigration.core.dbobject.Column;
-import com.cubrid.cubridmigration.core.dbobject.Record;
 import com.cubrid.cubridmigration.core.sql.SQLHelper;
 import com.cubrid.cubridmigration.graph.dbobj.Edge;
 import com.cubrid.cubridmigration.graph.dbobj.Vertex;
@@ -42,28 +38,9 @@ public class GraphSQLHelper extends SQLHelper {
         return ddl;
     }
 
-    public String getVertexInsert(Vertex v) {
-        String ddl = getTargetInsertVertex(v);
-        return ddl;
-    }
-
     public String getEdgeDDL(Edge e) {
         String ddl = new String();
         ddl = getCreateEdge(e);
-        return ddl;
-    }
-
-    public String getEdgeInsert(Edge e, int index) {
-        String ddl = new String();
-        ddl = getTargetInsertEdge(e, index);
-        return ddl;
-    }
-
-    public String getEdgeInsert(Edge e) {
-        String ddl = new String();
-        if (e.getEdgeType() == Edge.JOINTABLE_TYPE) {
-            ddl = getTargetInsertJoinEdge(e);
-        }
         return ddl;
     }
 
@@ -72,7 +49,7 @@ public class GraphSQLHelper extends SQLHelper {
         buffer.append(getQuotedObjName(v.getVertexLabel())).append(" (");
         buffer.append(v.getUniqueIDName());
         buffer.append(" BIGINT ");
-        buffer.append(" AUTO_INCREMENT ");
+        buffer.append(" AUTO_INCREMENT PRIMARY KEY");
         
         List<Column> columns = v.getColumnList();
         int len = columns.size();
@@ -88,39 +65,6 @@ public class GraphSQLHelper extends SQLHelper {
         buffer.append(")");
         return buffer.toString();
 
-    }
-
-    private String getTargetInsertVertex(Vertex v) {
-        int supportColumCount = 0;
-        StringBuffer buffer = new StringBuffer("INSERT VERTEX INTO ").append(v.getVertexLabel()).append(" VALUES (");
-        buffer.append("NULL");
-        
-        List<Column> columns = v.getColumnList();
-        int len = columns.size();
-        for (int i = 0; i < len; i++) {
-
-            if (!columns.get(i).isSelected()) {
-                continue;
-            }
-
-            supportColumCount++;
-            buffer.append(", ");
-            
-            String columnName = columns.get(i).getName();
-            columnName = columnName.replaceAll("\"", "");
-            buffer.append(columnName).append(':');
-
-            buffer.append('?');
-        }
-
-        if (supportColumCount == 0) {
-            return null;
-        }
-
-        buffer.append("}");
-        buffer.append(")");
-        buffer.append(" return n");
-        return buffer.toString();
     }
 
     private String getCreateEdge(Edge e) {
@@ -146,24 +90,6 @@ public class GraphSQLHelper extends SQLHelper {
             buffer.append(")");
         }
         
-        return buffer.toString();
-    }
-
-    private String getTargetInsertEdge(Edge e, int index) {
-        StringBuffer buffer = new StringBuffer("MATCH (n:").append(e.getStartVertexName()).append("),");
-        buffer.append("(m:").append(e.getEndVertexName()).append(")");
-        buffer.append(" where ");
-        buffer.append("n.").append(e.getFKColumnNames().get(index)).append(" = ");
-        buffer.append("m.").append(e.getREFColumnNames(e.getFKColumnNames().get(index))).append(" ");
-        buffer.append("create (n)-[r:").append(e.getEdgeLabel()).append("]->(m) return count(r)");
-
-        return buffer.toString();
-    }
-
-    private String getTargetInsertJoinEdge(Edge e) {
-
-        StringBuffer buffer = new StringBuffer();
-
         return buffer.toString();
     }
 
