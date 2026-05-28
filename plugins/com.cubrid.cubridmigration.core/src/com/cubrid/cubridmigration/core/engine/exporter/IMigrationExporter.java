@@ -103,5 +103,5 @@ public interface IMigrationExporter {
     public void exportGraphVertexRecords(Vertex v, 
 			RecordExportedListener oneNewRecord);
 	
-	public void exportGraphEdgeRecords(Edge e, int fkIndex, RecordExportedListener oneNewRecord);
+	public void exportGraphEdgeRecords(Edge e, RecordExportedListener oneNewRecord);
 }

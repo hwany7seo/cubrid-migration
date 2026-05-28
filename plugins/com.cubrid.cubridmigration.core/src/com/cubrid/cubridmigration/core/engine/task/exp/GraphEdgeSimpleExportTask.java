@@ -45,23 +45,21 @@ public class GraphEdgeSimpleExportTask extends
 
 	protected Edge edge;
 	protected final MigrationContext mrManager;
-	protected int fkIndex;
 
-	public GraphEdgeSimpleExportTask(MigrationContext mrManager, Edge e, int fkIndex) {
+	public GraphEdgeSimpleExportTask(MigrationContext mrManager, Edge e) {
 		this.mrManager = mrManager;
 		this.edge = e;
-		this.fkIndex = fkIndex;
 	}
 
 	/**
 	 * Export source table's records
 	 */
 	protected void executeExportTask() {
-		exporter.exportGraphEdgeRecords(edge, fkIndex, new RecordExportedListener() {
+		exporter.exportGraphEdgeRecords(edge, new RecordExportedListener() {
 			public void processRecords(String sourceTableName, List<Record> records) {
 				int reccordCount = records.size();
-				eventHandler.handleEvent(new ExportGraphRecordEvent(edge, reccordCount, fkIndex));
-				ImportTask task = taskFactory.createImportEdgeRecordsTask(edge, records, fkIndex);
+				eventHandler.handleEvent(new ExportGraphRecordEvent(edge, reccordCount));
+				ImportTask task = taskFactory.createImportEdgeRecordsTask(edge, records);
 
 				importTaskExecutor = mrManager.getImportRecordExecutor();
 				importTaskExecutor.execute((Runnable) task);

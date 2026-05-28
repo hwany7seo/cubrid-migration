@@ -37,6 +37,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+
+import com.cubrid.common.log.LogUtil;
 import com.cubrid.cubridmigration.core.common.Closer;
 import com.cubrid.cubridmigration.core.common.DBUtils;
 import com.cubrid.cubridmigration.core.dbobject.Column;
@@ -63,16 +66,15 @@ import com.cubrid.cubridmigration.core.engine.event.SingleRecordErrorEvent;
 import com.cubrid.cubridmigration.core.engine.exception.JDBCConnectErrorException;
 import com.cubrid.cubridmigration.core.engine.exception.NormalMigrationException;
 import com.cubrid.cubridmigration.core.engine.importer.Importer;
-import com.cubrid.cubridmigration.cubrid.CUBRIDSQLHelper;
 import com.cubrid.cubridmigration.cubrid.stmt.CUBRIDParameterSetter;
 import com.cubrid.cubridmigration.graph.GraphSQLHelper;
 import com.cubrid.cubridmigration.graph.dbobj.Edge;
 import com.cubrid.cubridmigration.graph.dbobj.Vertex;
 import com.cubrid.cubridmigration.graph.stmt.GraphParameterSetter;
 
-import ch.qos.logback.core.util.StringUtil;
-
 public class GraphJDBCImporter extends Importer {
+    
+    private static final Logger LOG = LogUtil.getLogger(GraphJDBCImporter.class);
 
     private final JDBCConManager connectionManager;
     private final MigrationConfiguration config;
@@ -126,6 +128,8 @@ public class GraphJDBCImporter extends Importer {
         String sql = GraphSQLHelper.getInstance(null).getEdgeDDL(e);
         try {
             executeDDL(sql);
+            System.out.println("createEdge");
+            System.out.println(sql);
             addTargetTableInConfig(e);
             createObjectSuccess(e);
         } catch (RuntimeException ex) {
@@ -135,24 +139,14 @@ public class GraphJDBCImporter extends Importer {
     }
 
     @Override
-    public int importEdges(Edge e, List<Record> records, int fkIndex) {
+    public int importEdges(Edge e, List<Record> records) {
         int retryCount = 0;
-        if (records == null) {
-            try {
-                Exception ex = new Exception("records is null in importEdges for " + e.getName());
-                throw ex;
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                eventHandler.handleEvent(new SingleRecordErrorEvent(null, ex));
-            }
-        }
-        
         while (true) {
             try {
                 if (e.getEdgeType() == Edge.JOINTABLE_TYPE) {
                     return createJoinEdgeImport(e, records);
                 }
-                return createEdgeImport(e, records, fkIndex);
+                return createEdgeImport(e);
             } catch (JDBCConnectErrorException ex) {
                 if (retryCount < 3) {
                     retryCount++;
@@ -168,7 +162,7 @@ public class GraphJDBCImporter extends Importer {
         }
     }
 
-    private int createEdgeImport(Edge e, List<Record> records, int fkIndex) throws SQLException {
+    private int createEdgeImport(Edge e) throws SQLException {
         int result = 0;
         int resultTotal = 0;
         boolean prvAutoCommitStatus = false;
@@ -178,35 +172,20 @@ public class GraphJDBCImporter extends Importer {
             conn.setAutoCommit(false);
         }
         PreparedStatement stmt = null;
-        String sql = getTargetInsertEdge(e,fkIndex);
+        System.out.println(" createEdgeImport");
         try {
-            if (sql == null) {
-                try {
-                    Exception ex = new Exception("There is not a single supported column in the table.");
-                    throw ex;
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    eventHandler.handleEvent(new SingleRecordErrorEvent(null, ex));
-                }
-            }
-
-            stmt = conn.prepareStatement(sql);
-
-            for (Record rc : records) {
-                if (rc == null) {
-                    continue;
-                }
-
-                parameterSetter.setRecord2Statement(rc, stmt);
+            for (int i=0 ; i < e.getfkCol2RefMappingSize(); i++) {
+                String sql = getTargetInsertEdge(e, i);
+                System.out.println(sql);
+                stmt = conn.prepareStatement(sql);
 
                 result = stmt.executeUpdate();
                 resultTotal += result;
 
-                stmt.clearParameters();
-            }
-            DBUtils.commit(conn);
-            if (resultTotal > 0) {
-                eventHandler.handleEvent(new ImportGraphRecordsEvent(e, resultTotal));
+                DBUtils.commit(conn);
+                if (resultTotal > 0) {
+                    eventHandler.handleEvent(new ImportGraphRecordsEvent(e, resultTotal));
+                }
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -239,6 +218,7 @@ public class GraphJDBCImporter extends Importer {
         }
         PreparedStatement stmt = null;
         String sql = getTargetInsertJoinEdge(e);
+        System.out.println(" createJoinEdgeImport");
         try {
             if (sql == null) {
                 try {
@@ -249,7 +229,7 @@ public class GraphJDBCImporter extends Importer {
                     eventHandler.handleEvent(new SingleRecordErrorEvent(null, ex));
                 }
             }
-
+            System.out.println(sql);
             stmt = conn.prepareStatement(sql);
 
             for (Record rc : records) {
@@ -288,30 +268,13 @@ public class GraphJDBCImporter extends Importer {
         return resultTotal;
     }
 
-    private String getTargetInsertEdge(Edge e, int idx) {
+    private String getTargetInsertEdge(Edge e, int fkIdx) {
         StringBuffer buf = new StringBuffer();
-        buf = new StringBuffer("INSERT EDGE" );
-        buf.append(" FROM (SELECT ").append(e.getStartVertexName()).append(" FROM ").append(e.getStartVertexName());
-        buf.append(" WHERE ").append(e.getStartVertex().getUniqueIDName()).append(" = ? )");
-        buf.append(" TO (SELECT ").append(e.getEndVertexName()).append(" FROM ").append(e.getEndVertexName());
-        buf.append(" WHERE ").append(e.getEndVertex().getUniqueIDName()).append(" = ? )");
-        buf.append(" INTO ").append(e.getEdgeLabel()).append(" VALUES (");
+        buf = new StringBuffer("INSERT EDGE INTO ").append(e.getEdgeLabel());
+        buf.append(" SELECT n, m FROM ").append(e.getStartVertexName()).append(" n JOIN ").append(e.getEndVertexName()).append(" m ON");
+        buf.append(" n.").append(e.getFKColumnNames().get(fkIdx)).append(" =");
+        buf.append(" m.").append(e.getREFColumnNames(e.getFKColumnNames().get(fkIdx)));
         
-        if (e.getColumnList().size() > 0) {
-            if (e.getColumnList() != null) {
-
-                for (int i = 0; i < e.getColumnList().size(); i++) {
-                    buf.append('?');
-
-                    if (i < e.getColumnList().size() - 1) {
-                        buf.append(", ");
-                    }
-                }
-            }
-        } 
-  
-        buf.append(")");
-  
         return buf.toString();
     }
 

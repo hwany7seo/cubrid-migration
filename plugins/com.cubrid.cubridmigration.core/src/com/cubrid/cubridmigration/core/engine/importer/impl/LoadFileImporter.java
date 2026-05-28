@@ -570,7 +570,7 @@ public class LoadFileImporter extends OfflineImporter {
     }
 
     @Override
-    public int importEdges(Edge e, List<Record> records, int fkIndex) {
+    public int importEdges(Edge e, List<Record> records) {
         return 0;
     }
 

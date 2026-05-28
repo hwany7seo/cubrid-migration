@@ -55,12 +55,12 @@ public class GraphEdgeJoinExportTask extends
 	 * Export source table's records
 	 */
 	protected void executeExportTask() {
-		exporter.exportGraphEdgeRecords(edge, -1, new RecordExportedListener() {
+		exporter.exportGraphEdgeRecords(edge, new RecordExportedListener() {
 			public void processRecords(String sourceTableName, List<Record> records) {
 				int reccordCount = 0;
 				reccordCount = records.size();
 				eventHandler.handleEvent(new ExportGraphRecordEvent(edge, reccordCount));
-				ImportTask task = taskFactory.createImportEdgeRecordsTask(edge, records, -1);
+				ImportTask task = taskFactory.createImportEdgeRecordsTask(edge, records);
 
 				importTaskExecutor = mrManager.getImportRecordExecutor();
 				importTaskExecutor.execute((Runnable) task);

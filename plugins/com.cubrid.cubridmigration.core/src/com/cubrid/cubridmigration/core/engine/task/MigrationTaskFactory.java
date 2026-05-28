@@ -842,8 +842,8 @@ public class MigrationTaskFactory {
 		return new ImportDataTaskDecorator(context, task);
 	}
 	
-	public GraphEdgeSimpleExportTask GraphSimpleEdgeExportTask(Edge e, int fkIndex) {
-	    GraphEdgeSimpleExportTask task = new GraphEdgeSimpleExportTask(context, e, fkIndex);
+	public GraphEdgeSimpleExportTask GraphSimpleEdgeExportTask(Edge e) {
+	    GraphEdgeSimpleExportTask task = new GraphEdgeSimpleExportTask(context, e);
         initExportTask(task, true);
         return task;
     }
@@ -860,8 +860,8 @@ public class MigrationTaskFactory {
         return new ImportDataTaskDecorator(context, task);
     }
 	
-	public ImportTask createImportEdgeRecordsTask(Edge e, List<Record> recordsTobeImport, int fkIndex) {
-		ImportTask task = new GraphEdgeImportTask(e, recordsTobeImport, fkIndex);
+	public ImportTask createImportEdgeRecordsTask(Edge e, List<Record> recordsTobeImport) {
+		ImportTask task = new GraphEdgeImportTask(e, recordsTobeImport);
 		initImportTask(task);
 		return new ImportDataTaskDecorator(context, task);
 	}

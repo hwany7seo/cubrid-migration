@@ -41,11 +41,9 @@ public class GraphEdgeImportTask extends
 
 	private final Edge edge;
 	private final List<Record> records;
-	private final int fkIndex;
 
-	public GraphEdgeImportTask(Edge e, List<Record> records, int fkIndex) {
+	public GraphEdgeImportTask(Edge e, List<Record> records) {
 		this.edge = e;
-		this.fkIndex = fkIndex;
 		if (records != null) {
 			this.records = new ArrayList<Record>(records);
 		} else {
@@ -54,6 +52,6 @@ public class GraphEdgeImportTask extends
 	}
 
 	protected void executeImport() {
-		importer.importEdges(edge, records, fkIndex);
+		importer.importEdges(edge, records);
 	}
 }

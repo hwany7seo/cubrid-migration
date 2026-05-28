@@ -545,7 +545,7 @@ public class JDBCExporter extends MigrationExporter {
 		}
 	}
 
-	public void exportGraphEdgeRecords(Edge e, int fkIndex, RecordExportedListener newRecordProcessor) {
+	public void exportGraphEdgeRecords(Edge e, RecordExportedListener newRecordProcessor) {
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("[IN]exportGraphEdgeRecords()");
 		}
@@ -564,7 +564,7 @@ public class JDBCExporter extends MigrationExporter {
 			return;
 		}
 		
-		exportGraphSimpleEdgeRecords(e, newRecordProcessor, fkIndex);
+		exportGraphSimpleEdgeRecords(e, newRecordProcessor);
 	}
 	
 	protected void exportGraphJoinTableEdgeRecordForCSV(Edge e, RecordExportedListener newRecordProcessor) {
@@ -765,7 +765,7 @@ public class JDBCExporter extends MigrationExporter {
 		return buffer.toString();
 	}
 	
-	protected void exportGraphSimpleEdgeRecords(Edge e, RecordExportedListener newRecordProcessor, int fkIndx) { 
+	protected void exportGraphSimpleEdgeRecords(Edge e, RecordExportedListener newRecordProcessor) { 
         if (LOG.isDebugEnabled()) {
             LOG.debug("[IN]exportGraphVertexRecords()");
         }
@@ -783,7 +783,7 @@ public class JDBCExporter extends MigrationExporter {
             List<Record> records = new ArrayList<Record>();
             long totalExported = 0L;
             long intPageCount = config.getPageFetchCount();
-            String sql = graphExHelper.getGraphCoraDBSelectSQL(e, fkIndx);
+            String sql = graphExHelper.getGraphCoraDBSelectSQL(e, 0);
             while (true) {
                 if (interrupted) {
                     return;

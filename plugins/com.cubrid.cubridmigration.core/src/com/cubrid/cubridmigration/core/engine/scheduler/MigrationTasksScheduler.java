@@ -849,9 +849,7 @@ public class MigrationTasksScheduler {
 
 		for (Edge e : migratedEdgeList) {
 			if (e.getEdgeType() == Edge.SECOND_FK_TYPE) {
-			    for (int i = 0; i < e.getfkCol2RefMappingSize(); i++) {
-			        executeTask2(taskFactory.GraphSimpleEdgeExportTask(e, i));
-			    }
+			    executeTask2(taskFactory.GraphSimpleEdgeExportTask(e));
 			}
 		}
 	}
@@ -863,9 +861,7 @@ public class MigrationTasksScheduler {
 
 		for (Edge e : migratedEdgeList) {
 			if (e.getEdgeType() == Edge.INTERMEDIATE_FK_TYPE) {
-			    for (int i = 0; i < e.getfkCol2RefMappingSize(); i++) {
-                    executeTask2(taskFactory.GraphSimpleEdgeExportTask(e, i));
-                }
+			    executeTask2(taskFactory.GraphSimpleEdgeExportTask(e));
 			}
 		}
 	}
@@ -877,9 +873,7 @@ public class MigrationTasksScheduler {
 
 		for (Edge e : migratedEdgeList) {
 			if (e.getEdgeType() == Edge.RECURSIVE_TYPE) {
-			    for (int i = 0; i < e.getfkCol2RefMappingSize(); i++) {
-                    executeTask2(taskFactory.GraphSimpleEdgeExportTask(e, i));
-                }
+			    executeTask2(taskFactory.GraphSimpleEdgeExportTask(e));
 			}
 		}
 	}

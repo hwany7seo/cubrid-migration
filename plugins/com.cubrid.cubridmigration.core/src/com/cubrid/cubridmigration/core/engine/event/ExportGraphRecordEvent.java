@@ -38,27 +38,23 @@ public class ExportGraphRecordEvent extends
 	private final Vertex vertex;
 	private final Edge edge;
 	private final int recordCount;
-	private final int fkIndex;
 
 	public ExportGraphRecordEvent(Vertex vertex, int recordCount) {
 		this.vertex = vertex;
 		this.edge = null;
 		this.recordCount = recordCount;
-		this.fkIndex = -1;
 	}
 	
 	public ExportGraphRecordEvent(Edge edge, int recordCount) {
 		this.edge = edge;
 		this.vertex = null;
 		this.recordCount = recordCount;
-		this.fkIndex = -1;
 	}
 	
 	public ExportGraphRecordEvent(Edge edge, int recordCount, int fkIndex) {
         this.edge = edge;
         this.vertex = null;
         this.recordCount = recordCount;
-        this.fkIndex = fkIndex;
     }
 
 	public Vertex getVertex() {
@@ -97,9 +93,6 @@ public class ExportGraphRecordEvent extends
 			sb.append(name).append("] successfully.").toString();
 		} else {
 			sb.append("Exported ").append(recordCount).append(" Edge records(FK)");
-			if (fkIndex >= 0) { 
-			    sb.append(")").append(fkIndex).append(")");
-			}
 			sb.append(" from table [").append(name).append("]");
 		    sb.append(" (type : ").append(edge.getEdgeType()).append(") successfully.").toString();
 		}

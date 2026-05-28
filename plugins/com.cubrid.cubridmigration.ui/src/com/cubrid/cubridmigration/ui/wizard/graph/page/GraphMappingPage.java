@@ -32,6 +32,8 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -97,6 +99,12 @@ public class GraphMappingPage extends MigrationWizardPage {
 	/** ELK layered layout algorithm id (see org.eclipse.elk.alg.layered) */
 	private static final String ELK_LAYERED_ALGORITHM = "org.eclipse.elk.layered";
 	private static final RecursiveGraphLayoutEngine ELK_LAYOUT_ENGINE = new RecursiveGraphLayoutEngine();
+
+	private boolean ctrlKeyMode = false;
+	
+    public static final int CTRL_KEYCODE = 0x40000;
+    public static final int Z_KEYCODE = 0x7a;
+    public static final int Y_KEYCODE = 0x79;
 
 	/**
 	 * Zest requires a non-null {@link LayoutAlgorithm}; actual coordinates come from ELK in {@link #applyElkLayout()}.
@@ -199,7 +207,6 @@ public class GraphMappingPage extends MigrationWizardPage {
 		graphViewer = new GraphViewer(parent, SWT.BORDER);	
 		graphViewer.setConnectionStyle(ZestStyles.CONNECTIONS_DIRECTED);
 		graphViewer.setLayoutAlgorithm(NO_OP_ZEST_LAYOUT, false);
-
 		
 		graphViewer.getGraphControl().setMenu(popupMenu);
 		
@@ -321,6 +328,37 @@ public class GraphMappingPage extends MigrationWizardPage {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {}
 		});
+		
+		graph.addKeyListener(new KeyListener() {
+            
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if (e.keyCode == CTRL_KEYCODE) {
+                    ctrlKeyMode = false;
+                }
+            }
+            
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.keyCode == CTRL_KEYCODE) {
+                    ctrlKeyMode = true;
+                }
+                
+                if (ctrlKeyMode) {
+                    if (e.keyCode == Z_KEYCODE) {
+                        executeUndo(workBuffer.undo());
+                        redoUndoHandler();
+                    } else if (e.keyCode == Y_KEYCODE) {
+                        executeRedo(workBuffer.redo());
+                        redoUndoHandler();
+                    }
+                }
+
+                if (selectedEdge != null && e.keyCode == SWT.DEL) {
+                    deleteEdgeInGraph(selectedEdge);
+                }
+            }
+        });
 	}
 	
 	@SuppressWarnings("unused")
@@ -463,22 +501,7 @@ public class GraphMappingPage extends MigrationWizardPage {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				
-				GraphDictionary gdbDict = mConfig.getGraphDictionary();
-				List<Edge> migratedEdgeList = gdbDict.getMigratedEdgeList();
-				
-				for (Edge edge : migratedEdgeList) {
-					if (edge.getEdgeLabel().equalsIgnoreCase(selectedEdge.getEdgeLabel())) {
-						
-						workBuffer.addWork(workCtrl.createWork(workTypeEnum.WT_DELETE.ordinal(), edge));
-						
-						gdbDict.removeEdge(edge.getEdgeLabel());
-						
-						break;
-					}
-				}
-				
-				refreshGraph();
+				deleteEdgeInGraph(selectedEdge);
 			}
 
 			@Override
@@ -1373,5 +1396,23 @@ public class GraphMappingPage extends MigrationWizardPage {
 				edge.setEdgeLabel(originalName);
 			}
 		}
+	}
+	
+	private void deleteEdgeInGraph(Edge e) {
+	    GraphDictionary gdbDict = mConfig.getGraphDictionary();
+        List<Edge> migratedEdgeList = gdbDict.getMigratedEdgeList();
+        
+        for (Edge edge : migratedEdgeList) {
+            if (edge.getEdgeLabel().equalsIgnoreCase(e.getEdgeLabel())) {
+                
+                workBuffer.addWork(workCtrl.createWork(workTypeEnum.WT_DELETE.ordinal(), edge));
+                
+                gdbDict.removeEdge(edge.getEdgeLabel());
+                
+                break;
+            }
+        }
+        
+        refreshGraph();
 	}
 }

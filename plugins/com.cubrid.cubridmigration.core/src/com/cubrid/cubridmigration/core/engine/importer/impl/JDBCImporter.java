@@ -550,7 +550,7 @@ public class JDBCImporter extends Importer {
     }
 
     @Override
-    public int importEdges(Edge e, List<Record> records, int fkIndex) {
+    public int importEdges(Edge e, List<Record> records) {
         return 0;
     }
     
