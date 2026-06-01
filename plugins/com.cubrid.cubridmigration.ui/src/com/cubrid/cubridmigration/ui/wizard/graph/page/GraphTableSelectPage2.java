@@ -32,12 +32,15 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.slf4j.Logger;
 
 import com.cubrid.common.log.LogUtil;
+import com.cubrid.cubridmigration.core.connection.CMTConParamManager;
+import com.cubrid.cubridmigration.core.connection.ConnParameters;
 import com.cubrid.cubridmigration.core.datatype.DataTypeConstant;
 import com.cubrid.cubridmigration.core.dbobject.Catalog;
 import com.cubrid.cubridmigration.core.dbobject.Column;
 import com.cubrid.cubridmigration.core.dbobject.FK;
 import com.cubrid.cubridmigration.core.dbobject.Index;
 import com.cubrid.cubridmigration.core.dbobject.Schema;
+import com.cubrid.cubridmigration.core.dbobject.SchemaCatalog;
 import com.cubrid.cubridmigration.core.dbobject.Table;
 import com.cubrid.cubridmigration.core.engine.config.MigrationConfiguration;
 import com.cubrid.cubridmigration.core.engine.config.SourceEntryTableConfig;
@@ -46,15 +49,17 @@ import com.cubrid.cubridmigration.graph.dbobj.GraphDictionary;
 import com.cubrid.cubridmigration.graph.dbobj.Vertex;
 import com.cubrid.cubridmigration.ui.database.GraphContentProvider;
 import com.cubrid.cubridmigration.ui.database.GraphLabelProvider;
+import com.cubrid.cubridmigration.ui.database.SchemaFetcherWithProgress;
 import com.cubrid.cubridmigration.ui.message.Messages;
 import com.cubrid.cubridmigration.ui.wizard.MigrationWizard;
 import com.cubrid.cubridmigration.ui.wizard.page.MigrationWizardPage;
+import com.cubrid.cubridmigration.ui.wizard.page.view.SchemaTableView.SrcTable;
 import com.cubrid.cubridmigration.ui.wizard.utils.MigrationCfgUtils;
 
 //GDB select table page.
-public class GraphTableSelectPage extends MigrationWizardPage {
+public class GraphTableSelectPage2 extends MigrationWizardPage {
 
-    private static final Logger LOG = LogUtil.getLogger(GraphTableSelectPage.class);
+    private static final Logger LOG = LogUtil.getLogger(GraphTableSelectPage2.class);
 	private TableViewer tableViewer;
 	private TableViewer columnViewer;
 	private TableColumn selectColumn;
@@ -63,7 +68,7 @@ public class GraphTableSelectPage extends MigrationWizardPage {
 	private List<Table> selectedTableList = new ArrayList<Table>();
 	
 	
-	public GraphTableSelectPage(String pageName) {
+	public GraphTableSelectPage2(String pageName) {
 		super(pageName);
 	}
 	
@@ -291,7 +296,7 @@ public class GraphTableSelectPage extends MigrationWizardPage {
 		if (isFirstVisible) {
 			final MigrationWizard mw = getMigrationWizard();
 			MigrationConfiguration cfg = mw.getMigrationConfig();
-			setTitle(mw.getStepNoMsg(GraphTableSelectPage.this) + Messages.objectMapPageTitle);
+			setTitle(mw.getStepNoMsg(GraphTableSelectPage2.this) + Messages.objectMapPageTitle);
 			setDescription(Messages.objectMapPageDescription);
 			
 			setErrorMessage(null);
@@ -863,17 +868,17 @@ public class GraphTableSelectPage extends MigrationWizardPage {
 	
 	private void setGraphVertexColumnlist(Vertex v, Table t) {
 	    MigrationConfiguration mconfig = getMigrationWizard().getMigrationConfig();
-        if (mconfig.getTargetTableSchema().get(0).getTargetOwner() == null) {
+        if (mconfig.getTargetTableSchema().get(0).getOwner() == null) {
             v.setGraphColumnList(mconfig.getTargetTableSchema(t.getName()).getColumns());
         } else {
-            v.setGraphColumnList(mconfig.getTargetTableSchema(t.getTargetOwner(), t.getName()).getColumns());
+            v.setGraphColumnList(mconfig.getTargetTableSchema(t.getOwner(), t.getName()).getColumns());
         }
 	    
 	}
 	
 	private void setGraphEdgeColumnlist(Edge e, Table t) {
         MigrationConfiguration mconfig = getMigrationWizard().getMigrationConfig();
-        if (mconfig.getTargetTableSchema().get(0).getTargetOwner() == null) {
+        if (mconfig.getTargetTableSchema().get(0).getOwner() == null) {
             int edgeType = e.getEdgeType();
             if (edgeType == Edge.JOINTABLE_TYPE || edgeType == Edge.JOIN_TWO_WAY_TYPE) {
                 e.setGraphColumnList(e.getStartVertex().getGraphColumnList());
@@ -881,7 +886,7 @@ public class GraphTableSelectPage extends MigrationWizardPage {
                 e.setGraphColumnList(mconfig.getTargetTableSchema(t.getName()).getColumns());
             }
         } else {
-            e.setGraphColumnList(mconfig.getTargetTableSchema(t.getTargetOwner(), t.getName()).getColumns());
+            e.setGraphColumnList(mconfig.getTargetTableSchema(t.getOwner(), t.getName()).getColumns());
         }
         
     }

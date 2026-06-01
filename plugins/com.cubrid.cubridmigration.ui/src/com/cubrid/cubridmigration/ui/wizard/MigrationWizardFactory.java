@@ -156,7 +156,7 @@ public final class MigrationWizardFactory {
         }
         Shell activeShell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
 
-        MigrationWizard wizard = new GraphMigrationWizard();
+        MigrationWizard wizard = new MigrationWizard();
 
         MigrationWizardDialog dialog = new MigrationWizardDialog(activeShell, wizard);
 
@@ -183,7 +183,7 @@ public final class MigrationWizardFactory {
         }
         Shell activeShell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
 
-        MigrationWizard wizard = new GraphMigrationWizard();
+        MigrationWizard wizard = new MigrationWizard();
         MigrationWizardDialog dialog = new MigrationWizardDialog(activeShell, wizard);
         openWizardDlg(dialog);
     }
@@ -195,7 +195,7 @@ public final class MigrationWizardFactory {
         }
         Shell activeShell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
 
-        MigrationWizardDialog dialog = new MigrationWizardDialog(activeShell, new GraphMigrationWizard());
+        MigrationWizardDialog dialog = new MigrationWizardDialog(activeShell, new MigrationWizard());
         openWizardDlg(dialog);
     }
 

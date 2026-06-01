@@ -285,7 +285,7 @@ public class GraphMappingPage extends MigrationWizardPage {
 					menuHandler();
 					deleteMenuHandler(true);
 					redoUndoHandler();
-					System.out.println("select object: " + ((Vertex) selectedObject).getVertexLabel());
+//					System.out.println("select object: " + ((Vertex) selectedObject).getVertexLabel());
 				}
 				
 				if (selection.getFirstElement() instanceof Edge) {
@@ -295,7 +295,7 @@ public class GraphMappingPage extends MigrationWizardPage {
 					menuHandler();
 					deleteMenuHandler(false);
 					redoUndoHandler();
-					System.out.println("selected object: " + ((Edge) selectedObject).getEdgeLabel());
+//					System.out.println("selected object: " + ((Edge) selectedObject).getEdgeLabel());
 				}
 				
 				dateTimeTextHandler();
@@ -374,7 +374,6 @@ public class GraphMappingPage extends MigrationWizardPage {
 			@SuppressWarnings("unchecked")
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
 				if (startVertex != null) {
 					startVertex = null;
 				}
@@ -707,11 +706,13 @@ public class GraphMappingPage extends MigrationWizardPage {
 			return;
 		}
 		
-		List<Column> columnList = null;;
+		List<Column> columnList = null;
+		List<Column> gdbColumnList = null;
 		
 		if (data instanceof Vertex) {
 			Vertex vertex = (Vertex) data;
 			columnList = vertex.getColumnList();
+			gdbColumnList = vertex.getGraphColumnList();
 			
 		} else if (data instanceof EntityConnectionData) {
 			EntityConnectionData connData = (EntityConnectionData) data;
@@ -719,9 +720,10 @@ public class GraphMappingPage extends MigrationWizardPage {
 		} else if (data instanceof Edge) {
 			Edge edge = (Edge) data;
 			columnList = edge.getColumnList();
+			gdbColumnList = edge.getGraphColumnList();
 		}
 		
-		gdbTable.setInput(columnList);
+		gdbTable.setInput(gdbColumnList);
 		rdbTable.setInput(columnList);
 		
 		gdbTable.refresh();
@@ -1226,13 +1228,6 @@ public class GraphMappingPage extends MigrationWizardPage {
 		setErrorMessage(null);
 		
 		try {
-//            Catalog sourceCatalog = mw.getSourceCatalog();
-//            Catalog targetCatalog = mw.getTargetCatalog();
-//            
-//            final MigrationConfiguration cfg = mw.getMigrationConfig();
-//            cfg.setSrcCatalog(sourceCatalog, isFirstVisible);
-//            cfg.setTarCatalog(targetCatalog);
-            
             gdbDict = mConfig.getGraphDictionary();
             gdbDict.printVertexAndEdge();
             showGraphData(gdbDict.getMigratedVertexList());

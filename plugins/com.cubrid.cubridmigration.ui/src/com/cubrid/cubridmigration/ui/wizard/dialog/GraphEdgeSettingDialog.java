@@ -478,25 +478,6 @@ public class GraphEdgeSettingDialog extends Dialog {
 				
 				newEdge.addColumn(startCol);
 				newEdge.addColumn(endCol);
-			} else {
-			    if (newEdge.testEdgeProperty) {
-                    Column addCol = new Column("start_label");
-                    addCol.setDataType("VARCHAR(255)");
-                    addCol.setJdbcIDOfDataType(DataTypeConstant.CUBRID_DT_VARCHAR);
-                    newEdge.addColumn(addCol);
-                    addCol = new Column("start_id");
-                    addCol.setDataType("BIGINT");
-                    addCol.setJdbcIDOfDataType(DataTypeConstant.CUBRID_DT_BIGINT);
-                    newEdge.addColumn(addCol);
-                    addCol = new Column("end_label");
-                    addCol.setDataType("VARCHAR(255)");
-                    addCol.setJdbcIDOfDataType(DataTypeConstant.CUBRID_DT_VARCHAR);
-                    newEdge.addColumn(addCol);
-                    addCol = new Column("end_id");
-                    addCol.setDataType("BIGINT");
-                    addCol.setJdbcIDOfDataType(DataTypeConstant.CUBRID_DT_BIGINT);
-                    newEdge.addColumn(addCol);
-			    }
 			}
 			
 			startVertex.getEndVertexes().add(endVertex);

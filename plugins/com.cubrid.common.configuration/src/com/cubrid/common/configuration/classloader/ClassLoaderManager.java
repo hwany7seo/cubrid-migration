@@ -35,7 +35,10 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -47,6 +50,8 @@ import java.util.Map;
 public final class ClassLoaderManager {
 
     private static final ClassLoaderManager MANGER = new ClassLoaderManager();
+
+    private static final String ORACLE_I18N_JAR = "orai18n.jar";
 
     private Map<String, ClassLoader> path2Loader = new HashMap<String, ClassLoader>();
 
@@ -69,7 +74,7 @@ public final class ClassLoaderManager {
                 if (result != null) {
                     return result;
                 }
-                us = new URL[] {file2.toURI().toURL()};
+                us = buildClassPathUrls(file2);
                 result =
                         AccessController.doPrivileged(
                                 new PrivilegedAction<URLClassLoader>() {
@@ -83,5 +88,27 @@ public final class ClassLoaderManager {
                 return null;
             }
         }
+    }
+
+    private URL[] buildClassPathUrls(File driverFile) throws Exception {
+        List<URL> urls = new ArrayList<URL>();
+        urls.add(driverFile.toURI().toURL());
+
+        if (isOracleJdbcDriver(driverFile)) {
+            File parent = driverFile.getParentFile();
+            if (parent != null) {
+                File companionJar = new File(parent, ORACLE_I18N_JAR);
+                if (companionJar.isFile()
+                        && !companionJar.getCanonicalPath().equals(driverFile.getCanonicalPath())) {
+                    urls.add(companionJar.toURI().toURL());
+                }
+            }
+        }
+        return urls.toArray(new URL[urls.size()]);
+    }
+
+    private boolean isOracleJdbcDriver(File driverFile) {
+        String name = driverFile.getName().toLowerCase(Locale.ENGLISH);
+        return name.startsWith("ojdbc") && name.endsWith(".jar");
     }
 }

@@ -45,7 +45,6 @@ import com.cubrid.cubridmigration.ui.message.Messages;
 import com.cubrid.cubridmigration.ui.wizard.MigrationWizard;
 import com.cubrid.cubridmigration.ui.wizard.page.MigrationWizardPage;
 import com.cubrid.cubridmigration.ui.wizard.graph.page.view.GraphSelectSrcTarTypesView;
-import com.cubrid.cubridmigration.ui.wizard.page.view.SelectSrcTarTypesView;
 
 /**
  * 
@@ -58,7 +57,6 @@ public class GraphSelectSrcTarTypesPage extends
 		MigrationWizardPage {
 
 	private static final Logger LOG = LogUtil.getLogger(GraphSelectSrcTarTypesPage.class);
-	private SelectSrcTarTypesView comSelection;
 	private GraphSelectSrcTarTypesView graphComSelection;
 
 	public GraphSelectSrcTarTypesPage(String pageName) {
@@ -78,7 +76,6 @@ public class GraphSelectSrcTarTypesPage extends
 				final MigrationWizard wzd = getMigrationWizard();
 				MigrationConfiguration cfg = wzd.getMigrationConfig();
 				if (wzd.isLoadMigrationScript()) {
-					//comSelection.showCfg(cfg.getSourceType(), cfg.getDestType());
 					graphComSelection.showCfg(cfg.getSourceType(), cfg.getDestType());
 				}
 				isFirstVisible = false;
@@ -98,7 +95,6 @@ public class GraphSelectSrcTarTypesPage extends
 		container.setLayout(new GridLayout());
 		setControl(container);
 		container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		//comSelection = new SelectSrcTarTypesView(container);
 		graphComSelection = new GraphSelectSrcTarTypesView(container);
 		afterShowCurrentPage(null);
 	}
@@ -109,33 +105,12 @@ public class GraphSelectSrcTarTypesPage extends
 	 * @return next page
 	 */
 	public IWizardPage getNextPage() {
-		//if (!updateMigrationConfig()) {
 		if (!updateGraphMigrationConfig()) {
 			return null;
 		}
 		return super.getNextPage();
 	}
 
-	/**
-	 * Save user input (source database connection information) to export
-	 * options.
-	 * 
-	 * @return true if update success.
-	 */
-	protected boolean updateMigrationConfig() {
-		//Warning message : type changing will cause settings reset
-		final MigrationWizard wzd = getMigrationWizard();
-		if (!wzd.updateSrcTarType(comSelection.getSourceType(), comSelection.getTargetType())) {
-			return false;
-		}
-		final String result = this.comSelection.save();
-		if (StringUtils.isNotBlank(result)) {
-			MessageDialog.openError(getShell(), Messages.msgError, result);
-			return false;
-		}
-		return true;
-	}
-	
 	protected boolean updateGraphMigrationConfig() {
 		//Warning message : type changing will cause settings reset
 		final MigrationWizard wzd = getMigrationWizard();

@@ -90,7 +90,7 @@ public class ClobHandler extends DefaultHandler {
             clob =
                     (Clob)
                             Class.forName(
-                                            "cubrid.jdbc.driver.CUBRIDClob",
+                                            "coradb.jdbc.driver.CORADBClob",
                                             false,
                                             stmt.getClass().getClassLoader())
                                     .getConstructor(stmt.getConnection().getClass(), String.class)

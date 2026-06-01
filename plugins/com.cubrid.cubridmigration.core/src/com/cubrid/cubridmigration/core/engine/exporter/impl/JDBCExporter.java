@@ -765,9 +765,9 @@ public class JDBCExporter extends MigrationExporter {
 		return buffer.toString();
 	}
 	
-	protected void exportGraphSimpleEdgeRecords(Edge e, RecordExportedListener newRecordProcessor) { 
+	protected void exportGraphReadEdgeRecords(Edge e, RecordExportedListener newRecordProcessor) { 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("[IN]exportGraphVertexRecords()");
+            LOG.debug("[IN]exportGraphSimpleEdgeRecords()");
         }
         Table sTable = config.getTargetTableSchema(e.getOwner(), e.getEdgeLabel());
         if (sTable == null) {
@@ -815,6 +815,24 @@ public class JDBCExporter extends MigrationExporter {
             if (!records.isEmpty()) {
                 newRecordProcessor.processRecords(e.getEdgeLabel(), records);
             }
+        } finally {
+            newRecordProcessor.endExportTable(e.getEdgeLabel());
+            connManager.closeTar(conn);
+        }
+    }
+	
+	protected void exportGraphSimpleEdgeRecords(Edge e, RecordExportedListener newRecordProcessor) { 
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("[IN]exportGraphSimpleEdgeRecords()");
+        }
+        Table sTable = config.getTargetTableSchema(e.getOwner(), e.getEdgeLabel());
+        if (sTable == null) {
+            throw new NormalMigrationException("Table " + e.getEdgeLabel() + " was not found.");
+        }
+        Connection conn = connManager.getTargetConnection(); //NOPMD
+        try {
+            newRecordProcessor.startExportTable(e.getEdgeLabel());
+            newRecordProcessor.processRecords(e.getEdgeLabel(), null);
         } finally {
             newRecordProcessor.endExportTable(e.getEdgeLabel());
             connManager.closeTar(conn);
@@ -1033,26 +1051,6 @@ public class JDBCExporter extends MigrationExporter {
                 value = rs.getObject(i);
                 record.addColumnValue(sCol, value);
             }
-            //add Edge record
-            if (e.testEdgeProperty) {
-                Column col = new Column("start_label");
-                col.setDataType("VARCHAR(255)");
-                col.setJdbcIDOfDataType(DataTypeConstant.CUBRID_DT_VARCHAR);
-                record.addColumnValue(col, e.getStartVertexName());
-                col = new Column("start_id");
-                col.setDataType("BIGINT");
-                col.setJdbcIDOfDataType(DataTypeConstant.CUBRID_DT_BIGINT);
-                record.addColumnValue(col, rs.getObject(1));
-                col = new Column("end_label");
-                col.setDataType("VARCHAR(255)");
-                col.setJdbcIDOfDataType(DataTypeConstant.CUBRID_DT_VARCHAR);
-                record.addColumnValue(col, e.getEndVertexName());
-                col = new Column("end_id");
-                col.setDataType("BIGINT");
-                col.setJdbcIDOfDataType(DataTypeConstant.CUBRID_DT_BIGINT);
-                record.addColumnValue(col, rs.getObject(2));
-            }
-            
             return record;
         } catch (NormalMigrationException ex) {
             LOG.error("", ex);

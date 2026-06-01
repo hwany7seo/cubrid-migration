@@ -31,7 +31,6 @@ package com.cubrid.cubridmigration.core.engine.importer.impl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -80,6 +79,7 @@ public class GraphJDBCImporter extends Importer {
     private final MigrationConfiguration config;
     private final CUBRIDParameterSetter parameterSetter;
     private final GraphParameterSetter graphParameterSetter;
+    private final GraphSQLHelper sqlHelper;
 
     public GraphJDBCImporter(MigrationContext mrManager) {
         super(mrManager);
@@ -87,11 +87,12 @@ public class GraphJDBCImporter extends Importer {
         this.graphParameterSetter = mrManager.getGraphParamSetter();
         this.config = mrManager.getConfig();
         this.connectionManager = mrManager.getConnManager();
+        this.sqlHelper = GraphSQLHelper.getInstance(); 
     }
 
     @Override
     public void createVertex(Vertex v) {
-        String sql = GraphSQLHelper.getInstance(null).getVertexDDL(v);
+        String sql = sqlHelper.getVertexDDL(v);
         try {
             executeDDL(sql);
             createObjectSuccess(v);
@@ -128,8 +129,6 @@ public class GraphJDBCImporter extends Importer {
         String sql = GraphSQLHelper.getInstance(null).getEdgeDDL(e);
         try {
             executeDDL(sql);
-            System.out.println("createEdge");
-            System.out.println(sql);
             addTargetTableInConfig(e);
             createObjectSuccess(e);
         } catch (RuntimeException ex) {
@@ -172,11 +171,9 @@ public class GraphJDBCImporter extends Importer {
             conn.setAutoCommit(false);
         }
         PreparedStatement stmt = null;
-        System.out.println(" createEdgeImport");
         try {
             for (int i=0 ; i < e.getfkCol2RefMappingSize(); i++) {
-                String sql = getTargetInsertEdge(e, i);
-                System.out.println(sql);
+                String sql = sqlHelper.getTargetInsertEdge(e, i);
                 stmt = conn.prepareStatement(sql);
 
                 result = stmt.executeUpdate();
@@ -217,8 +214,7 @@ public class GraphJDBCImporter extends Importer {
             conn.setAutoCommit(false);
         }
         PreparedStatement stmt = null;
-        String sql = getTargetInsertJoinEdge(e);
-        System.out.println(" createJoinEdgeImport");
+        String sql = sqlHelper.getTargetInsertJoinEdge(e);
         try {
             if (sql == null) {
                 try {
@@ -229,7 +225,6 @@ public class GraphJDBCImporter extends Importer {
                     eventHandler.handleEvent(new SingleRecordErrorEvent(null, ex));
                 }
             }
-            System.out.println(sql);
             stmt = conn.prepareStatement(sql);
 
             for (Record rc : records) {
@@ -268,50 +263,6 @@ public class GraphJDBCImporter extends Importer {
         return resultTotal;
     }
 
-    private String getTargetInsertEdge(Edge e, int fkIdx) {
-        StringBuffer buf = new StringBuffer();
-        buf = new StringBuffer("INSERT EDGE INTO ").append(e.getEdgeLabel());
-        buf.append(" SELECT n, m FROM ").append(e.getStartVertexName()).append(" n JOIN ").append(e.getEndVertexName()).append(" m ON");
-        buf.append(" n.").append(e.getFKColumnNames().get(fkIdx)).append(" =");
-        buf.append(" m.").append(e.getREFColumnNames(e.getFKColumnNames().get(fkIdx)));
-        
-        return buf.toString();
-    }
-
-    private String getTargetInsertJoinEdge(Edge e) {
-        StringBuffer buffer = new StringBuffer();
-        int fkIndex = 0;
-        if (e.getStartVertexName().equals(e.getEndVertexName())) {
-            fkIndex = 1;
-        }
-        
-        buffer.append("INSERT EDGE");
-        buffer.append(" FROM (");
-        buffer.append(" SELECT ").append(e.getStartVertexName());
-        buffer.append(" FROM ").append(e.getStartVertexName());
-        buffer.append(" WHERE ").append(e.getREFColumnNames(e.getFKColumnNames().get(fkIndex))).append(" = ?)");
-        
-        buffer.append(" TO (");
-        buffer.append(" SELECT ").append(e.getEndVertexName());
-        buffer.append(" FROM ").append(e.getEndVertexName());
-        buffer.append(" WHERE ").append(e.getREFColumnNames(e.getFKColumnNames().get(1))).append(" = ?)");
-        
-        buffer.append(" INTO ").append(e.getEdgeLabel()).append(" VALUES (");
-        if (e.getColumnList() != null) {
-
-            for (int i = 0; i < e.getColumnList().size(); i++) {
-                buffer.append('?');
-
-                if (i < e.getColumnList().size() - 1) {
-                    buffer.append(", ");
-                }
-            }
-        }
-
-        buffer.append(")");
-        return buffer.toString();
-    }
-
     /**
      * Import with no retry.
      * 
@@ -331,7 +282,7 @@ public class GraphJDBCImporter extends Importer {
         PreparedStatement stmt = null; // NOPMD
         int result = 0;
         try {
-            String sql = getTargetInsertVertex(v);
+            String sql = sqlHelper.getTargetInsertVertex(v);
             try {
                 stmt = conn.prepareStatement(sql);
 
@@ -353,8 +304,6 @@ public class GraphJDBCImporter extends Importer {
                         parameterSetter.setRecord2Statement(trec, stmt);
                         stmt.addBatch();
                     } catch (SQLException ex) {
-                        // print exception
-
                         ex.printStackTrace();
 
                         if (isConnectionCutDown(ex)) {
@@ -409,33 +358,6 @@ public class GraphJDBCImporter extends Importer {
             connectionManager.closeTar(conn);
         }
         return result;
-    }
-
-    private String getTargetInsertVertex(Vertex v) {
-        int supportColumCount = 0;
-        StringBuffer buffer = new StringBuffer("INSERT INTO ").append(v.getVertexLabel()).append(" VALUES (");
-        buffer.append("NULL");
-        
-        List<Column> columns = v.getColumnList();
-        int len = columns.size();
-        for (int i = 0; i < len; i++) {
-
-            if (!columns.get(i).isSelected()) {
-                continue;
-            }
-
-            supportColumCount++;
-
-            buffer.append(", ");
-            buffer.append('?');
-        }
-
-        if (supportColumCount == 0) {
-            return null;
-        }
-
-        buffer.append(")");
-        return buffer.toString();
     }
 
     /**

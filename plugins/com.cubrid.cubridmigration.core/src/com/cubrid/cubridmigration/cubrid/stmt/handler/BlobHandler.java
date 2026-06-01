@@ -87,7 +87,7 @@ public class BlobHandler extends DefaultHandler {
             blob =
                     (Blob)
                             Class.forName(
-                                            "cubrid.jdbc.driver.CUBRIDBlob",
+                                            "coradb.jdbc.driver.CORADBBlob",
                                             false,
                                             stmt.getClass().getClassLoader())
                                     .getConstructor(stmt.getConnection().getClass())

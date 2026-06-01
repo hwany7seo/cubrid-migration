@@ -41,7 +41,6 @@ import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
@@ -64,13 +63,20 @@ import com.cubrid.cubridmigration.ui.wizard.editor.MigrationProgressEditorInput;
 import com.cubrid.cubridmigration.ui.wizard.graph.page.GraphConfirmationPage;
 import com.cubrid.cubridmigration.ui.wizard.graph.page.GraphMappingPage;
 import com.cubrid.cubridmigration.ui.wizard.graph.page.GraphSelectDestinationPage;
+import com.cubrid.cubridmigration.ui.wizard.graph.page.GraphSelectDestinationPageBackup;
 import com.cubrid.cubridmigration.ui.wizard.graph.page.GraphSelectSourcePage;
 import com.cubrid.cubridmigration.ui.wizard.graph.page.GraphSelectSrcTarTypesPage;
 import com.cubrid.cubridmigration.ui.wizard.graph.page.GraphTableSelectPage;
+import com.cubrid.cubridmigration.ui.wizard.page.ObjectMappingPage;
+import com.cubrid.cubridmigration.ui.wizard.page.SQLSelectPage;
+import com.cubrid.cubridmigration.ui.wizard.page.SQLTargetDBSelectPage;
+import com.cubrid.cubridmigration.ui.wizard.page.SchemaMappingPage;
+import com.cubrid.cubridmigration.ui.wizard.page.SelectDestinationPage;
+import com.cubrid.cubridmigration.ui.wizard.page.SelectSourcePage;
 
 public class GraphMigrationWizard extends MigrationWizard {
 	
-	private static final int[] IDX_GRAPH = new int[] {0, 1, 2, 3, 4, 5};
+	private static final int[] IDX_GRAPH = new int[] {0, 1, 2, 3, 4, 5, 6};
 
 	private static final Logger LOG = LogUtil.getLogger(GraphMigrationWizard.class);
 
@@ -83,6 +89,7 @@ public class GraphMigrationWizard extends MigrationWizard {
 		Set<Integer> supportedDBs = new HashSet<Integer>(2);
 		supportedDBs.add(DatabaseType.CUBRID.getID());
 		supportedDBs.add(DatabaseType.ORACLE.getID());
+		supportedDBs.add(DatabaseType.TIBERO.getID());
 		return supportedDBs;
 	}
 
@@ -167,14 +174,18 @@ public class GraphMigrationWizard extends MigrationWizard {
 	public void addPages() {
 		addPage(new GraphSelectSrcTarTypesPage("0"));
 
-		addPage(new GraphSelectSourcePage("1"));
+		//addPage(new GraphSelectSourcePage("1"));
+		addPage(new SelectSourcePage("1"));
 		addPage(new GraphSelectDestinationPage("2"));
+//		addPage(new SelectDestinationPage("2"));
+		addPage(new SchemaMappingPage("3"));
+		
 
-		graphTableSelPage = new GraphTableSelectPage("3");
+		graphTableSelPage = new GraphTableSelectPage("4");
 		addPage(graphTableSelPage);
 		
-		addPage(new GraphMappingPage("4"));
-		addPage(new GraphConfirmationPage("5"));
+		addPage(new GraphMappingPage("5"));
+		addPage(new GraphConfirmationPage("6"));
 		
 	}
 

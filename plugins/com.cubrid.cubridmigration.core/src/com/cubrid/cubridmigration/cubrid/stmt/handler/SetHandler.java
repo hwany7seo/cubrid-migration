@@ -77,7 +77,7 @@ public class SetHandler extends DefaultHandler {
 
             Method method =
                     Class.forName(
-                                    "cubrid.jdbc.driver.CUBRIDPreparedStatement",
+                                    "coradb.jdbc.driver.CORADBPreparedStatement",
                                     false,
                                     stmt.getClass().getClassLoader())
                             .getMethod(

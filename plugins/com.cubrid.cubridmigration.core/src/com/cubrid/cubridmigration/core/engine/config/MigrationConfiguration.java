@@ -1354,9 +1354,7 @@ public class MigrationConfiguration {
         expTables.clear();
         expTables.addAll(tempExpEntryTables);
         targetTables.clear();
-        if (!targetIsGraph()) {
-            targetTables.addAll(tempTarTables.values());
-        }
+        targetTables.addAll(tempTarTables.values());
 
         if (isTarSchemaDuplicate) {
             repareN21MigrationSetting();
@@ -3772,7 +3770,7 @@ public class MigrationConfiguration {
      */
     public Table getTargetTableSchema(String name) {
         for (Table tt : this.targetTables) {
-            if (tt.getName().equals(name)) {
+            if (tt.getName().equalsIgnoreCase(name)) {
                 return tt;
             }
         }
@@ -3791,8 +3789,14 @@ public class MigrationConfiguration {
         }
 
         for (Table tt : this.targetTables) {
-            if (tt.getName().equalsIgnoreCase(name) && tt.getOwner().equalsIgnoreCase(owner)) {
-                return tt;
+            if (tt.getOwner() == null) {
+                if (tt.getName().equalsIgnoreCase(name)) {
+                    return tt;
+                }
+            } else {
+                if (tt.getName().equalsIgnoreCase(name) && tt.getOwner().equalsIgnoreCase(owner)) {
+                    return tt;
+                }
             }
         }
         return null;

@@ -52,7 +52,7 @@ public class StartVertexTableEvent extends
 	 */
 	public String toString() {
 		return "Begin to export records of table [" + vertex.getVertexLabel()
-				+ "] for GraphDB Vertex.";
+				+ "(type : " + vertex.getVertexType() + " )] for GraphDB Vertex.";
 	}
 
 	/**

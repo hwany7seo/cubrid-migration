@@ -933,6 +933,8 @@ public abstract class AbstractJDBCSchemaFetcher implements IDependOnDatabaseType
             }
             if (table != null) {
                 schema.addTable(table);
+                setImportedKeysCount(conn, catalog, schema, table);
+                setExportedKeysCount(conn, catalog, schema, table);
             }
         }
     }

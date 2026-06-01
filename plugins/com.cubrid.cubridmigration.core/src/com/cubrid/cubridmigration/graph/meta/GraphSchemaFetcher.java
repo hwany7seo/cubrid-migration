@@ -149,11 +149,6 @@ public class GraphSchemaFetcher extends AbstractJDBCSchemaFetcher {
 			int columnTypeNum = resultSetMeta.getColumnType(i);
 			int columnPrecision = resultSetMeta.getPrecision(i);
 			
-			System.out.println("column type log : " + columnType);
-			System.out.println("column size log : " + columnSize);
-			System.out.println("column type number log : " + columnTypeNum);
-			System.out.println("column precision log : " + columnPrecision);
-			
 			if (StringUtils.isEmpty(columnName)) {
 				columnName = resultSetMeta.getColumnName(i);
 			}

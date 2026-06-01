@@ -392,6 +392,8 @@ public final class TiberoSchemaFetcher extends AbstractJDBCSchemaFetcher {
                 commentQueryLoader.findAllTabComments(conn, schema.getName());
         for (Table table : schema.getTables()) {
             table.setComment(commentEditor(comments.get(table.getName())));
+            setImportedKeysCount(conn, catalog, schema, table);
+            setExportedKeysCount(conn, catalog, schema, table);
         }
         buildPartitions(conn, catalog, schema);
     }
@@ -553,7 +555,9 @@ public final class TiberoSchemaFetcher extends AbstractJDBCSchemaFetcher {
                 String name = tables.getString(3);
                 if (name.startsWith("BIN$")
                         || name.startsWith("MLOG$")
-                        || name.startsWith("RUPD$")) {
+                        || name.startsWith("RUPD$")
+                        || name.contains("$")
+                        || name.contains("_")) {
                     continue;
                 }
                 tableNameList.add(owner + "." + name);

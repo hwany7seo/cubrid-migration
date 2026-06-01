@@ -103,10 +103,22 @@
             name="MSSQL&gt;&gt;CUBRID">
       </page>
       <page
-            category="com.cubrid.cubridmigration.ui.common.composite.MigrationConfigPage"
-            class="com.cubrid.cubridmigration.ui.common.composite.Tibero2CUBRIDTypeMapPage"
-            id="com.cubrid.cubridmigration.ui.common.composite.Tibero2CUBRIDTypeMapPage"
-            name="Oracle&gt;&gt;CUBRID">
+            category="com.cubrid.cubridmigration.ui.preference.MigrationConfigPage"
+            class="com.cubrid.cubridmigration.ui.preference.CUBRID2CUBRIDTypeMapPage"
+            id="com.cubrid.cubridmigration.ui.preference.CUBRID2CUBRIDTypeMapPage"
+            name="CUBRID&gt;&gt;CORADB">
+      </page>
+      <page
+            category="com.cubrid.cubridmigration.ui.preference.MigrationConfigPage"
+            class="com.cubrid.cubridmigration.ui.preference.Oracle2CUBRIDTypeMapPage"
+            id="com.cubrid.cubridmigration.ui.preference.Oracle2CUBRIDTypeMapPage"
+            name="Oracle&gt;&gt;CORADB">
+      </page>
+      <page
+            category="com.cubrid.cubridmigration.ui.preference.MigrationConfigPage"
+            class="com.cubrid.cubridmigration.ui.preference.Tibero2CUBRIDTypeMapPage"
+            id="com.cubrid.cubridmigration.ui.preference.Tibero2CUBRIDTypeMapPage"
+            name="Tibero&gt;&gt;CORADB">
       </page>
       <page
             class="com.cubrid.cubridmigration.ui.preference.JDBCDriverManagePage"

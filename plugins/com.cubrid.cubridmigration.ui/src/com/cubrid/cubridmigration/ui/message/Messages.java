@@ -355,7 +355,6 @@ public class Messages extends NLS {
     public static String errOtherMigrationRunning;
     public static String errSequenceName;
     public static String failedLogDialogSaveErrMsg;
-    public static String fileWarningMessage;
     public static String fileRepositoryEmptyWarning;
     public static String groupNameExisted;
     public static String groupNameInvalid;

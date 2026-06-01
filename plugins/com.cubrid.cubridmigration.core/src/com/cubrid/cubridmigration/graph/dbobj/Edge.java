@@ -43,6 +43,7 @@ public class Edge extends DBObject {
 	String ddl = "-";
 	
 	private List<Column> columnList = new ArrayList<Column>();
+	private List<Column> graphColumnList = new ArrayList<Column>();
 	
 	private Map<String, String> fkCol2RefMapping = new TreeMap<String, String>();
 	
@@ -54,8 +55,6 @@ public class Edge extends DBObject {
 	private String owner;
 	
 	boolean isHavePKStartVertex = false;
-	
-	public boolean testEdgeProperty = false;
 	
 	public Edge() {
 	}
@@ -84,10 +83,20 @@ public class Edge extends DBObject {
 	}
 	public void addColumn(Column col) {
 		this.columnList.add(col);
+		this.graphColumnList.add(col);
 	}
+	
+    public List<Column> getGraphColumnList() {
+        return graphColumnList;
+    }
+    
+    public void setGraphColumnList(List<Column> columnList) {
+        this.graphColumnList = columnList;
+    }
 	
 	public void addColumnAtFirst(Column col) {
 		this.columnList.add(0, col);
+		this.graphColumnList.add(0, col);
 	}
 	
 	public Column getColumnbyName(String columnName) {

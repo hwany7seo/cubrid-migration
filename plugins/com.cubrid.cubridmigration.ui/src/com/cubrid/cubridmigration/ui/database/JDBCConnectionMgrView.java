@@ -765,7 +765,7 @@ public class JDBCConnectionMgrView {
     /**
      * @author fulei
      */
-    private class RefreshAction extends Action {
+    protected class RefreshAction extends Action {
         /** constructor */
         public RefreshAction() {
             setText(Messages.schemaMappingRefreshLabel);

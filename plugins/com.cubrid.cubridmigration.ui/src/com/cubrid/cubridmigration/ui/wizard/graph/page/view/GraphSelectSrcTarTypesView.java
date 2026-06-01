@@ -71,6 +71,8 @@ public class GraphSelectSrcTarTypesView {
 
 	private Button btnOnlineCUBRIDSrc;
 	private Button btnOnlineOracleSrc;
+	private Button btnOnlineTiberoSrc;
+	
 
 	private final List<Button> srcButtons = new ArrayList<Button>(4);
 
@@ -100,8 +102,8 @@ public class GraphSelectSrcTarTypesView {
 		});
 		srcButtons.add(btnOnlineCUBRIDSrc);
 		
-		btnOnlineOracleSrc = createSrcTarTypeBtn(grpSrc, Messages.btnSrcOnlineTiberoDB,
-				Messages.btnSrcOnlineTiberoDBDes);
+		btnOnlineOracleSrc = createSrcTarTypeBtn(grpSrc, Messages.btnSrcOnlineOracleDB,
+				Messages.btnSrcOnlineOracleDBDes);
 		btnOnlineOracleSrc.setData(MigrationConfiguration.SOURCE_TYPE_ORACLE);
 		btnOnlineOracleSrc.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -113,6 +115,20 @@ public class GraphSelectSrcTarTypesView {
 			}
 		});
 		srcButtons.add(btnOnlineOracleSrc);
+		
+		btnOnlineTiberoSrc = createSrcTarTypeBtn(grpSrc, Messages.btnSrcOnlineTiberoDB,
+                Messages.btnSrcOnlineTiberoDBDes);
+		btnOnlineTiberoSrc.setData(MigrationConfiguration.SOURCE_TYPE_TIBERO);
+		btnOnlineTiberoSrc.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e){
+                Button sourceBtn = (Button) e.getSource();
+                if (sourceBtn.getSelection()) {
+                    selectRDBSrc();
+                }
+            }
+        });
+        srcButtons.add(btnOnlineTiberoSrc);
 		
 
 		Label comSep = new Label(grpSrc, SWT.SEPARATOR | SWT.HORIZONTAL);

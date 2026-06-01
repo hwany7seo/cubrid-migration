@@ -276,7 +276,7 @@ public class GraphConfirmationPage extends
 			txtSummary.setStyleRange(sr);
 		}
 		
-		setDDLText();
+		//setDDLText();
 		switchText(false);
 	}
 

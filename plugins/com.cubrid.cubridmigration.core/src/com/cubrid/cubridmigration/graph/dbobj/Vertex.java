@@ -34,6 +34,7 @@ public class Vertex extends DBObject {
 	private List<Vertex> endVertexes;
 	
 	private List<Column> columnList = new ArrayList<Column>();
+	private List<Column> graphColumnList = new ArrayList<Column>();
 	
 	private int vertexType = NONE;
 	private boolean hasPK = false;
@@ -72,6 +73,30 @@ public class Vertex extends DBObject {
 	    }
 		this.columnList = columnList;
 	}
+	
+	public List<Column> getGraphColumnList() {
+        return graphColumnList;
+    }
+	
+    public void setGraphColumnList(List<Column> columnList) {
+        if (columnList != null) {
+            Set<String> existingNames = columnList.stream()
+                    .map(Column::getName)
+                    .collect(Collectors.toSet());
+            String newColumnName = "_u_id";
+            while (existingNames.contains(newColumnName)) {
+                newColumnName = "_" + newColumnName;
+            }
+//            Column newColumn = new Column();
+//            newColumn.setName(newColumnName);
+//            newColumn.setDataType("BIGINT");
+            setUniqueIDName(newColumnName);
+            
+//            columnList.add(0, newColumn);
+        }
+        this.graphColumnList = columnList;
+    }
+	
 	public void addColumn(Column col) {
 		this.columnList.add(col);
 	}

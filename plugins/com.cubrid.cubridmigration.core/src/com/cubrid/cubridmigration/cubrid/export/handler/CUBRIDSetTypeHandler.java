@@ -59,7 +59,7 @@ public class CUBRIDSetTypeHandler implements IExportDataHandler {
         try {
             ClassLoader dbClassLoader = rs.getClass().getClassLoader();
             method =
-                    Class.forName("cubrid.jdbc.driver.CUBRIDResultSet", false, dbClassLoader)
+                    Class.forName("coradb.jdbc.driver.CORADBResultSet", false, dbClassLoader)
                             .getMethod("getCollection", new Class[] {String.class});
             Object obj = method.invoke(rs, column.getName());
 
