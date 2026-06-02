@@ -25,11 +25,13 @@
          <menu
                id="com.cubrid.cubridmigration.ui.menu.migration"
                label="%migration">
+<!--               
             <command
                   commandId="com.cubrid.cubridmigration.ui.command.NewMigration"
                   label="%newMigration"
                   style="push">
             </command>
+-->            
             <command
                   commandId="com.cubrid.cubridmigration.ui.command.NewGraphMigration"
                   label="%newGraphMigration"
@@ -87,6 +89,7 @@
       <menuContribution
             allPopups="false"
             locationURI="menu:com.cubrid.cubridmigration.toolbar.newMigrationWizard">
+<!--
          <command
                commandId="com.cubrid.cubridmigration.ui.command.NewMigration"
                icon="icon/tb/mnu_new_wizard.png"
@@ -96,6 +99,7 @@
                style="push"
                tooltip="%ttCreateNewMigration">
          </command>
+-->         
          <command
                commandId="com.cubrid.cubridmigration.ui.command.NewGraphMigration"
                icon="icon/tb/mnu_new_wizard.png"

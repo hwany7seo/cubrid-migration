@@ -32,12 +32,12 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.slf4j.Logger;
 
 import com.cubrid.common.log.LogUtil;
-import com.cubrid.cubridmigration.core.datatype.DataTypeConstant;
 import com.cubrid.cubridmigration.core.dbobject.Catalog;
 import com.cubrid.cubridmigration.core.dbobject.Column;
 import com.cubrid.cubridmigration.core.dbobject.FK;
 import com.cubrid.cubridmigration.core.dbobject.Index;
 import com.cubrid.cubridmigration.core.dbobject.Schema;
+import com.cubrid.cubridmigration.core.dbobject.SchemaCatalog;
 import com.cubrid.cubridmigration.core.dbobject.Table;
 import com.cubrid.cubridmigration.core.engine.config.MigrationConfiguration;
 import com.cubrid.cubridmigration.core.engine.config.SourceEntryTableConfig;
@@ -49,7 +49,6 @@ import com.cubrid.cubridmigration.ui.database.GraphLabelProvider;
 import com.cubrid.cubridmigration.ui.message.Messages;
 import com.cubrid.cubridmigration.ui.wizard.MigrationWizard;
 import com.cubrid.cubridmigration.ui.wizard.page.MigrationWizardPage;
-import com.cubrid.cubridmigration.ui.wizard.utils.MigrationCfgUtils;
 
 //GDB select table page.
 public class GraphTableSelectPage extends MigrationWizardPage {
@@ -288,19 +287,18 @@ public class GraphTableSelectPage extends MigrationWizardPage {
 	
 	@Override
 	protected void afterShowCurrentPage(PageChangedEvent event) {
-		if (isFirstVisible) {
-			final MigrationWizard mw = getMigrationWizard();
+	    final MigrationWizard mw = getMigrationWizard();
+		if (isFirstVisible || mw.isChanged()) {
+		    mw.setIsChanged(false);
 			MigrationConfiguration cfg = mw.getMigrationConfig();
 			setTitle(mw.getStepNoMsg(GraphTableSelectPage.this) + Messages.objectMapPageTitle);
 			setDescription(Messages.objectMapPageDescription);
 			
 			setErrorMessage(null);
             mw.refreshWizardStatus();
-            MigrationCfgUtils util = new MigrationCfgUtils();
 
             try {
     			Catalog sourceCatalog = mw.getSourceCatalog();
-    			Catalog targetCatalog = mw.getTargetCatalog();
     			// Temp Code (should be rewritten for GraphDB.)
     			cfg.setSrcCatalog(sourceCatalog, isFirstVisible && !mw.isLoadMigrationScript());
     			
@@ -884,5 +882,19 @@ public class GraphTableSelectPage extends MigrationWizardPage {
             e.setGraphColumnList(mconfig.getTargetTableSchema(t.getTargetOwner(), t.getName()).getColumns());
         }
         
+    }
+	
+	private boolean validateSourceConfiguration(
+            MigrationConfiguration cfg, SchemaCatalog sourceSchemaCatalog) {
+        if (cfg.getSourceConParams() == null) {
+            MessageDialog.openError(getShell(), Messages.msgError, "Source connection is not set.");
+            return false;
+        }
+        if (sourceSchemaCatalog == null) {
+            MessageDialog.openError(
+                    getShell(), Messages.msgError, "Source schema catalog is not loaded.");
+            return false;
+        }
+        return true;
     }
 }

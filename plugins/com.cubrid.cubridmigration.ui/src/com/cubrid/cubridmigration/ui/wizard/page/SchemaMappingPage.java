@@ -242,6 +242,7 @@ public class SchemaMappingPage extends MigrationWizardPage {
             CMTConParamManager.getInstance()
                     .updateSelectedSourceCatalog(cp, selectedSchemas, srcCatalog);
             wizard.setSourceDBNode(srcCatalog);
+            wizard.setIsChanged(true);
         } catch (Exception e) {
             LOG.error("Failed to refresh detailed catalog in SchemaMappingPage", e);
         }
@@ -511,6 +512,7 @@ public class SchemaMappingPage extends MigrationWizardPage {
             wizard.setSourceCatalog(srcCatalog);
             CMTConParamManager.getInstance()
                     .updateSelectedSourceCatalog(cp, selectedSchemas, detailed);
+            wizard.setIsChanged(true);
             return true;
         } catch (Exception e) {
             LOG.error("Failed to fetch detailed source catalog in SchemaMappingPage", e);

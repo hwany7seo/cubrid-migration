@@ -109,6 +109,8 @@ public class MigrationWizard extends Wizard implements IMigrationWizardStatus {
 
     private boolean tarOfflineMode;
     private boolean srcOfflineMode;
+    
+    private boolean isChanged = false;
 
     public MigrationWizard() {
         setWindowTitle(Messages.wizardTitle);
@@ -593,5 +595,13 @@ public class MigrationWizard extends Wizard implements IMigrationWizardStatus {
             return 0;
         }
         return targetCatalog.getSchemas().size();
+    }
+    
+    public boolean isChanged() {
+        return isChanged;
+    }
+    
+    public void setIsChanged(boolean change) {
+        isChanged = change;
     }
 }

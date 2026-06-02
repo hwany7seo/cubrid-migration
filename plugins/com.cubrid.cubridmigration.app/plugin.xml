@@ -148,11 +148,13 @@
          <menu
                id="com.cubrid.cubridmigration.ui.menu.migration"
                label="%migration">
+<!--
     		<command
                   commandId="com.cubrid.cubridmigration.ui.command.NewMigration"
                   label="%newMigration"
                   style="push">
             </command>
+-->            
             <command
                   commandId="com.cubrid.cubridmigration.ui.command.NewGraphMigration"
                   label="%newGraphMigration"
@@ -236,6 +238,7 @@
                name="com.cubrid.cubridmigration.ui.toolbar.separator1"
                visible="true">
          </separator>
+<!--         
          <command
                commandId="com.cubrid.cubridmigration.ui.command.NewMigration"
                icon="icons/tb/tb_new_wizard.png"
@@ -244,6 +247,7 @@
                style="push"
                tooltip="%ttCreateNewMigration">
          </command>
+-->         
          <command
                commandId="com.cubrid.cubridmigration.ui.command.NewGraphMigration"
                icon="icons/tb/tb_new_wizard.png"
