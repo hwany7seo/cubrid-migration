@@ -68,6 +68,7 @@ public class Edge extends DBObject {
 		this.startVertexName = edge.getStartVertexName();
 		this.endVertexName = edge.getEndVertexName();
 		this.columnList = new ArrayList<Column>(edge.getColumnList());
+		this.graphColumnList = new ArrayList<Column>(edge.getGraphColumnList());
 		this.fkCol2RefMapping = new TreeMap<String, String>(edge.getfkCol2RefMapping());
 		this.edgeProperties = new HashMap<String, String>(edge.getEdgeProperties());
 		this.fkString = edge.getFKString();
@@ -241,11 +242,17 @@ public class Edge extends DBObject {
 	
 	public void removeIDCol() {
 		Iterator<Column> iter = columnList.iterator();
-		
 		while (iter.hasNext()) {
 			Column col = iter.next();
 			if (col.getDataType().equals("ID")) {
 				iter.remove();
+			}
+		}
+		Iterator<Column> graphIter = graphColumnList.iterator();
+		while (graphIter.hasNext()) {
+			Column col = graphIter.next();
+			if (col.getDataType().equals("ID")) {
+				graphIter.remove();
 			}
 		}
 	}

@@ -146,7 +146,7 @@ public class GraphJDBCImporter extends Importer {
         int retryCount = 0;
         while (true) {
             try {
-                if (e.getEdgeType() == Edge.JOINTABLE_TYPE) {
+                if (e.getEdgeType() == Edge.JOINTABLE_TYPE || e.getEdgeType() == Edge.JOIN_TWO_WAY_TYPE) {
                     return createJoinEdgeImport(e, records);
                 }
                 return createEdgeImport(e);
@@ -174,6 +174,7 @@ public class GraphJDBCImporter extends Importer {
             prvAutoCommitStatus = true;
             conn.setAutoCommit(false);
         }
+        
         PreparedStatement stmt = null;
         try {
             for (int i=0 ; i < e.getfkCol2RefMappingSize(); i++) {
@@ -185,6 +186,7 @@ public class GraphJDBCImporter extends Importer {
                 if (sql == null) {
                     continue;
                 }
+                System.out.println("createEdgeImport sql : " + sql);
 
                 stmt = conn.prepareStatement(sql);
 
@@ -203,7 +205,6 @@ public class GraphJDBCImporter extends Importer {
                 throw new JDBCConnectErrorException(ex);
             }
             DBUtils.rollback(conn);
-            // If SQL has errors, write the records to a SQL files.
         } catch (Exception eee) {
             eee.printStackTrace();
         } finally {
@@ -227,6 +228,7 @@ public class GraphJDBCImporter extends Importer {
         }
         PreparedStatement stmt = null;
         String sql = sqlHelper.getTargetInsertJoinEdge(e);
+        System.out.println("createJoinEdgeImport sql : " + sql);
         try {
             if (sql == null) {
                 try {

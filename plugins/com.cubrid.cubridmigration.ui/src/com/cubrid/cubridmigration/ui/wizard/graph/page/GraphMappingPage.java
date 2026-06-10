@@ -1307,31 +1307,48 @@ public class GraphMappingPage extends MigrationWizardPage {
 	private boolean setTwoWayEdge() {
 		List<Edge> edgeList = gdbDict.getMigratedEdgeList();
 		List<Edge> twoWayEdgeList = new ArrayList<Edge>();
-		
+
 		for (Edge edge : edgeList) {
 			int edgeType = Edge.TWO_WAY_TYPE;
-			
+
 			if (edge.getEdgeType() == Edge.JOINTABLE_TYPE)
 				edgeType = Edge.JOIN_TWO_WAY_TYPE;
-			
+
 			Edge copiedEdge = new Edge(edge);
 			copiedEdge.setEdgeType(edgeType);
 			copiedEdge.removeIDCol();
-			
+
+			copiedEdge.setStartVertexName(edge.getEndVertexName());
+			copiedEdge.setEndVertexName(edge.getStartVertexName());
+			copiedEdge.setStartVertex(edge.getEndVertex());
+			copiedEdge.setEndVertex(edge.getStartVertex());
+
+			// For regular two-way edges, reverse fkCol2RefMapping so the SQL direction flips.
+			// For join two-way edges the FK columns belong to the join table (not vertices),
+			// so keep the mapping as-is; getTargetInsertJoinEdge and setEdgeRecord2Statement
+			// handle the FROM/TO and binding index swap internally.
+			if (edgeType == Edge.TWO_WAY_TYPE) {
+				copiedEdge.clearFKCol2Ref();
+				for (String fkCol : edge.getFKColumnNames()) {
+					String refCol = edge.getREFColumnNames(fkCol);
+					copiedEdge.addFKCol2Ref(refCol, fkCol);
+				}
+			}
+
 			if (mConfig.targetIsCSV()) {
 				Column twoWayStartCol = new Column(":END_ID(" + copiedEdge.getEndVertexName() + ")");
 				twoWayStartCol.setDataType("ID");
-				
+
 				Column twoWayEndCol = new Column(":START_ID(" + copiedEdge.getStartVertexName() + ")");
 				twoWayEndCol.setDataType("ID");
-				
+
 				copiedEdge.addColumnAtFirst(twoWayEndCol);
 				copiedEdge.addColumnAtFirst(twoWayStartCol);
 			}
-			
+
 			twoWayEdgeList.add(copiedEdge);
 		}
-		
+
 		gdbDict.addMigratedEdgeList(twoWayEdgeList);
 
 		return true;

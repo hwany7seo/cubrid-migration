@@ -107,29 +107,33 @@ public class GraphSQLHelper extends SQLHelper {
 
     public String getTargetInsertJoinEdge(Edge e) {
         StringBuffer buffer = new StringBuffer();
-        int fkIndex = 0;
+        int fromIndex = 0;
+        int toIndex = 1;
         if (e.getStartVertexName().equals(e.getEndVertexName())) {
-            fkIndex = 1;
+            // self-referencing edge: FROM uses index 1 to avoid using the same vertex twice
+            fromIndex = 1;
+        } else if (e.getEdgeType() == Edge.JOIN_TWO_WAY_TYPE) {
+            // reversed direction: FROM (new start = old end) uses FK1, TO (new end = old start) uses FK0
+            fromIndex = 1;
+            toIndex = 0;
         }
-        
+
         buffer.append("INSERT EDGE");
         buffer.append(" FROM (");
         buffer.append(" SELECT ").append(getQuotedObjName(e.getStartVertexName()));
         buffer.append(" FROM ").append(getQuotedObjName(e.getStartVertexName()));
-        buffer.append(" WHERE ").append(getQuotedObjName(e.getREFColumnNames(e.getFKColumnNames().get(fkIndex)))).append(" = ?)");
-        
+        buffer.append(" WHERE ").append(getQuotedObjName(e.getREFColumnNames(e.getFKColumnNames().get(fromIndex)))).append(" = ?)");
+
         buffer.append(" TO (");
         buffer.append(" SELECT ").append(getQuotedObjName(e.getEndVertexName()));
         buffer.append(" FROM ").append(getQuotedObjName(e.getEndVertexName()));
-        buffer.append(" WHERE ").append(getQuotedObjName(e.getREFColumnNames(e.getFKColumnNames().get(1)))).append(" = ?)");
-        
-        buffer.append(" INTO ").append(getQuotedObjName(e.getEdgeLabel())).append(" VALUES (");
-        
-        if (e.getGraphColumnList() != null) {
+        buffer.append(" WHERE ").append(getQuotedObjName(e.getREFColumnNames(e.getFKColumnNames().get(toIndex)))).append(" = ?)");
 
+        buffer.append(" INTO ").append(getQuotedObjName(e.getEdgeLabel())).append(" VALUES (");
+
+        if (e.getGraphColumnList() != null) {
             for (int i = 0; i < e.getGraphColumnList().size(); i++) {
                 buffer.append('?');
-
                 if (i < e.getGraphColumnList().size() - 1) {
                     buffer.append(", ");
                 }

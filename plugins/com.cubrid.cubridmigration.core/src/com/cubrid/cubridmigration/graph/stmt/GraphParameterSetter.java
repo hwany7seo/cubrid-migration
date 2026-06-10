@@ -143,16 +143,18 @@ public class GraphParameterSetter {
 	public void setEdgeRecord2Statement(Edge edge, Record record, PreparedStatement pstmt) {
 		int refColSize = edge.getFKColumnNames().size();
 		int colListSize = edge.getColumnList().size();
-		
+
 		try {
 			for (int i = 0; i < refColSize; i++) {
-//				String startColName = edge.getREFColumnNames(edge.getFKColumnNames().get(i));
-				String startColName = edge.getFKColumnNames().get(i);
-				
+				// JOIN_TWO_WAY SQL has FROM/TO swapped (fromIndex=1, toIndex=0),
+				// so bind FK1's value at position 0 and FK0's value at position 1.
+				int fkIdx = (edge.getEdgeType() == Edge.JOIN_TWO_WAY_TYPE && refColSize == 2)
+						? (1 - i) : i;
+				String startColName = edge.getFKColumnNames().get(fkIdx);
+
 				for (ColumnValue colVal : record.getColumnValueList()) {
 					if (colVal.getColumn().getName().equals(startColName)) {
 						final SetterHandler handler = getHandler(colVal);
-						
 						if (colVal.getValue() != null) {
 							handler.handle(pstmt, i, colVal);
 						} else {
