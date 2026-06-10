@@ -32,8 +32,11 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -106,9 +109,6 @@ public class GraphMappingPage extends MigrationWizardPage {
     public static final int Z_KEYCODE = 0x7a;
     public static final int Y_KEYCODE = 0x79;
 
-	/**
-	 * Zest requires a non-null {@link LayoutAlgorithm}; actual coordinates come from ELK in {@link #applyElkLayout()}.
-	 */
 	private static final LayoutAlgorithm NO_OP_ZEST_LAYOUT = new LayoutAlgorithm() {
 		@Override
 		public void setLayoutContext(LayoutContext context) {
@@ -133,18 +133,32 @@ public class GraphMappingPage extends MigrationWizardPage {
 	
 	private String highlightNodeName = "";
 	
-	private Vertex selectedVertex;
 	private Vertex startVertex;
 	private Vertex endVertex;
 	
-	private Edge selectedEdge;
-	
+	private List<Object> selectedObjectList = null;
 	private Object selectedObject;
 	
 	private TableViewer gdbTable;
 	private TableViewer rdbTable;
 	
 	private Menu popupMenu;
+	
+	interface PopupMenuType {
+	    int START_VERTEX = 0;
+	    int END_VERTEX = 1;
+	    int CANCEL = 2;
+	    int SEPARAYOR_1 = 3;
+	    int CHANGE_NAME = 4;
+	    int DELETE_EDGE = 5;
+	    int SEPARATOR_2 = 6;
+	    int UNDO = 7;
+	    int REDO = 8;
+	    int SEPARATOR_3 = 9;
+	    int DATATIME_FILTER = 10;
+	    int UNSET_FILTER = 11;
+	}
+	
 	private Button twoWayBtn;
 	
 	Text dateTimeText;
@@ -269,38 +283,42 @@ public class GraphMappingPage extends MigrationWizardPage {
 		graphViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
+			    System.out.println("graphViewer addSelectionListener e : " + event.getSelection().toString());
 				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-				changeColumnData(selection.getFirstElement());
-				
-				if(selection.getFirstElement() instanceof Vertex) {
-					selectedObject = (Vertex) selection.getFirstElement();
-					selectedVertex = (Vertex) selection.getFirstElement();
-					
-//					for (GraphNode gNode : (ArrayList<GraphNode>) graphViewer.getGraphControl().getNodes()) {
-//						if (gNode.getText().equalsIgnoreCase(selectedVertex.getVertexLabel())) {
-//							highlightNodeName = gNode.getText();
-//						}
-//					}
-					
-					menuHandler();
-					deleteMenuHandler(true);
-					redoUndoHandler();
-//					System.out.println("select object: " + ((Vertex) selectedObject).getVertexLabel());
+				if (selection != null) {
+				    selectedObjectList = selection.toList();
+				} else {
+				    selectedObjectList = null;
 				}
+//				changeColumnData(selection.getFirstElement());
 				
-				if (selection.getFirstElement() instanceof Edge) {
-					selectedObject = (Edge) selection.getFirstElement();
-					selectedEdge = (Edge) selection.getFirstElement();
-					
-					menuHandler();
-					deleteMenuHandler(false);
-					redoUndoHandler();
-//					System.out.println("selected object: " + ((Edge) selectedObject).getEdgeLabel());
-				}
+//				if(selection.getFirstElement() instanceof Vertex) {
+//					selectedObject = (Vertex) selection.getFirstElement();
+//					
+////					for (GraphNode gNode : (ArrayList<GraphNode>) graphViewer.getGraphControl().getNodes()) {
+////						if (gNode.getText().equalsIgnoreCase(selectedVertex.getVertexLabel())) {
+////							highlightNodeName = gNode.getText();
+////						}
+////					}
+//					
+//					menuHandler();
+//					deleteMenuHandler(true);
+//					redoUndoHandler();
+////					System.out.println("select object: " + ((Vertex) selectedObject).getVertexLabel());
+//				}
+//				
+//				if (selection.getFirstElement() instanceof Edge) {
+//					selectedObject = (Edge) selection.getFirstElement();
+//					
+//					menuHandler();
+//					deleteMenuHandler(false);
+//					redoUndoHandler();
+////					System.out.println("selected object: " + ((Edge) selectedObject).getEdgeLabel());
+//				}
+//				
+//				dateTimeTextHandler();
 				
-				dateTimeTextHandler();
-				
-				//refreshGraph();
+//				refreshGraph();
 			}
 		});
 		
@@ -311,6 +329,17 @@ public class GraphMappingPage extends MigrationWizardPage {
 			@Override
 			@SuppressWarnings("unchecked")
 			public void widgetSelected(SelectionEvent e) {
+			    if (e.item instanceof GraphNode) {
+			        selectedObject = ((GraphNode)e.item).getData();
+			    } else if (e.item instanceof GraphConnection) {
+			        selectedObject = ((GraphConnection)e.item).getData();
+			    } else {
+			        selectedObject = null;
+			        return;
+			    }
+			    
+			    changeColumnData(selectedObject);
+			    
 				ArrayList<GraphItem> selectList = (ArrayList<GraphItem>) graph.getSelection();
 				for (GraphItem selection : selectList) {
 					if (selection instanceof GraphConnection) {
@@ -323,6 +352,36 @@ public class GraphMappingPage extends MigrationWizardPage {
 						}
 					}
 				}
+				
+				if (selectedObjectList != null) {
+    				for (Object obj : selectedObjectList) {
+    				    if (obj instanceof Edge) {
+    				        System.out.println("edge list in e : " + ((Edge)obj).getName());
+    				    }
+    				}
+				}
+			    
+			    if(selectedObject instanceof Vertex) {
+//                    for (GraphNode gNode : (ArrayList<GraphNode>) graphViewer.getGraphControl().getNodes()) {
+//                        if (gNode.getText().equalsIgnoreCase(selectedVertex.getVertexLabel())) {
+//                            highlightNodeName = gNode.getText();
+//                        }
+//                    }
+                  
+			        menuHandler();
+			        deleteMenuHandler(true);
+			        redoUndoHandler();
+//                    System.out.println("select object: " + ((Vertex) selectedObject).getVertexLabel());
+			    }
+              
+			    if (selectedObject instanceof Edge) {
+			        menuHandler();
+			        deleteMenuHandler(false);
+			        redoUndoHandler();
+//                    System.out.println("selected object: " + ((Edge) selectedObject).getEdgeLabel());
+			    }
+				
+				dateTimeTextHandler();
 			}
 			
 			@Override
@@ -354,8 +413,13 @@ public class GraphMappingPage extends MigrationWizardPage {
                     }
                 }
 
-                if (selectedEdge != null && e.keyCode == SWT.DEL) {
-                    deleteEdgeInGraph(selectedEdge);
+                if ((selectedObjectList != null && selectedObjectList.size() > 0) && e.keyCode == SWT.DEL) {
+                    for (Object obj : selectedObjectList) {
+                        if (obj instanceof Edge) {
+                           deleteEdgeInGraph((Edge)obj);
+                           redoUndoHandler();
+                        }
+                    }
                 }
             }
         });
@@ -378,10 +442,10 @@ public class GraphMappingPage extends MigrationWizardPage {
 					startVertex = null;
 				}
 				
-				startVertex = selectedVertex;
+				startVertex = (Vertex)selectedObject;
 				
 				for (GraphNode gNode : (ArrayList<GraphNode>) graphViewer.getGraphControl().getNodes()) {
-					if (gNode.getText().equalsIgnoreCase(selectedVertex.getVertexLabel())) {
+					if (gNode.getText().equalsIgnoreCase(startVertex.getVertexLabel())) {
 						highlightNodeName = gNode.getText();
 						
 						setHighlight(gNode);
@@ -398,7 +462,7 @@ public class GraphMappingPage extends MigrationWizardPage {
 		MenuItem item2 = new MenuItem(popupMenu, SWT.POP_UP);
 		item2.setText(Messages.msgMenuEndVertex);
 		
-		item2.addSelectionListener(new SelectionListener() {
+		item2.addSelectionListener(new SelectionAdapter() {
 			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -407,25 +471,20 @@ public class GraphMappingPage extends MigrationWizardPage {
 					endVertex = null;
 				}
 				
-				endVertex = selectedVertex;
+				endVertex = (Vertex)selectedObject;
 				
 				GraphEdgeSettingDialog edgeSettingDialog = new GraphEdgeSettingDialog(getShell(), 
 						mConfig, gdbDict, startVertex, endVertex, workBuffer, workCtrl);
 				edgeSettingDialog.open();
 				
 				redoUndoHandler();
-				
-				refreshGraph();
 			}
-			
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {}
 		});
 		
 		MenuItem item3 = new MenuItem(popupMenu, SWT.POP_UP);
 		item3.setText(Messages.btnCancel);
 		
-		item3.addSelectionListener(new SelectionListener() {
+		item3.addSelectionListener(new SelectionAdapter() {
 			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -438,9 +497,6 @@ public class GraphMappingPage extends MigrationWizardPage {
 					endVertex = null;
 				}
 			}
-			
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {}
 		});
 		
 		MenuItem separator = new MenuItem(popupMenu, SWT.SEPARATOR);
@@ -448,7 +504,7 @@ public class GraphMappingPage extends MigrationWizardPage {
 		MenuItem changeName = new MenuItem(popupMenu, SWT.POP_UP);
 		changeName.setText(Messages.msgMenuChangeName);
 		
-		changeName.addSelectionListener(new SelectionListener() {
+		changeName.addSelectionListener(new SelectionAdapter() {
 			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -456,9 +512,9 @@ public class GraphMappingPage extends MigrationWizardPage {
 				String originalName;
 				 
 				if (selectedObject instanceof Vertex) {
-					originalName = selectedVertex.getName();
+					originalName = ((Vertex)selectedObject).getName();
 				} else {
-					originalName = selectedEdge.getName();
+					originalName = ((Edge)selectedObject).getName();
 				}
 				
 				GraphRenamingDialog renameDialog = new GraphRenamingDialog(getShell(), gdbDict, selectedObject);
@@ -469,42 +525,39 @@ public class GraphMappingPage extends MigrationWizardPage {
 				List<Vertex> migratedVertexList = gdbDict.getMigratedVertexList();
 				
 				if (selectedObject instanceof Vertex) {
+				    Vertex SelectedVertex = (Vertex)selectedObject;
 					for (Vertex vertex : migratedVertexList) {
-						if (vertex.getName().equals(selectedVertex.getName())) {
+						if (vertex.getName().equals(SelectedVertex.getName())) {
 							workBuffer.addWork(workCtrl.createWork(workTypeEnum.WT_RENAME.ordinal(), vertex, originalName));
+							renameVertexFromGraph(vertex, vertex.getName());
 							break;
 						}
 					}
 				} else {
+				    Edge SelectedEdge = (Edge)selectedObject;
 					for (Edge edge : migratedEdgeList) {
-						if (edge.getName().equals(selectedEdge.getName())) {
+						if (edge.getName().equals(SelectedEdge.getName())) {
 							workBuffer.addWork(workCtrl.createWork(workTypeEnum.WT_RENAME.ordinal(), edge, originalName));
+							renameEdgeFromGraph(edge, SelectedEdge.getName());
 							break;
 						}
 					}
 				}
 				
 				redoUndoHandler();
-				
-				refreshGraph();
 			}
-			
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {}
 		});
 		
 		MenuItem deleteEdge = new MenuItem(popupMenu, SWT.POP_UP);
 		deleteEdge.setText(Messages.msgMenuDeleteEdge);
 		
-		deleteEdge.addSelectionListener(new SelectionListener() {
+		deleteEdge.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				deleteEdgeInGraph(selectedEdge);
+				deleteEdgeInGraph(((Edge)selectedObject));
 			}
 
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {}
 		});
 		
 		MenuItem separator2 = new MenuItem(popupMenu, SWT.SEPARATOR);
@@ -512,29 +565,23 @@ public class GraphMappingPage extends MigrationWizardPage {
 		MenuItem undo = new MenuItem(popupMenu, SWT.POP_UP);
 		undo.setText(Messages.msgMenuUndo);
 		
-		undo.addSelectionListener(new SelectionListener() {
+		undo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				executeUndo(workBuffer.undo());
 				redoUndoHandler();
 			}
-			
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {}
 		});
 		
 		MenuItem redo = new MenuItem(popupMenu, SWT.POP_UP);
 		redo.setText(Messages.msgMenuRedo);
 		
-		redo.addSelectionListener(new SelectionListener() {
+		redo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				executeRedo(workBuffer.redo());
 				redoUndoHandler();
 			}
-			
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {}
 		});
 		
 		MenuItem separator3 = new MenuItem(popupMenu, SWT.SEPARATOR);
@@ -542,7 +589,7 @@ public class GraphMappingPage extends MigrationWizardPage {
 		MenuItem dateTimeFilter = new MenuItem(popupMenu, SWT.POP_UP);
 		dateTimeFilter.setText("set datetime filter");
 		
-		dateTimeFilter.addSelectionListener(new SelectionListener() {
+		dateTimeFilter.addSelectionListener(new SelectionAdapter() {
 			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -552,16 +599,12 @@ public class GraphMappingPage extends MigrationWizardPage {
 				filterHandler();
 			}
 			
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
-			}
 		});
 		
 		MenuItem unsetFilter = new MenuItem(popupMenu, SWT.POP_UP);
 		unsetFilter.setText("unset filter");
 		
-		unsetFilter.addSelectionListener(new SelectionListener() {
+		unsetFilter.addSelectionListener(new SelectionAdapter() {
 			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -573,12 +616,6 @@ public class GraphMappingPage extends MigrationWizardPage {
 				
 				dateTimeTextHandler();
 				filterHandler();
-			}
-			
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
-				
 			}
 		});
 		
@@ -610,9 +647,8 @@ public class GraphMappingPage extends MigrationWizardPage {
 		
 		for (Column col : columnList) {
 			if (col.isConditionColumn()) {
-				fromDateString = "aaaaaaaaa";
-				toDateString = "bbbbbbbbbb";
-				
+				fromDateString = col.getFromDate();
+				toDateString = col.getToDate();
 				break;
 			}
 		}
@@ -640,30 +676,33 @@ public class GraphMappingPage extends MigrationWizardPage {
 		MenuItem[] items = popupMenu.getItems();
 		
 		if (isVertex) {
-			items[5].setEnabled(false);
+			items[PopupMenuType.DELETE_EDGE].setEnabled(false);
 		} else {
-			items[5].setEnabled(true);
+			items[PopupMenuType.DELETE_EDGE].setEnabled(true);
 		}
 	}
 	
 	public void menuHandler() {
 		MenuItem[] items = popupMenu.getItems();
+		MenuItem start_vertex = items[PopupMenuType.START_VERTEX];
+		MenuItem end_vertex = items[PopupMenuType.END_VERTEX];
+		MenuItem cancle = items[PopupMenuType.CANCEL];
 		
-		if (selectedVertex != null) {
-			items[0].setEnabled(true);
-			items[1].setEnabled(false);
-			items[2].setEnabled(false);
+		if (selectedObject != null) {
+		    start_vertex.setEnabled(true);
+		    end_vertex.setEnabled(false);
+		    cancle.setEnabled(false);
 			
 		} else {
-			items[0].setEnabled(false);
-			items[1].setEnabled(false);
-			items[2].setEnabled(false);
+		    start_vertex.setEnabled(false);
+		    end_vertex.setEnabled(false);
+		    cancle.setEnabled(false);
 		}
 		
 		if (startVertex != null) {
-			popupMenu.getItem(0).setEnabled(true);
-			popupMenu.getItem(1).setEnabled(true);
-			popupMenu.getItem(2).setEnabled(true);
+		    start_vertex.setEnabled(true);
+		    end_vertex.setEnabled(true);
+		    cancle.setEnabled(true);
 		}
 		
 		if (endVertex != null) {
@@ -672,21 +711,25 @@ public class GraphMappingPage extends MigrationWizardPage {
 	}
 	
 	public void redoUndoHandler() {
+	   MenuItem undo = popupMenu.getItem(PopupMenuType.UNDO);
+	   MenuItem redo = popupMenu.getItem(PopupMenuType.REDO);
+	    
 		if (workBuffer.isUndoListEmpty()) {
-			popupMenu.getItem(7).setEnabled(false);
+		    undo.setEnabled(false);
 		} else {
-			popupMenu.getItem(7).setEnabled(true);
+		    undo.setEnabled(true);
 		}
 		
 		if (workBuffer.isRedoListEmpty()) {
-			popupMenu.getItem(8).setEnabled(false);
+			redo.setEnabled(false);
 		} else {
-			popupMenu.getItem(8).setEnabled(true);
+			redo.setEnabled(true);
 		}
 	}
 	
 	public void filterHandler() {
 		boolean hasDateTimeFilter = false;
+		MenuItem unsetFilter = popupMenu.getItem(PopupMenuType.UNSET_FILTER);
 		
 		if (selectedObject instanceof Vertex) {
 			hasDateTimeFilter = true;
@@ -695,9 +738,9 @@ public class GraphMappingPage extends MigrationWizardPage {
 		}
 		
 		if (hasDateTimeFilter) {
-			popupMenu.getItem(11).setEnabled(true);
+		    unsetFilter.setEnabled(true);
 		} else {
-			popupMenu.getItem(11).setEnabled(false);
+		    unsetFilter.setEnabled(false);
 		}
 	}
 	
@@ -735,8 +778,17 @@ public class GraphMappingPage extends MigrationWizardPage {
 	private void refreshGraph() {
 		graphViewer.refresh();
 		applyElkLayout();
+		clearData();
 	}
-
+	
+	private void clearData() {
+	    workBuffer.clearAll();
+	    redoUndoHandler();
+	    startVertex = null;
+	    endVertex = null;
+	    menuHandler();
+	}
+	
 	/**
 	 * Builds an ELK graph from current vertices/edges, runs layered layout, and copies x/y to {@link GraphNode}.
 	 */
@@ -1235,9 +1287,9 @@ public class GraphMappingPage extends MigrationWizardPage {
 		} catch (Exception e) {
 		    LOG.error(LogUtil.getExceptionString(e));
             throw e;
+        } finally {
+            isFirstVisible = false;
         }
-		
-		isFirstVisible = false;
 	}
 	
 	protected void handlePageLeaving(PageChangingEvent event) {
@@ -1286,6 +1338,10 @@ public class GraphMappingPage extends MigrationWizardPage {
 	}
 
 	private void executeUndo(Work work) {
+	    if (work == null) {
+	        return;
+	    }
+	    
 		workCtrl.setWork(work);
 		
 		if (work.getObject() instanceof Vertex) {
@@ -1298,28 +1354,33 @@ public class GraphMappingPage extends MigrationWizardPage {
 			} else if (work.getWorkType() == workTypeEnum.WT_RENAME.ordinal()) {
 				String tempStr = work.getObject().getName();
 				
+				renameFromGraph(work.getObject(), work.getOriginalName());
 				changeVertexName(work.getObject().getName(), work.getOriginalName());
 				work.setOriginalName(tempStr);
 			}
 		} else {
+		    Edge edge = (Edge)work.getObject();
 			if (work.getWorkType() == workTypeEnum.WT_DELETE.ordinal()) {
-				gdbDict.addMigratedEdgeList((Edge) work.getObject());
-				
+				gdbDict.addMigratedEdgeList(edge);
+				SetEdgeVisibleFromGraph(edge, true);
 			} else if (work.getWorkType() == workTypeEnum.WT_CREATE.ordinal()) {
-				gdbDict.removeEdge(((Edge) workCtrl.getObject()).getEdgeLabel());
-				
+				gdbDict.removeEdge(edge.getEdgeLabel());
+				SetEdgeVisibleFromGraph(edge, false);
 			} else if (work.getWorkType() == workTypeEnum.WT_RENAME.ordinal()) {
 				String tempStr = work.getObject().getName();
 				
+				renameFromGraph(work.getObject(), work.getOriginalName());
 				changeEdgeName(work.getObject().getName(), work.getOriginalName());
 				work.setOriginalName(tempStr);
 			}
 		}
-		
-		refreshGraph();
 	}
 	
 	private void executeRedo(Work work) {
+	    if (work == null) {
+            return;
+        }
+	    
 		workCtrl.setWork(work);
 		
 		if (work.getObject() instanceof Vertex) {
@@ -1332,27 +1393,28 @@ public class GraphMappingPage extends MigrationWizardPage {
 			} else if (work.getWorkType() == workTypeEnum.WT_RENAME.ordinal()) {
 				String tempStr = work.getObject().getName();
 				
+				renameFromGraph(work.getObject(), work.getOriginalName());
 				changeVertexName(work.getObject().getName(), work.getOriginalName());
 				work.setOriginalName(tempStr);
 				
 			}
 		} else {
+		    Edge edge = (Edge)work.getObject();
 			if (work.getWorkType() == workTypeEnum.WT_DELETE.ordinal()) {
-				gdbDict.removeEdge(((Edge) workCtrl.getObject()).getEdgeLabel());
-				
+				gdbDict.removeEdge(edge.getEdgeLabel());
+				SetEdgeVisibleFromGraph(edge, false);
 			} else if (work.getWorkType() == workTypeEnum.WT_CREATE.ordinal()) {
-				gdbDict.addMigratedEdgeList((Edge) work.getObject());
-				
+				gdbDict.addMigratedEdgeList(edge);
+				SetEdgeVisibleFromGraph(edge, true);
 			} else if (work.getWorkType() == workTypeEnum.WT_RENAME.ordinal()) {
 				String tempStr = work.getObject().getName();
 				
+				renameFromGraph(work.getObject(), work.getOriginalName());
 				changeEdgeName(work.getObject().getName(), work.getOriginalName());
 				work.setOriginalName(tempStr);
 				
 			}
 		}
-
-		refreshGraph();
 	}
 	
 	private void changeVertexName(String nowName, String originalName) {
@@ -1395,19 +1457,70 @@ public class GraphMappingPage extends MigrationWizardPage {
 	
 	private void deleteEdgeInGraph(Edge e) {
 	    GraphDictionary gdbDict = mConfig.getGraphDictionary();
-        List<Edge> migratedEdgeList = gdbDict.getMigratedEdgeList();
-        
-        for (Edge edge : migratedEdgeList) {
-            if (edge.getEdgeLabel().equalsIgnoreCase(e.getEdgeLabel())) {
-                
-                workBuffer.addWork(workCtrl.createWork(workTypeEnum.WT_DELETE.ordinal(), edge));
-                
-                gdbDict.removeEdge(edge.getEdgeLabel());
-                
-                break;
+        workBuffer.addWork(workCtrl.createWork(workTypeEnum.WT_DELETE.ordinal(), e));
+        gdbDict.removeEdge(e.getEdgeLabel());
+        SetEdgeVisibleFromGraph(e, false);
+	}
+
+	private void SetEdgeVisibleFromGraph(Edge e, boolean visible) {
+		if (graph == null || graph.isDisposed() || e == null) {
+			return;
+		}
+		List<GraphConnection> connections = new ArrayList<>(graph.getConnections());
+		for (GraphConnection connection : connections) {
+			if (connection.isDisposed() || connection.getData() != e) {
+				continue;
+			}
+			if (e.equals(selectedObject)) {
+				selectedObject = null;
+			}
+			connection.setVisible(visible);
+		}
+		graph.redraw();
+	}
+	
+	private void renameFromGraph(Object o, String name) {
+	    if (o instanceof Vertex) {
+	        renameVertexFromGraph((Vertex)o, name);
+	    } else if ( o instanceof Edge) {
+            renameEdgeFromGraph((Edge)o, name);
+	    } 
+	}
+	
+	private void renameEdgeFromGraph(Edge e, String name) {
+        if (graph == null || graph.isDisposed() || e == null) {
+            return;
+        }
+        List<GraphConnection> connections = new ArrayList<>(graph.getConnections());
+        for (GraphConnection connection : connections) {
+            if (connection.isDisposed() || connection.getData() != e) {
+                continue;
+            }
+            connection.setText(name);
+            
+            if (e.equals(selectedObject)) {
+                selectedObject = e;
             }
         }
-        
-        refreshGraph();
-	}
+        graph.redraw();
+    }
+	
+	private void renameVertexFromGraph(Vertex v, String name) {
+        if (graph == null || graph.isDisposed() || v == null) {
+            return;
+        }
+        List<GraphNode> nodes = new ArrayList<>(graph.getNodes());
+        for (GraphNode node : nodes) {
+            if (node.isDisposed() || node.getData() != v) {
+                continue;
+            }
+            node.setText(name);
+            
+            if (v.equals(selectedObject)) {
+                selectedObject = v;
+            }
+        }
+        graph.redraw();
+    }
+	
 }

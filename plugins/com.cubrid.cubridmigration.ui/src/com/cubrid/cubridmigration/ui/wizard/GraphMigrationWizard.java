@@ -63,15 +63,9 @@ import com.cubrid.cubridmigration.ui.wizard.editor.MigrationProgressEditorInput;
 import com.cubrid.cubridmigration.ui.wizard.graph.page.GraphConfirmationPage;
 import com.cubrid.cubridmigration.ui.wizard.graph.page.GraphMappingPage;
 import com.cubrid.cubridmigration.ui.wizard.graph.page.GraphSelectDestinationPage;
-import com.cubrid.cubridmigration.ui.wizard.graph.page.GraphSelectDestinationPageBackup;
-import com.cubrid.cubridmigration.ui.wizard.graph.page.GraphSelectSourcePage;
 import com.cubrid.cubridmigration.ui.wizard.graph.page.GraphSelectSrcTarTypesPage;
 import com.cubrid.cubridmigration.ui.wizard.graph.page.GraphTableSelectPage;
-import com.cubrid.cubridmigration.ui.wizard.page.ObjectMappingPage;
-import com.cubrid.cubridmigration.ui.wizard.page.SQLSelectPage;
-import com.cubrid.cubridmigration.ui.wizard.page.SQLTargetDBSelectPage;
 import com.cubrid.cubridmigration.ui.wizard.page.SchemaMappingPage;
-import com.cubrid.cubridmigration.ui.wizard.page.SelectDestinationPage;
 import com.cubrid.cubridmigration.ui.wizard.page.SelectSourcePage;
 
 public class GraphMigrationWizard extends MigrationWizard {

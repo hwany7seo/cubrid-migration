@@ -126,6 +126,10 @@ public class GraphJDBCImporter extends Importer {
     
     @Override
     public void createEdge(Edge e) {
+        if (e.getEdgeType() == Edge.TWO_WAY_TYPE || e.getEdgeType() == Edge.JOIN_TWO_WAY_TYPE) {
+            return;
+        }
+        
         String sql = GraphSQLHelper.getInstance(null).getEdgeDDL(e);
         try {
             executeDDL(sql);
@@ -173,7 +177,15 @@ public class GraphJDBCImporter extends Importer {
         PreparedStatement stmt = null;
         try {
             for (int i=0 ; i < e.getfkCol2RefMappingSize(); i++) {
+                if (!checkHaveAttribute(e, i)) {
+                    continue;
+                }
+
                 String sql = sqlHelper.getTargetInsertEdge(e, i);
+                if (sql == null) {
+                    continue;
+                }
+
                 stmt = conn.prepareStatement(sql);
 
                 result = stmt.executeUpdate();
@@ -532,6 +544,37 @@ public class GraphJDBCImporter extends Importer {
     public int importEdgeCsv(Edge e) {
         // TODO Auto-generated method stub
         return 0;
+    }
+    
+    private boolean checkHaveAttribute(Edge e, int idx) {
+        List<String> fkColumns = e.getFKColumnNames();
+        if (idx >= fkColumns.size()) {
+            return false;
+        }
+
+        String fkColName = fkColumns.get(idx);
+        if (fkColName == null || fkColName.isEmpty()) {
+            return false;
+        }
+
+        String refColName = e.getREFColumnNames(fkColName);
+        if (refColName == null || refColName.isEmpty()) {
+            return false;
+        }
+
+        // FK column must exist in start vertex (SQL: n.[fkCol])
+        Vertex startVertex = e.getStartVertex();
+        if (startVertex == null || startVertex.getColumnByName(fkColName) == null) {
+            return false;
+        }
+
+        // REF column must exist in end vertex (SQL: m.[refCol])
+        Vertex endVertex = e.getEndVertex();
+        if (endVertex == null || endVertex.getColumnByName(refColName) == null) {
+            return false;
+        }
+
+        return true;
     }
     
 }

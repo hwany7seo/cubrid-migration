@@ -400,7 +400,7 @@ public final class ConnParameters implements Serializable, IDBSource, IJDBCConne
         String d1 = StringUtils.defaultString(dbName);
         String d2 = StringUtils.defaultString(cp.dbName);
 
-        boolean isCubrid = (dbType == DatabaseType.CUBRID.getID());
+        boolean isCubrid = (dbType == DatabaseType.CORADB.getID());
         return isCubrid ? d1.equalsIgnoreCase(d2) : d1.equals(d2);
     }
 

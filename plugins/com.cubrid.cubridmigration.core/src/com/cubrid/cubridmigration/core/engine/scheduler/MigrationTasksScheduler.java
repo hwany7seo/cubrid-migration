@@ -406,10 +406,11 @@ public class MigrationTasksScheduler {
         MigrationConfiguration config = context.getConfig();
         List<Schema> dummySchemaList = config.getTargetSchemaList();
 
-        dummySchemaList.stream()
+        dummySchemaList.stream().filter(null)
                 .distinct()
                 .forEach(
                         schema -> {
+                            schema.getTargetSchemaName();
                             executeTask(taskFactory.createImportSchemaTask(schema));
                         });
     }

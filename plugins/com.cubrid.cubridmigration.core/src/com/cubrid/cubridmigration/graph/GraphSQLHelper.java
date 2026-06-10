@@ -85,13 +85,23 @@ public class GraphSQLHelper extends SQLHelper {
     }
     
     public String getTargetInsertEdge(Edge e, int fkIdx) {
-        StringBuffer buf = new StringBuffer();
-        buf = new StringBuffer("INSERT EDGE INTO ").append(getQuotedObjName(e.getEdgeLabel()));
+        List<String> fkColumns = e.getFKColumnNames();
+        if (fkIdx >= fkColumns.size()) {
+            return null;
+        }
+        String fkColName = fkColumns.get(fkIdx);
+        String refColName = e.getREFColumnNames(fkColName);
+        if (fkColName == null || refColName == null
+                || e.getStartVertexName() == null || e.getEndVertexName() == null) {
+            return null;
+        }
+
+        StringBuffer buf = new StringBuffer("INSERT EDGE INTO ").append(getQuotedObjName(e.getEdgeLabel()));
         buf.append(" SELECT n, m FROM ").append(getQuotedObjName(e.getStartVertexName()));
         buf.append(" n JOIN ").append(getQuotedObjName(e.getEndVertexName())).append(" m ON");
-        buf.append(" n.").append(getQuotedObjName(e.getFKColumnNames().get(fkIdx))).append(" =");
-        buf.append(" m.").append(getQuotedObjName(e.getREFColumnNames(e.getFKColumnNames().get(fkIdx))));
-        
+        buf.append(" n.").append(getQuotedObjName(fkColName)).append(" =");
+        buf.append(" m.").append(getQuotedObjName(refColName));
+
         return buf.toString();
     }
 

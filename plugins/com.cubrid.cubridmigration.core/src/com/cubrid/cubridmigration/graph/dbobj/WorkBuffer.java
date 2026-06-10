@@ -20,6 +20,10 @@ public class WorkBuffer {
 	}
 	
 	public Work undo() {
+	    if (undoList.isEmpty()) {
+	        return null;
+	    }
+	    
 		Work work = undoList.pop();
 		redoList.push(work);
 		
@@ -34,6 +38,10 @@ public class WorkBuffer {
 	}
 	
 	public Work redo() {
+	    if (redoList.isEmpty()) {
+	        return null;
+	    }
+	    
 		Work work = redoList.pop();
 		undoList.push(work);
 		
@@ -47,10 +55,14 @@ public class WorkBuffer {
 		return redoList.isEmpty();
 	}
 	
-	
 	//log code
 	public void printLog() {
 		System.out.println("data count in undoList : " + undoList.size());
 		System.out.println("data count in redoList : " + redoList.size());
+	}
+	
+	public void clearAll() {
+	    redoList.clear();
+	    undoList.clear();
 	}
 }

@@ -597,11 +597,11 @@ public class MigrationWizard extends Wizard implements IMigrationWizardStatus {
         return targetCatalog.getSchemas().size();
     }
     
-    public boolean isChanged() {
+    public boolean isDataChanged() {
         return isChanged;
     }
     
-    public void setIsChanged(boolean change) {
+    public void setDataChanged(boolean change) {
         isChanged = change;
     }
 }

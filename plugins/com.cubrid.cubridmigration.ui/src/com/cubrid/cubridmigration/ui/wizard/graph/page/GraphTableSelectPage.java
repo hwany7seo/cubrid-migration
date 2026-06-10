@@ -2,8 +2,12 @@ package com.cubrid.cubridmigration.ui.wizard.graph.page;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.PageChangedEvent;
@@ -60,7 +64,6 @@ public class GraphTableSelectPage extends MigrationWizardPage {
 	private Map<String, List<Column>> columnData = new HashMap<String, List<Column>>();
 	private List<Table> tableList = new ArrayList<Table>();
 	private List<Table> selectedTableList = new ArrayList<Table>();
-	
 	
 	public GraphTableSelectPage(String pageName) {
 		super(pageName);
@@ -219,9 +222,6 @@ public class GraphTableSelectPage extends MigrationWizardPage {
 				List<Column> columnList = table.getColumns();
 				
 				columnData.put(table.getName(), columnList);
-
-				
-				
 //				columnViewer.setInput(columnList);
 			}
 		}
@@ -240,6 +240,7 @@ public class GraphTableSelectPage extends MigrationWizardPage {
 		
 		tableViewer.refresh();
 		refreshSelectAllHeaderStatus();
+		getMigrationWizard().setDataChanged(true);
 	}
 	
 	private void toggleAllTablesSelection() {
@@ -249,6 +250,7 @@ public class GraphTableSelectPage extends MigrationWizardPage {
 		}
 		tableViewer.refresh();
 		refreshSelectAllHeaderStatus();
+		getMigrationWizard().setDataChanged(true);
 	}
 	
 	private boolean isAllTablesSelected() {
@@ -288,39 +290,34 @@ public class GraphTableSelectPage extends MigrationWizardPage {
 	@Override
 	protected void afterShowCurrentPage(PageChangedEvent event) {
 	    final MigrationWizard mw = getMigrationWizard();
-		if (isFirstVisible || mw.isChanged()) {
-		    mw.setIsChanged(false);
-			MigrationConfiguration cfg = mw.getMigrationConfig();
-			setTitle(mw.getStepNoMsg(GraphTableSelectPage.this) + Messages.objectMapPageTitle);
-			setDescription(Messages.objectMapPageDescription);
-			
-			setErrorMessage(null);
-            mw.refreshWizardStatus();
+	    mw.setDataChanged(false);
+		MigrationConfiguration cfg = mw.getMigrationConfig();
+		setTitle(mw.getStepNoMsg(GraphTableSelectPage.this) + Messages.objectMapPageTitle);
+		setDescription(Messages.objectMapPageDescription);
+		
+		setErrorMessage(null);
+        mw.refreshWizardStatus();
 
-            try {
-    			Catalog sourceCatalog = mw.getSourceCatalog();
-    			// Temp Code (should be rewritten for GraphDB.)
-    			cfg.setSrcCatalog(sourceCatalog, isFirstVisible && !mw.isLoadMigrationScript());
-    			
-    			if (!cfg.hasObjects2Export()) {
-    				cfg.setAll(true);
-    			}
-    			
-    	         List<Schema> schemaList = sourceCatalog.getSchemas();
-    	            
-	            clearData();
-//	            showTableInformationForGdbms(schemaList);
-	            showTableViewerData(schemaList);
+        try {
+			Catalog sourceCatalog = mw.getSourceCatalog();
+			cfg.setSrcCatalog(sourceCatalog, isFirstVisible && !mw.isLoadMigrationScript());
+			
+			if (!cfg.hasObjects2Export()) {
+				cfg.setAll(true);
+			}
+			
+	         List<Schema> schemaList = sourceCatalog.getSchemas();
 	            
-	            makeColumnViewerData(schemaList);
+            clearData();
+//	            showTableInformationForGdbms(schemaList);
+            showTableViewerData(schemaList);
+            
+            makeColumnViewerData(schemaList);
 
-            } catch (Exception e) {
-                LOG.error(LogUtil.getExceptionString(e));
-                throw e;
-            }
-			
-			isFirstVisible = false;
-		}
+        } catch (Exception e) {
+            LOG.error(LogUtil.getExceptionString(e));
+            throw e;
+        }
 	}
 	
 	protected void handlePageLeaving(PageChangingEvent event) {
@@ -339,9 +336,20 @@ public class GraphTableSelectPage extends MigrationWizardPage {
 	public boolean saveSelectedTable() {
 		selectedTableList.clear();
 		List<SourceEntryTableConfig> setcList = getMigrationWizard().getMigrationConfig().getExpEntryTableCfg();
+		Map<String, String> tempTableList = new HashMap<>();
+		Set<String> duplicateTableList = new LinkedHashSet<>();
 		
 		for (Table table : tableList) {
 			if (table.isSelected()) {
+			    String owner = tempTableList.get(table.getName());
+			    if (owner == null) {
+			        tempTableList.put(table.getName(), table.getOwner());
+			    } else {
+			        duplicateTableList.add(owner + "." + table.getName());
+			        duplicateTableList.add(table.getOwner() + "." + table.getName());
+			        continue;
+			    }
+			    
 				selectedTableList.add(table);
 				String tableName = table.getName();
 				
@@ -356,6 +364,18 @@ public class GraphTableSelectPage extends MigrationWizardPage {
 		if (selectedTableList.isEmpty()) {
 			MessageDialog.openError(getShell(), Messages.errNoTableSelected, Messages.errNoTableSelectedDes);
 			return false;
+		} else if (!duplicateTableList.isEmpty()) {
+		    StringBuffer buf = new StringBuffer();
+		    int i = 0;
+		    for (String name : duplicateTableList) {
+		        if (i > 0) {
+                    buf.append(", ");
+                }
+		        buf.append(name);
+		        i++;
+		    }
+		    MessageDialog.openError(getShell(), Messages.errExistDuplicateTable, buf.toString());
+		    return false;
 		} else {
 			showTableInformationForGdbms(selectedTableList);
 		}
@@ -884,17 +904,4 @@ public class GraphTableSelectPage extends MigrationWizardPage {
         
     }
 	
-	private boolean validateSourceConfiguration(
-            MigrationConfiguration cfg, SchemaCatalog sourceSchemaCatalog) {
-        if (cfg.getSourceConParams() == null) {
-            MessageDialog.openError(getShell(), Messages.msgError, "Source connection is not set.");
-            return false;
-        }
-        if (sourceSchemaCatalog == null) {
-            MessageDialog.openError(
-                    getShell(), Messages.msgError, "Source schema catalog is not loaded.");
-            return false;
-        }
-        return true;
-    }
 }

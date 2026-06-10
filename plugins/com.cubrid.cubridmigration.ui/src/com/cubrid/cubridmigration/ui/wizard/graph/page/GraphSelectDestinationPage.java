@@ -32,13 +32,17 @@ package com.cubrid.cubridmigration.ui.wizard.graph.page;
 
 import com.cubrid.cubridmigration.core.connection.ConnParameters;
 import com.cubrid.cubridmigration.core.dbobject.Catalog;
+import com.cubrid.cubridmigration.core.dbtype.DatabaseType;
 import com.cubrid.cubridmigration.core.engine.config.MigrationConfiguration;
 import com.cubrid.cubridmigration.ui.database.IJDBCConnectionFilter;
 import com.cubrid.cubridmigration.ui.database.JDBCConnectionMgrView;
 import com.cubrid.cubridmigration.ui.message.Messages;
+import com.cubrid.cubridmigration.ui.wizard.GraphMigrationWizard;
 import com.cubrid.cubridmigration.ui.wizard.MigrationWizard;
 import com.cubrid.cubridmigration.ui.wizard.page.MigrationWizardPage;
 import com.cubrid.cubridmigration.ui.wizard.page.view.AbstractDestinationView;
+
+import java.sql.DatabaseMetaData;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.PageChangedEvent;
@@ -110,14 +114,14 @@ public class GraphSelectDestinationPage extends MigrationWizardPage {
         private OnlineTargetDBView() {
             conMgrView =
                     new JDBCConnectionMgrView(
-                            MigrationWizard.getSupportedTarDBTypes(),
+                            GraphMigrationWizard.getSupportedTarDBTypes(),
                             new IJDBCConnectionFilter() {
 
                                 public boolean doFilter(ConnParameters cp) {
                                     final MigrationConfiguration cfg =
                                             getMigrationWizard().getMigrationConfig();
-                                    if (cfg.sourceIsOnline()) {
-                                        return cfg.getSourceConParams().isSameDB(cp);
+                                    if (cfg.sourceIsOnline() && cp.getDbType() != DatabaseType.CORADB.getID()) {
+                                        return true;
                                     }
                                     return false;
                                 }
@@ -135,8 +139,8 @@ public class GraphSelectDestinationPage extends MigrationWizardPage {
         public void init() {
             setTitle(
                     getMigrationWizard().getStepNoMsg(GraphSelectDestinationPage.this)
-                            + Messages.msgDestSelectOnlineCUBRIDDB);
-            setDescription(Messages.msgDestSelectOnlineCUBRIDDBDes);
+                            + Messages.msgDestSelectOnlineCoraDB);
+            setDescription(Messages.msgDestSelectOnlineCoraDBDes);
             final MigrationConfiguration config = getMigrationWizard().getMigrationConfig();
             conMgrView.init(config.getTargetConParams(), null);
         }

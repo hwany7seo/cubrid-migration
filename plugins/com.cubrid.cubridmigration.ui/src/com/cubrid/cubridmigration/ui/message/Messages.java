@@ -905,6 +905,7 @@ public class Messages extends NLS {
 	
 	public static String errNoTableSelected;
 	public static String errNoTableSelectedDes;
+	public static String errExistDuplicateTable;
 	
 	public static String msgColumnList;
 	public static String msgColumnName;
