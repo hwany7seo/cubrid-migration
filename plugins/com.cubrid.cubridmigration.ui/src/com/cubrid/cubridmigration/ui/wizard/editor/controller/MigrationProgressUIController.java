@@ -697,23 +697,45 @@ public class MigrationProgressUIController {
         return item;
     }
     
-    public String[] updateEdgeImpData(String EdgeFKName, long imp) {
+    public String[] updateEdgeImpData(String edgeFKName, long imp) {
 		for (String[] item : edgeItems) {
-			if (item[2].equals(EdgeFKName)) {
+			if (item[2].equals(edgeFKName)) {
 				return getEdgeItemForImpData(imp, item);
 			}
 		}
 		return new String[] {};
 	}
-	
-	public String[] updateEdgeImpData(String owner, String EdgeFKName, long imp) {
-		
+
+	public String[] updateEdgeImpData(String edgeFKName, String startVertex, String endVertex, long imp) {
+		for (String[] item : edgeItems) {
+			if (item[2].equals(edgeFKName) && item[0].equals(startVertex) && item[1].equals(endVertex)) {
+				return getEdgeItemForImpData(imp, item);
+			}
+		}
+		return new String[] {};
+	}
+
+	public String[] updateEdgeImpData(String owner, String edgeFKName, long imp) {
 		for (String[] item : edgeItems) {
 			// for Single Schema
 			if (item[4] == null || "null".equalsIgnoreCase(item[4])) {
-				return updateEdgeImpData(EdgeFKName, imp);
+				return updateEdgeImpData(edgeFKName, imp);
 			}
-			if (item[2].equals(EdgeFKName) && item[4].equalsIgnoreCase(owner)) {
+			if (item[2].equals(edgeFKName) && item[4].equalsIgnoreCase(owner)) {
+				return getEdgeItemForImpData(imp, item);
+			}
+		}
+		return new String[] {};
+	}
+
+	public String[] updateEdgeImpData(String owner, String edgeFKName, String startVertex, String endVertex, long imp) {
+		for (String[] item : edgeItems) {
+			// for Single Schema
+			if (item[4] == null || "null".equalsIgnoreCase(item[4])) {
+				return updateEdgeImpData(edgeFKName, startVertex, endVertex, imp);
+			}
+			if (item[2].equals(edgeFKName) && item[4].equalsIgnoreCase(owner)
+					&& item[0].equals(startVertex) && item[1].equals(endVertex)) {
 				return getEdgeItemForImpData(imp, item);
 			}
 		}

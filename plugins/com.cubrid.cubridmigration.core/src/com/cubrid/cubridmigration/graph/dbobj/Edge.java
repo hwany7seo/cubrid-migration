@@ -258,19 +258,16 @@ public class Edge extends DBObject {
 	}
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
 		return edgeLabel;
 	}
 
 	@Override
 	public String getObjType() {
-		// TODO Auto-generated method stub
 		return getEdgeType() == 3 ? "Join Table Edge" : "Edge";
 	}
 
 	@Override
 	public String getDDL() {
-		// TODO Auto-generated method stub
 		return ddl;
 	}
 	

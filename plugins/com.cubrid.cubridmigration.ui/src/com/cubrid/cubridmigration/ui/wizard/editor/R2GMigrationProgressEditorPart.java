@@ -492,7 +492,11 @@ public class R2GMigrationProgressEditorPart extends
 					ire.getRecordCount());
 			tvVertexProgress.refresh(item);
 		} else if (ire.getEdge() != null) {
-			item = controller.updateEdgeImpData(ire.getEdge().getOwner(), ire.getEdge().getEdgeLabel(),
+			item = controller.updateEdgeImpData(
+					ire.getEdge().getOwner(),
+					ire.getEdge().getEdgeLabel(),
+					ire.getEdge().getStartVertexName(),
+					ire.getEdge().getEndVertexName(),
 					ire.getRecordCount());
 			tvEdgeProgress.refresh(item);
 		}
