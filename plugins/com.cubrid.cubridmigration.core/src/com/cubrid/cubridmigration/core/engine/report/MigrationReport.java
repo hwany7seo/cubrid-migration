@@ -636,64 +636,66 @@ public class MigrationReport implements Serializable {
             }
             return;
         }
-        List<PK> pks = new ArrayList<PK>();
-        List<FK> fks = new ArrayList<FK>();
-        List<Index> indexes = new ArrayList<Index>();
-        for (SourceEntryTableConfig setc : config.getExpEntryTableCfg()) {
-            if (!setc.isCreateNewTable()) {
-                continue;
-            }
-            Table tt = config.getTargetTableSchema(setc.getTarget());
-            if (tt == null) {
-                continue;
-            }
-            if (getDBObjResult(tt) != null) {
-                continue;
-            }
-            createDBObjMigResult(tt);
-            // If it is not creating new table, the PK,FK and index will not be recreated.
-            if (!setc.isCreateNewTable()) {
-                continue;
+        if (!config.targetIsGraph()) {
+            List<PK> pks = new ArrayList<PK>();
+            List<FK> fks = new ArrayList<FK>();
+            List<Index> indexes = new ArrayList<Index>();
+            for (SourceEntryTableConfig setc : config.getExpEntryTableCfg()) {
+                if (!setc.isCreateNewTable()) {
+                    continue;
+                }
+                Table tt = config.getTargetTableSchema(setc.getTarget());
+                if (tt == null) {
+                    continue;
+                }
+                if (getDBObjResult(tt) != null) {
+                    continue;
+                }
+                createDBObjMigResult(tt);
+                // If it is not creating new table, the PK,FK and index will not be recreated.
+                if (!setc.isCreateNewTable()) {
+                    continue;
+                }
+
+                PK pk = tt.getPk();
+                if (setc.isCreatePK() && pk != null && !pk.getPkColumns().isEmpty()) {
+                    pks.add(pk);
+                }
+                fks.addAll(tt.getFks());
+                indexes.addAll(tt.getIndexes());
             }
 
-            PK pk = tt.getPk();
-            if (setc.isCreatePK() && pk != null && !pk.getPkColumns().isEmpty()) {
-                pks.add(pk);
+            for (SourceSQLTableConfig setc : config.getExpSQLCfg()) {
+                if (!setc.isCreateNewTable()) {
+                    continue;
+                }
+                Table tt = config.getTargetTableSchema(setc.getTarget());
+                if (tt == null) {
+                    continue;
+                }
+                if (getDBObjResult(tt) != null) {
+                    continue;
+                }
+                createDBObjMigResult(tt);
             }
-            fks.addAll(tt.getFks());
-            indexes.addAll(tt.getIndexes());
-        }
 
-        for (SourceSQLTableConfig setc : config.getExpSQLCfg()) {
-            if (!setc.isCreateNewTable()) {
-                continue;
+            for (PK pk : pks) {
+                createDBObjMigResult(pk);
             }
-            Table tt = config.getTargetTableSchema(setc.getTarget());
-            if (tt == null) {
-                continue;
+            for (FK fk : fks) {
+                createDBObjMigResult(fk);
             }
-            if (getDBObjResult(tt) != null) {
-                continue;
+            for (Index idx : indexes) {
+                createDBObjMigResult(idx);
             }
-            createDBObjMigResult(tt);
-        }
-
-        for (PK pk : pks) {
-            createDBObjMigResult(pk);
-        }
-        for (FK fk : fks) {
-            createDBObjMigResult(fk);
-        }
-        for (Index idx : indexes) {
-            createDBObjMigResult(idx);
-        }
-        List<View> views = config.getTargetViewSchema();
-        for (View vw : views) {
-            createDBObjMigResult(vw);
-        }
-        List<Sequence> sequences = config.getTargetSerialSchema();
-        for (Sequence sq : sequences) {
-            createDBObjMigResult(sq);
+            List<View> views = config.getTargetViewSchema();
+            for (View vw : views) {
+                createDBObjMigResult(vw);
+            }
+            List<Sequence> sequences = config.getTargetSerialSchema();
+            for (Sequence sq : sequences) {
+                createDBObjMigResult(sq);
+            }
         }
 
         List<SourceEntryTableConfig> allExportTables = config.getExpEntryTableCfg();

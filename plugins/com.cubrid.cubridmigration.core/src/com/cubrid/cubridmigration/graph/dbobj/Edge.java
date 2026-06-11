@@ -270,6 +270,10 @@ public class Edge extends DBObject {
 	public String getDDL() {
 		return ddl;
 	}
+
+	public void setDDL(String ddl) {
+		this.ddl = ddl;
+	}
 	
 	public void setSourceDBObject() {
 		this.sourceDBObject = getObjType() + " (" + edgeLabel + ", " + startVertexName + " -> " + endVertexName + ")";

@@ -95,8 +95,10 @@ public class GraphJDBCImporter extends Importer {
         String sql = sqlHelper.getVertexDDL(v);
         try {
             executeDDL(sql);
+            v.setDDL(sql);
             createObjectSuccess(v);
         } catch (RuntimeException e) {
+            v.setDDL(sql);
             createObjectFailed(v, e);
             return;
         }
@@ -133,9 +135,11 @@ public class GraphJDBCImporter extends Importer {
         String sql = GraphSQLHelper.getInstance(null).getEdgeDDL(e);
         try {
             executeDDL(sql);
+            e.setDDL(sql);
             addTargetTableInConfig(e);
             createObjectSuccess(e);
         } catch (RuntimeException ex) {
+            e.setDDL(sql);
             createObjectFailed(e, ex);
             return;
         }
