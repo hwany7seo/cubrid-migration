@@ -3,7 +3,6 @@ package com.cubrid.cubridmigration.ui.wizard.graph.page;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +40,6 @@ import com.cubrid.cubridmigration.core.dbobject.Column;
 import com.cubrid.cubridmigration.core.dbobject.FK;
 import com.cubrid.cubridmigration.core.dbobject.Index;
 import com.cubrid.cubridmigration.core.dbobject.Schema;
-import com.cubrid.cubridmigration.core.dbobject.SchemaCatalog;
 import com.cubrid.cubridmigration.core.dbobject.Table;
 import com.cubrid.cubridmigration.core.engine.config.MigrationConfiguration;
 import com.cubrid.cubridmigration.core.engine.config.SourceEntryTableConfig;
@@ -64,6 +62,7 @@ public class GraphTableSelectPage extends MigrationWizardPage {
 	private Map<String, List<Column>> columnData = new HashMap<String, List<Column>>();
 	private List<Table> tableList = new ArrayList<Table>();
 	private List<Table> selectedTableList = new ArrayList<Table>();
+	private Set<String> lastSavedSelection = null;
 	
 	public GraphTableSelectPage(String pageName) {
 		super(pageName);
@@ -318,7 +317,8 @@ public class GraphTableSelectPage extends MigrationWizardPage {
             showTableViewerData(schemaList);
             
             makeColumnViewerData(schemaList);
-
+            tableViewer.getTable().select(0);
+            changeColumnData(tableViewer.getTable().getItem(0).getData());
         } catch (Exception e) {
             LOG.error(LogUtil.getExceptionString(e));
             throw e;
@@ -326,24 +326,22 @@ public class GraphTableSelectPage extends MigrationWizardPage {
 	}
 	
 	protected void handlePageLeaving(PageChangingEvent event) {
-		// If page is not complete, it should be go to previous page.
-		
 		if (!isPageComplete()) {
 			return;
 		}
 		if (isGotoNextPage(event)) {
-//			event.doit = updateMigrationConfig();
 			event.doit = saveSelectedTable();
 		}
 	}
-	
+
 	//GDB error dialog
 	public boolean saveSelectedTable() {
 		selectedTableList.clear();
 		List<SourceEntryTableConfig> setcList = getMigrationWizard().getMigrationConfig().getExpEntryTableCfg();
 		Map<String, String> tempTableList = new HashMap<>();
 		Set<String> duplicateTableList = new LinkedHashSet<>();
-		
+		Set<String> currentKeys = new HashSet<>();
+
 		for (Table table : tableList) {
 			if (table.isSelected()) {
 			    String owner = tempTableList.get(table.getName());
@@ -354,10 +352,11 @@ public class GraphTableSelectPage extends MigrationWizardPage {
 			        duplicateTableList.add(table.getOwner() + "." + table.getName());
 			        continue;
 			    }
-			    
+
 				selectedTableList.add(table);
+				currentKeys.add((table.getOwner() != null ? table.getOwner() : "") + "." + table.getName());
+
 				String tableName = table.getName();
-				
 				for (SourceEntryTableConfig setc : setcList) {
 					if (setc.getName().equals(tableName)) {
 						setc.setSelected(true);
@@ -365,7 +364,7 @@ public class GraphTableSelectPage extends MigrationWizardPage {
 				}
 			}
 		}
-		
+
 		if (selectedTableList.isEmpty()) {
 			MessageDialog.openError(getShell(), Messages.errNoTableSelected, Messages.errNoTableSelectedDes);
 			return false;
@@ -381,10 +380,11 @@ public class GraphTableSelectPage extends MigrationWizardPage {
 		    }
 		    MessageDialog.openError(getShell(), Messages.errExistDuplicateTable, buf.toString());
 		    return false;
-		} else {
+		} else if (!currentKeys.equals(lastSavedSelection)) {
 			showTableInformationForGdbms(selectedTableList);
+			lastSavedSelection = currentKeys;
 		}
-		
+
 		return true;
 	}
 	

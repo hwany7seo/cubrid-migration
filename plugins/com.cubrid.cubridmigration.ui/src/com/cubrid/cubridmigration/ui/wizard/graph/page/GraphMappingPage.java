@@ -282,7 +282,6 @@ public class GraphMappingPage extends MigrationWizardPage {
 		graphViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
-			    System.out.println("graphViewer addSelectionListener e : " + event.getSelection().toString());
 				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 				if (selection != null) {
 				    selectedObjectList = selection.toList();
@@ -1283,15 +1282,23 @@ public class GraphMappingPage extends MigrationWizardPage {
 
 		setErrorMessage(null);
 
+		// Returning from the next page: dictionary is unchanged, skip redraw.
 		if (fromNextPage) {
 			fromNextPage = false;
 			return;
 		}
 
+		gdbDict = mConfig.getGraphDictionary();
+
+		// Only redraw when the dictionary was actually modified since the last draw.
+		if (!gdbDict.isDirty()) {
+			return;
+		}
+
 		try {
-			gdbDict = mConfig.getGraphDictionary();
 			gdbDict.printVertexAndEdge();
 			showGraphData(gdbDict.getMigratedVertexList());
+			gdbDict.clearDirty();
 
 		} catch (Exception e) {
 			LOG.error(LogUtil.getExceptionString(e));
