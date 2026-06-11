@@ -30,12 +30,14 @@ public class GraphLabelProvider implements
 	@Override
 	public String getColumnText(Object element, int columnIndex) {
 		Table table = (Table) element;
-		
+
 		switch (columnIndex) {
 		case 0:
 			return null;
 		case 1:
 			return table.getName();
+		case 2:
+			return table.getOwner();
 		default:
 			return null;
 		}

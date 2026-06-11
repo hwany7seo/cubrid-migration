@@ -98,15 +98,18 @@ public class GraphTableSelectPage extends MigrationWizardPage {
 		
 		TableLayout tableLayout = new TableLayout();
 		tableLayout.addColumnData(new ColumnWeightData(7, true));
-		tableLayout.addColumnData(new ColumnWeightData(93, true));
-		
+		tableLayout.addColumnData(new ColumnWeightData(63, true));
+		tableLayout.addColumnData(new ColumnWeightData(30, true));
+
 		tableViewer.getTable().setLayout(tableLayout);
 		tableViewer.getTable().setLinesVisible(true);
 		tableViewer.getTable().setHeaderVisible(true);
-		
+
 		TableColumn column1 = new TableColumn(tableViewer.getTable(), SWT.LEFT);
 		TableColumn column2 = new TableColumn(tableViewer.getTable(), SWT.LEFT);
 		column2.setText(Messages.colTableName);
+		TableColumn column3 = new TableColumn(tableViewer.getTable(), SWT.LEFT);
+		column3.setText(Messages.colOwnerName);
 		selectColumn = column1;
 		selectColumn.addSelectionListener(
 				new SelectionAdapter() {
@@ -202,14 +205,16 @@ public class GraphTableSelectPage extends MigrationWizardPage {
 	}
 	
 	public void showTableViewerData(List<Schema> schemaList) {
-		
+
 		for (Schema schema : schemaList) {
 			List<Table> schemaTableList = schema.getTables();
 			for (Table table : schemaTableList) {
 				tableList.add(table);
 			}
 		}
-		
+
+		tableList.sort((a, b) -> a.getName().compareToIgnoreCase(b.getName()));
+
 		tableViewer.setInput(tableList);
 		refreshSelectAllHeaderStatus();
 	}

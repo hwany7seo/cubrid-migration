@@ -13,3 +13,4 @@ Export-Package: com.cubrid.common.configuration.classloader,
  com.cubrid.common.configuration.jdbc,
  com.cubrid.common.configuration
 Bundle-ClassPath: .
+Automatic-Module-Name: com.cubrid.common.configuration

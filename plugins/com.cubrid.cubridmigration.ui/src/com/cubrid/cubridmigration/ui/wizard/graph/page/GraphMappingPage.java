@@ -69,9 +69,7 @@ import org.eclipse.zest.layouts.interfaces.LayoutContext;
 import org.slf4j.Logger;
 
 import com.cubrid.common.log.LogUtil;
-import com.cubrid.cubridmigration.core.dbobject.Catalog;
 import com.cubrid.cubridmigration.core.dbobject.Column;
-import com.cubrid.cubridmigration.core.dbtype.DatabaseType;
 import com.cubrid.cubridmigration.core.engine.config.MigrationConfiguration;
 import com.cubrid.cubridmigration.graph.dbobj.Edge;
 import com.cubrid.cubridmigration.graph.dbobj.GraphDictionary;
@@ -87,7 +85,6 @@ import com.cubrid.cubridmigration.ui.wizard.dialog.GraphDateTimeFilterDialog;
 import com.cubrid.cubridmigration.ui.wizard.dialog.GraphEdgeSettingDialog;
 import com.cubrid.cubridmigration.ui.wizard.dialog.GraphRenamingDialog;
 import com.cubrid.cubridmigration.ui.wizard.page.MigrationWizardPage;
-import com.cubrid.cubridmigration.ui.wizard.page.ObjectMappingPage;
 
 //GDB override ObjectMappingPage. GraphMappingPage seems to have a similar structure to ObjectMappingPage
 
@@ -104,6 +101,7 @@ public class GraphMappingPage extends MigrationWizardPage {
 	private static final RecursiveGraphLayoutEngine ELK_LAYOUT_ENGINE = new RecursiveGraphLayoutEngine();
 
 	private boolean ctrlKeyMode = false;
+	private boolean fromNextPage = false;
 	
     public static final int CTRL_KEYCODE = 0x40000;
     public static final int Z_KEYCODE = 0x7a;
@@ -143,6 +141,7 @@ public class GraphMappingPage extends MigrationWizardPage {
 	private TableViewer rdbTable;
 	
 	private Menu popupMenu;
+	private boolean isChangedSelectTable = false;
 	
 	interface PopupMenuType {
 	    int START_VERTEX = 0;
@@ -1281,32 +1280,41 @@ public class GraphMappingPage extends MigrationWizardPage {
 		mConfig = mw.getMigrationConfig();
 		setTitle(mw.getStepNoMsg(GraphMappingPage.this) + Messages.objectMapPageTitle);
 		setDescription(Messages.objectMapPageDescription);
-		
+
 		setErrorMessage(null);
-		
+
+		if (fromNextPage) {
+			fromNextPage = false;
+			return;
+		}
+
 		try {
-            gdbDict = mConfig.getGraphDictionary();
-            gdbDict.printVertexAndEdge();
-            showGraphData(gdbDict.getMigratedVertexList());
-            
+			gdbDict = mConfig.getGraphDictionary();
+			gdbDict.printVertexAndEdge();
+			showGraphData(gdbDict.getMigratedVertexList());
+
 		} catch (Exception e) {
-		    LOG.error(LogUtil.getExceptionString(e));
-            throw e;
-        } finally {
-            isFirstVisible = false;
-        }
+			LOG.error(LogUtil.getExceptionString(e));
+			throw e;
+		}
 	}
 	
 	protected void handlePageLeaving(PageChangingEvent event) {
 		if (!isPageComplete()) {
 			return;
 		}
-		
-		if (twoWayBtn.getSelection()) {
-			event.doit = setTwoWayEdge();
+
+		if (isGotoNextPage(event)) {
+			fromNextPage = true;
+
+			if (twoWayBtn.getSelection()) {
+				event.doit = setTwoWayEdge();
+			}
+
+			gdbDict.setVertexAndEdge();
+		} else {
+			fromNextPage = false;
 		}
-		
-		gdbDict.setVertexAndEdge();
 	}
 	
 	private boolean setTwoWayEdge() {
@@ -1545,4 +1553,11 @@ public class GraphMappingPage extends MigrationWizardPage {
         graph.redraw();
     }
 	
+	public void setChangedSelectTable(boolean changed) {
+	    isChangedSelectTable = changed;
+	}
+	
+	public boolean isChangedSelectTable() {
+	    return isChangedSelectTable;
+	}
 }
