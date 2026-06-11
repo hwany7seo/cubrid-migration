@@ -67,8 +67,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Migration Report model
@@ -363,7 +365,17 @@ public class MigrationReport implements Serializable {
      * @return List<DBObjMigrationResult>
      */
     public List<DBObjMigrationResult> getDbObjectsResult() {
-        return new ArrayList<DBObjMigrationResult>(dbObjectsResult);
+        List<DBObjMigrationResult> result = new ArrayList<DBObjMigrationResult>(dbObjectsResult);
+        // Collect names of all "Join Table Edge" entries
+        Set<String> joinTableEdgeNames = new HashSet<String>();
+        for (DBObjMigrationResult r : result) {
+            if ("Join Table Edge".equals(r.getObjType())) {
+                joinTableEdgeNames.add(r.getObjName());
+            }
+        }
+        // Remove "Edge" entries that share a name with a "Join Table Edge" entry
+        result.removeIf(r -> "Edge".equals(r.getObjType()) && joinTableEdgeNames.contains(r.getObjName()));
+        return result;
     }
 
     /**

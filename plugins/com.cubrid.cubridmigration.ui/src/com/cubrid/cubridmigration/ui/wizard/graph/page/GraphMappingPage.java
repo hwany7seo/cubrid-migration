@@ -1270,6 +1270,11 @@ public class GraphMappingPage extends MigrationWizardPage {
 		refreshGraph();
 	}
 	
+	@Override
+	public void handlePageChanging(PageChangingEvent event) {
+	    super.handlePageChanging(event);
+	}
+	
 	//GDB GraphMappingPage -> afterShowCurrentPage
 	protected void afterShowCurrentPage(PageChangedEvent event) {
 		final MigrationWizard mw = getMigrationWizard();

@@ -63,6 +63,7 @@ public class Edge extends DBObject {
 		this.oid = edge.getOid();
 		this.id = edge.getId();
 		this.edgeLabel = edge.getEdgeLabel();
+		this.edgeType = edge.getEdgeType();
 		this.startVertex = edge.getStartVertex();
 		this.endVertex = edge.getEndVertex();
 		this.startVertexName = edge.getStartVertexName();
@@ -263,7 +264,12 @@ public class Edge extends DBObject {
 
 	@Override
 	public String getObjType() {
-		return getEdgeType() == 3 ? "Join Table Edge" : "Edge";
+		int type = getEdgeType();
+		switch(type) {
+		    
+		}
+		
+		return (type == JOINTABLE_TYPE || type == JOIN_TWO_WAY_TYPE) ? "Join Table Edge" : "Edge";
 	}
 
 	@Override

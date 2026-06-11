@@ -93,12 +93,11 @@ public class GraphJDBCImporter extends Importer {
     @Override
     public void createVertex(Vertex v) {
         String sql = sqlHelper.getVertexDDL(v);
+        v.setDDL(sql);
         try {
             executeDDL(sql);
-            v.setDDL(sql);
             createObjectSuccess(v);
         } catch (RuntimeException e) {
-            v.setDDL(sql);
             createObjectFailed(v, e);
             return;
         }
@@ -128,18 +127,17 @@ public class GraphJDBCImporter extends Importer {
     
     @Override
     public void createEdge(Edge e) {
+        String sql = GraphSQLHelper.getInstance(null).getEdgeDDL(e);
+        e.setDDL(sql);
+        
         if (e.getEdgeType() == Edge.TWO_WAY_TYPE || e.getEdgeType() == Edge.JOIN_TWO_WAY_TYPE) {
             return;
         }
-        
-        String sql = GraphSQLHelper.getInstance(null).getEdgeDDL(e);
         try {
             executeDDL(sql);
-            e.setDDL(sql);
             addTargetTableInConfig(e);
             createObjectSuccess(e);
         } catch (RuntimeException ex) {
-            e.setDDL(sql);
             createObjectFailed(e, ex);
             return;
         }
@@ -190,8 +188,6 @@ public class GraphJDBCImporter extends Importer {
                 if (sql == null) {
                     continue;
                 }
-                System.out.println("createEdgeImport sql : " + sql);
-
                 stmt = conn.prepareStatement(sql);
 
                 result = stmt.executeUpdate();
@@ -232,7 +228,6 @@ public class GraphJDBCImporter extends Importer {
         }
         PreparedStatement stmt = null;
         String sql = sqlHelper.getTargetInsertJoinEdge(e);
-        System.out.println("createJoinEdgeImport sql : " + sql);
         try {
             if (sql == null) {
                 try {
