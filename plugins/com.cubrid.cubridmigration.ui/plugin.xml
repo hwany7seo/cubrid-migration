@@ -119,11 +119,13 @@
           id="com.cubrid.cubridmigration.ui.commands.category.help"
           name="Help">
     </category>
+<!--    
     <command
           categoryId="com.cubrid.cubridmigration.ui.commands.category.script"
           id="com.cubrid.cubridmigration.ui.command.NewMigration"
           name="%newMigration">
     </command>
+-->    
     <command
           categoryId="com.cubrid.cubridmigration.ui.commands.category.script"
           id="com.cubrid.cubridmigration.ui.command.NewGraphMigration"
@@ -258,10 +260,12 @@
           class="com.cubrid.cubridmigration.ui.window.MaxWindowHandler"
           commandId="com.cubrid.cubridmigration.app.command.zoomWindowCommand">
     </handler>
+<!--    
     <handler
           class="com.cubrid.cubridmigration.ui.wizard.handler.NewMigrationWizardHandler"
           commandId="com.cubrid.cubridmigration.ui.command.NewMigration">
     </handler>
+-->    
     <handler
           class="com.cubrid.cubridmigration.ui.wizard.handler.NewGraphMigrationWizardHandler"
           commandId="com.cubrid.cubridmigration.ui.command.NewGraphMigration">
