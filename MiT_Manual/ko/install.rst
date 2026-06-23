@@ -28,7 +28,7 @@
 Windows
 `````````````
 
-MiT를 다운로드 한 후 JDK 1.8을 사용하도록 설정한 후 cubridmigration.exe파일을 실행한다.
+MiT를 다운로드 한 후 cubridmigration.exe파일을 실행한다.
 
 Linux
 ```````````

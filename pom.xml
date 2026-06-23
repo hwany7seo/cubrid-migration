@@ -64,6 +64,12 @@
             <url>${cmt-p2-site}</url>
             <layout>p2</layout>
         </repository>
+
+        <repository>
+            <id>elk-p2-repo</id>
+            <url>https://download.eclipse.org/elk/updates/releases/0.10.0/</url>
+            <layout>p2</layout>
+        </repository>
     </repositories>
      
     <build>
