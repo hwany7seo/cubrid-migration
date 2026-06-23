@@ -31,9 +31,8 @@ source type
 
 target으로 이관할 데이터를 가져올 source를 선택하는 부분이다.
 
-현재 선택 가능한 DBMS는 CUBRID, Tibero, NEO4J, turbograph++가 있다.
+현재 선택 가능한 DBMS는 CUBRID, Oracle, Tibero, CoraDB가 있다.
 
-현재 GraphDB는 CUBRID와 Tibero에 대한 출력만 지원한다 (G2R)
 
 destination type
 ================
@@ -42,30 +41,20 @@ destination type
 
 target의 출력을 어떻게 할 것인지 설정하는 부분이다.
 
-Online CUBRID database
+Online CoraDB database
 ------------------------
 
-target을 CUBRID로 설정한다. 해당 옵션은 source가 GraphDB일 때만 지원한다.
-
-Online Tibero database
--------------------------
-
-target을 Tibero로 설정한다. 해당 옵션은 source가 GraphDB일 때만 지원한다.
-
-Online Neo4j database
-------------------------
-
-target을 Neo4j로 설정한다. 해당 옵션은 source가 CUBRID 또는 Tibero일 때만 사용 가능하다.
+target을 CoraDB로 설정한다. 해당 옵션은 source가 CUBRID, Oracle 또는 Tibero일 때만 사용 가능하다.
 
 Local GRAPH dump files
 ------------------------
 
-target을 dump file로 설정한다. 해당 옵션은 source가 CUBRID 또는 Tibero일 때만 사용 가능하다.
+target을 dump file로 설정한다. 해당 옵션은 source가 CUBRID, Oracle 또는 Tibero일 때만 사용 가능하다.
 
 Local CSV dump files
 ------------------------
 
-target을 csv file로 설정한다. 해당 옵션은 source가 CUBRID 또는 Tibero일 때만 사용 가능하다.
+target을 csv file로 설정한다. 해당 옵션은 source가 CUBRID, Oracle 또는 Tibero일 때만 사용 가능하다.
 
 ----------------------------------------
 연결 선택
@@ -87,7 +76,7 @@ connection을 생성한다
 데이터베이스 종류
 ------------------
 
-현재 선택된 데이터베이스의 타입을 나타낸다. 현재 원본 DB는 CUBRID가 유일하다.
+현재 선택된 데이터베이스의 타입을 나타낸다. 현재 원본 DB는 CUBRID, Oracle, Tibero가 있다.
 
 JDBC 드라이버 선택
 ---------------------
@@ -112,7 +101,7 @@ DB의 포트 번호를 입력한다. 기본값은 CUBRID의 기본 포트인 330
 데이터베이스 이름
 ------------------------
 
-원본 DB내부의 schema또는 DB이름을 입력한다. (ex. CUBRID의 샘플DB인 demodb, NEO4J의 샘플DB인 neo4j)
+원본 DB 내부의 schema 또는 DB 이름을 입력한다. (ex. CUBRID의 샘플 DB인 demodb, CoraDB의 샘플 DB인 coradb)
 
 문자 집합
 ------------------------
@@ -162,8 +151,4 @@ JDBC URL을 커스텀 할 수 있다. 만약 DB연결시 parameter가 필요할 
     :maxdepth: 1
 
     getting_start/0.RDB_to_GDB.rst
-    getting_start/1.GDB_to_RDB.rst
-    getting_start/2.RDB_to_dump.rst
-    getting_start/3.RDB_to_csv.rst
-    getting_start/4.CLI.rst
     getting_start/5.Type_Mapping.rst

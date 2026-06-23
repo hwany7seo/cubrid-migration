@@ -13,7 +13,7 @@ source DB를 선택하고 진행하면 아래와 같은 화면이 표시된다.
 GDB 선택
 =========================
 
-상단에 Turbograph와 Neo4j를 선택할 수 있는 라디오 버튼이다.
+상단에 CoraDB를 선택할 수 있는 라디오 버튼이다.
 
 target으로 사용할 GDB를 선택하면 해당 GDB에 맞는 data type, GQL로 csv file을 출력한다.
 

@@ -8,7 +8,7 @@ import java.sql.ResultSet;
 public class CoraDBMetaData {
 	public static void main(String[] args) {
 		String driver = "coradb.jdbc.driver.CORADBDriver";
-		String url = "jdbc:CoraDB:192.168.3.131:33000:demodb:dba::";
+		String url = "jdbc:CoraDB:192.168.3.131:33000:oracle_mitdb:dba::";
 		String userid = "dba";
 		String password = "";
 
@@ -24,7 +24,7 @@ public class CoraDBMetaData {
 
 	            String[] types = {"TABLE", "VIEW"};
 
-	            try (ResultSet rs = metaData.getTables(null, null, "%", null)) {
+	            try (ResultSet rs = metaData.getTables(null, "DBA", "%", null)) {
 	                
 	                while (rs.next()) {
 	                    String tableCat   = rs.getString("TABLE_CAT");

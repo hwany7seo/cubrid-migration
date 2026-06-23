@@ -1,5 +1,5 @@
 :meta-keywords: guide tool
-:meta-description: GDB to RDB CLI migration
+:meta-description: RDB to GDB CLI migration
 
 ************************
 CLI 환경에서 이관하기
