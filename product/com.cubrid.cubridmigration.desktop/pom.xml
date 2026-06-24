@@ -77,7 +77,8 @@
                             <target>
                                 <get src="${jre.download.url}/OpenJDK21U-jre_x64_windows_hotspot_21.0.7_6.zip" dest="${project.build.directory}/win-jre.zip" />
                                 <get src="${jre.download.url}/OpenJDK21U-jre_x64_linux_hotspot_21.0.7_6.tar.gz" dest="${project.build.directory}/linux-jre.tar.gz" />
-                                <get src="${jre.download.url}/OpenJDK21U-jre_x64_mac_hotspot_21.0.7_6.tar.gz" dest="${project.build.directory}/mac-jre.tar.gz" />
+                                <get src="${jre.download.url}/OpenJDK21U-jre_x64_mac_hotspot_21.0.7_6.tar.gz" dest="${project.build.directory}/mac-x64-jre.tar.gz" />
+                                <get src="${jre.download.url}/OpenJDK21U-jre_aarch64_mac_hotspot_21.0.7_6.tar.gz" dest="${project.build.directory}/mac-aarch64-jre.tar.gz" />
                             </target>
                         </configuration>
                     </execution>
@@ -99,12 +100,45 @@
                                 <chmod perm="755">
                                     <fileset dir="${jre.dir}/linux/linux-jre/bin" includes="**/*"/>
                                 </chmod>
-                                <untar src="${project.build.directory}/mac-jre.tar.gz" dest="${jre.dir}/mac" compression="gzip">
-                                    <mapper type="regexp" from="^[^/]+/(.*)$" to="mac-jre/\1"/>
+                                <untar src="${project.build.directory}/mac-x64-jre.tar.gz" dest="${jre.dir}/mac-x64" compression="gzip">
+                                    <mapper type="regexp" from="^[^/]+/(.*)$" to="mac-x64-jre/\1"/>
                                 </untar>
                                 <chmod perm="755">
-                                    <fileset dir="${jre.dir}/mac/mac-jre/Contents/Home/bin" includes="**/*"/>
+                                    <fileset dir="${jre.dir}/mac-x64/mac-x64-jre/Contents/Home/bin" includes="**/*"/>
                                 </chmod>
+                                <untar src="${project.build.directory}/mac-aarch64-jre.tar.gz" dest="${jre.dir}/mac-aarch64" compression="gzip">
+                                    <mapper type="regexp" from="^[^/]+/(.*)$" to="mac-aarch64-jre/\1"/>
+                                </untar>
+                                <chmod perm="755">
+                                    <fileset dir="${jre.dir}/mac-aarch64/mac-aarch64-jre/Contents/Home/bin" includes="**/*"/>
+                                </chmod>
+                            </target>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>create-mac-aarch64-dmg</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <property name="dmg.staging" value="${project.build.directory}/dmg-staging/macosx-cocoa-aarch64"/>
+                                <delete dir="${dmg.staging}" quiet="true"/>
+                                <mkdir dir="${dmg.staging}"/>
+                                <untar src="${project.build.directory}/${cubridmigration-desktop}-${cubridmigration-version}-macosx-cocoa-aarch64.tar.gz"
+                                       dest="${dmg.staging}" compression="gzip"/>
+                                <exec executable="genisoimage" failonerror="true">
+                                    <arg value="-V"/>
+                                    <arg value="${cubridmigration-desktop}"/>
+                                    <arg value="-D"/>
+                                    <arg value="-R"/>
+                                    <arg value="-apple"/>
+                                    <arg value="-no-pad"/>
+                                    <arg value="-o"/>
+                                    <arg value="${project.build.directory}/${cubridmigration-desktop}-${cubridmigration-version}-macosx-cocoa-aarch64.dmg"/>
+                                    <arg value="${dmg.staging}"/>
+                                </exec>
                             </target>
                         </configuration>
                     </execution>
@@ -151,6 +185,20 @@
                         <configuration>
                             <descriptors>
                                 <descriptor>${basedir}/mac.xml</descriptor>
+                            </descriptors>
+                            <finalName>${cubridmigration-desktop}-${cubridmigration-version}</finalName>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>migration-mac-aarch64</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>${basedir}/mac-aarch64.xml</descriptor>
                             </descriptors>
                             <finalName>${cubridmigration-desktop}-${cubridmigration-version}</finalName>
                         </configuration>
