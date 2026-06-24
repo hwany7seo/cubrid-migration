@@ -9,10 +9,10 @@
 본 프로그램을 처음 사용하는데 참고할 수 있는 간략한 사용법을 설명한다. 
 
 ========================
-공통 부분
+원본 DB 연결 관련
 ========================
 
-MiT의 기능 대부분에 공통으로 적용되는 기능이다.
+원본 DB에 연결 하기 위한 과정을 소개한다.
 
 ----------------------------
 이관 타입 선택
@@ -20,9 +20,7 @@ MiT의 기능 대부분에 공통으로 적용되는 기능이다.
 
 .. image:: image/GDB_to_RDB2.png
 
-이관을 실행하기 위해 '새 마이그레이션' 버튼을 선택하면 표시되는 화면.
-
-RDB to RDB 또는 GDB to GDB 이관은 불가능하다.
+이관을 실행하기 위해 '새 그래프 마이그레이션' 버튼을 선택하면 표시되는 화면.
 
 source type
 ================
@@ -31,7 +29,7 @@ source type
 
 target으로 이관할 데이터를 가져올 source를 선택하는 부분이다.
 
-현재 선택 가능한 DBMS는 CUBRID, Oracle, Tibero, CoraDB가 있다.
+현재 선택 가능한 DBMS는 CUBRID, Oracle, Tibero가 있다.
 
 
 destination type
@@ -41,20 +39,7 @@ destination type
 
 target의 출력을 어떻게 할 것인지 설정하는 부분이다.
 
-Online CoraDB database
-------------------------
-
-target을 CoraDB로 설정한다. 해당 옵션은 source가 CUBRID, Oracle 또는 Tibero일 때만 사용 가능하다.
-
-Local GRAPH dump files
-------------------------
-
-target을 dump file로 설정한다. 해당 옵션은 source가 CUBRID, Oracle 또는 Tibero일 때만 사용 가능하다.
-
-Local CSV dump files
-------------------------
-
-target을 csv file로 설정한다. 해당 옵션은 source가 CUBRID, Oracle 또는 Tibero일 때만 사용 가능하다.
+현재는 Onlne CoraDB만 지원한다.
 
 ----------------------------------------
 연결 선택
@@ -81,7 +66,10 @@ connection을 생성한다
 JDBC 드라이버 선택
 ---------------------
 
-찾아보기를 눌러 JDBC 드라이버를 추가할 수 있다. 만약 한번 진행했을 경우 dropbox 메뉴를 통해 기존에 사용했던 JDBC를 사용할 수 있다.
+찾아보기를 눌러 JDBC 드라이버를 추가할 수 있다. 만약 한번 진행 했을 경우 dropbox 메뉴를 통해 기존에 사용했던 JDBC를 사용할 수 있다.
+CUBRID JDBC는 미리 추가 되어 있으며 Oracle, Tibero는 다운로드 후 추가하여 사용하여야 한다.
+Oracle에 경우 연결시 ojdbc버전에 따라 orai18n.jar 관련 오류가 발생하는 경우 선택 된 jdbc와 동일한 경로에 다운로드 후 동일한 폴더에 복사 후 
+프로그램을 재시작하여 다시 연결하면 오류를 해결 할 수 있다.
 
 연결 이름
 ------------------------
@@ -96,17 +84,18 @@ JDBC 드라이버 선택
 연결 포트
 ------------------------
 
-DB의 포트 번호를 입력한다. 기본값은 CUBRID의 기본 포트인 33000으로 되어있다.
+DB의 포트 번호를 입력한다. 기본값은 CUBRID의 기본 포트인 33000으로 되어있다. (Oracle의 경우 1521, Tibero의 경우 8629)
 
 데이터베이스 이름
 ------------------------
 
-원본 DB 내부의 schema 또는 DB 이름을 입력한다. (ex. CUBRID의 샘플 DB인 demodb, CoraDB의 샘플 DB인 coradb)
+원본 DB 내부의 스키마 또는 DB 이름을 입력한다. (e.g. CUBRID의 샘플 DB인 demodb, Orcale에 경우 ORCL)
 
 문자 집합
 ------------------------
 
 원본 DB에서 사용중인 인코딩 타입을 설정한다. CUBRID가 지원하는 인코딩 타입은 아래와 같다.
+Oracle, Tibero에 경우 자동 설정되므로 지원하지 않는다.
 
 * UTF-8(기본)
 * MS949
@@ -141,7 +130,7 @@ JDBC URL을 커스텀 할 수 있다. 만약 DB연결시 parameter가 필요할 
 .. image:: getting_start/R2G/image/select_conn_test.png
 
 =================
-이후 진행
+RDB to GDB
 =================
 
 각 이관 기능 별 세부 사항은 다음을 참고한다.

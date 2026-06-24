@@ -145,11 +145,11 @@ Update-BuildVersion
 
 switch ($SelectedProfile) {
     "all" {
-        & $Mvn clean package "-Dcubridmigration-version=$ReleaseVersion" -Pdesktop $MvnDebug
+        & $Mvn clean verify "-Dcubridmigration-version=$ReleaseVersion" -Pdesktop $MvnDebug
         & $Mvn clean package "-Dcubridmigration-version=$ReleaseVersion" -Pconsole $MvnDebug
     }
     "desktop" {
-        & $Mvn clean package "-Dcubridmigration-version=$ReleaseVersion" -Pdesktop $MvnDebug
+        & $Mvn clean verify "-Dcubridmigration-version=$ReleaseVersion" -Pdesktop $MvnDebug
     }
     "console" {
         & $Mvn clean package "-Dcubridmigration-version=$ReleaseVersion" -Pconsole $MvnDebug
