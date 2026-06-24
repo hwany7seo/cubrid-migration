@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+ddddd<?xml version="1.0" encoding="UTF-8"?>
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
          xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -77,7 +77,8 @@
                             <target>
                                 <get src="${jre.download.url}/OpenJDK21U-jre_x64_windows_hotspot_21.0.7_6.zip" dest="${project.build.directory}/win-jre.zip" />
                                 <get src="${jre.download.url}/OpenJDK21U-jre_x64_linux_hotspot_21.0.7_6.tar.gz" dest="${project.build.directory}/linux-jre.tar.gz" />
-                                <get src="${jre.download.url}/OpenJDK21U-jre_x64_mac_hotspot_21.0.7_6.tar.gz" dest="${project.build.directory}/mac-jre.tar.gz" />
+                                <get src="${jre.download.url}/OpenJDK21U-jre_x64_mac_hotspot_21.0.7_6.tar.gz" dest="${project.build.directory}/mac-x64-jre.tar.gz" />
+                                <get src="${jre.download.url}/OpenJDK21U-jre_aarch64_mac_hotspot_21.0.7_6.tar.gz" dest="${project.build.directory}/mac-aarch64-jre.tar.gz" />
                             </target>
                         </configuration>
                     </execution>
@@ -99,11 +100,17 @@
                                 <chmod perm="755">
                                     <fileset dir="${jre.dir}/linux/linux-jre/bin" includes="**/*"/>
                                 </chmod>
-                                <untar src="${project.build.directory}/mac-jre.tar.gz" dest="${jre.dir}/mac" compression="gzip">
-                                    <mapper type="regexp" from="^[^/]+/(.*)$" to="mac-jre/\1"/>
+                                <untar src="${project.build.directory}/mac-x64-jre.tar.gz" dest="${jre.dir}/mac-x64" compression="gzip">
+                                    <mapper type="regexp" from="^[^/]+/(.*)$" to="mac-x64-jre/\1"/>
                                 </untar>
                                 <chmod perm="755">
-                                    <fileset dir="${jre.dir}/mac/mac-jre/Contents/Home/bin" includes="**/*"/>
+                                    <fileset dir="${jre.dir}/mac-x64/mac-x64-jre/Contents/Home/bin" includes="**/*"/>
+                                </chmod>
+                                <untar src="${project.build.directory}/mac-aarch64-jre.tar.gz" dest="${jre.dir}/mac-aarch64" compression="gzip">
+                                    <mapper type="regexp" from="^[^/]+/(.*)$" to="mac-aarch64-jre/\1"/>
+                                </untar>
+                                <chmod perm="755">
+                                    <fileset dir="${jre.dir}/mac-aarch64/mac-aarch64-jre/Contents/Home/bin" includes="**/*"/>
                                 </chmod>
                             </target>
                         </configuration>
@@ -151,6 +158,20 @@
                         <configuration>
                             <descriptors>
                                 <descriptor>${basedir}/mac.xml</descriptor>
+                            </descriptors>
+                            <finalName>${cubridmigration-desktop}-${cubridmigration-version}</finalName>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>migration-mac-aarch64</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>${basedir}/mac-aarch64.xml</descriptor>
                             </descriptors>
                             <finalName>${cubridmigration-desktop}-${cubridmigration-version}</finalName>
                         </configuration>

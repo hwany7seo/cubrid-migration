@@ -10,8 +10,8 @@
 
     <properties>
         <cubridmigration-version>0.0.0</cubridmigration-version>
-        <cubridmigration-desktop>CUBRID-Migration-Toolkit</cubridmigration-desktop>
-        <cubridmigration-console>CUBRID-Migration-Toolkit-console</cubridmigration-console>
+        <cubridmigration-desktop>CoraDB-Migration-Toolkit</cubridmigration-desktop>
+        <cubridmigration-console>CoraDB-Migration-Toolkit-console</cubridmigration-console>
 
         <eclipse-version>2025-03</eclipse-version>
         <java.version>21</java.version>
@@ -101,6 +101,11 @@
                             <os>macosx</os>
                             <ws>cocoa</ws>
                             <arch>x86_64</arch>
+                        </environment>
+                        <environment>
+                            <os>macosx</os>
+                            <ws>cocoa</ws>
+                            <arch>aarch64</arch>
                         </environment>
                     </environments>
                 </configuration>
