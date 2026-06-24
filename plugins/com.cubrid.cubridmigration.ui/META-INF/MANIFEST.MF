@@ -23,8 +23,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.elk.alg.common,
  org.eclipse.elk.alg.layered
 Bundle-ClassPath: .
-Export-Package: com.cubrid.common.ui.common.notice,
- com.cubrid.common.ui.handler,
+Export-Package: com.cubrid.common.ui.handler,
  com.cubrid.cubridmigration.ui,
  com.cubrid.cubridmigration.ui.common,
  com.cubrid.cubridmigration.ui.preference,

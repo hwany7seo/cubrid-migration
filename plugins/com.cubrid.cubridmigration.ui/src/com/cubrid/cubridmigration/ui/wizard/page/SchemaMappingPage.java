@@ -395,6 +395,11 @@ public class SchemaMappingPage extends MigrationWizardPage {
             return false;
         }
 
+        config.clearNewTargetShemaList();
+        for (Schema srcSchema : srcCatalog.getSchemas()) {
+            srcSchema.setTargetSchemaName(null);
+        }
+
         List<String> checkNewSchemaDuplicate = new ArrayList<>();
         config.setTarSchemaDuplicate(false);
 
@@ -406,6 +411,9 @@ public class SchemaMappingPage extends MigrationWizardPage {
                 return false;
             }
         }
+
+        config.rebuildTargetSchemaListFromSource(srcCatalog);
+
         wizard.setSourceDBNode(srcCatalog);
         return true;
     }
@@ -414,6 +422,10 @@ public class SchemaMappingPage extends MigrationWizardPage {
             SrcTable srcTable, Catalog tarCatalog, List<String> checkNewSchemaDuplicate) {
         if (!(tarCatalog.isDbHasUserSchema())) {
             srcTable.setTarSchema(null);
+            Schema srcSchema = srcCatalog.getSchemaByName(srcTable.getSrcSchema());
+            if (srcSchema != null) {
+                srcSchema.setTargetSchemaName(srcSchema.getName());
+            }
             return true;
         }
 

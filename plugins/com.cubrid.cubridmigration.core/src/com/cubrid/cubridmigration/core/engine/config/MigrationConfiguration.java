@@ -751,12 +751,27 @@ public class MigrationConfiguration {
      * @param isReset
      */
     private void buildSchemaCfg(boolean isReset) {
-        for (String schemaName : newTargetSchema) {
-            Schema dummySchema = new Schema();
-            dummySchema.setName(schemaName);
-            dummySchema.setNewTargetSchema(true);
+        if (!targetIsOnline()) {
+            return;
+        }
+        if (!scriptSchemaMapping.isEmpty()) {
+            return;
+        }
+        rebuildTargetSchemaListFromSource(srcCatalog);
+    }
 
-            targetSchemaList.add(dummySchema);
+    public void rebuildTargetSchemaListFromSource(Catalog sourceCatalog) {
+        removeTargetSchemaList();
+        for (Schema sourceSchema : sourceCatalog.getSchemas()) {
+            String target = sourceSchema.getTargetSchemaName();
+            if (StringUtils.isBlank(target)) {
+                continue;
+            }
+            Schema entry = new Schema();
+            entry.setName(sourceSchema.getName());
+            entry.setTargetSchemaName(target);
+            entry.setNewTargetSchema(newTargetSchema.contains(target));
+            targetSchemaList.add(entry);
         }
     }
 
@@ -790,20 +805,20 @@ public class MigrationConfiguration {
                     }
                 }
                 tempList.add(sc);
-                Sequence tseq = null;
-                if (sc.getOwner() == null) {
-                    tseq = getTargetSerialSchema(sc.getTarget());
-                } else {
-                    tseq = getTargetSerialSchema(sc.getTargetOwner(), sc.getTarget());
-                }
+                String sourceOwner =
+                        StringUtils.defaultIfBlank(
+                                sc.getOwner(),
+                                StringUtils.defaultIfBlank(
+                                        seq.getOwner(), sourceDBSchema.getName()));
+                Sequence tseq = getTargetSerialSchema(sc.getTargetOwner(), sc.getTarget());
                 if (tseq == null) {
                     tseq = (Sequence) seq.clone();
                     tseq.setName(sc.getTarget());
-                    tseq.setOwner(sc.getTargetOwner());
-                    tseq.setSourceOwner(sc.getOwner());
-                    tseq.setDDL(cubridddlUtil.getSequenceDDL(tseq, this.addUserSchema));
-                    tseq.setComment(seq.getComment());
                 }
+                tseq.setOwner(sc.getTargetOwner());
+                tseq.setSourceOwner(sourceOwner);
+                tseq.setDDL(cubridddlUtil.getSequenceDDL(tseq, this.addUserSchema));
+                tseq.setComment(seq.getComment());
                 tempSerials.add(tseq);
             }
         }
@@ -961,7 +976,11 @@ public class MigrationConfiguration {
                     tprocedure = getTargetPlcsqlProcedureSchema(sc.getTargetOwner(), sc.getTarget());
                 }
 
-                if (tprocedure == null || !sourceDBSchema.getTargetSchemaName().equals(tprocedure.getTargetOwner())) {
+                if (tprocedure == null
+                        || (nonNull(sourceDBSchema.getTargetSchemaName())
+                                && !sourceDBSchema
+                                        .getTargetSchemaName()
+                                        .equals(tprocedure.getTargetOwner()))) {
                     tprocedure = new PlcsqlProcedure();
                     tprocedure.setOwner(sc.getOwner());
                     tprocedure.setTargetOwner(sc.getTargetOwner());
@@ -1015,7 +1034,11 @@ public class MigrationConfiguration {
                     tfunction = getTargetPlcsqlFunctionSchema(sc.getTargetOwner(), sc.getTarget());
                 }
 
-                if (tfunction == null || !sourceDBSchema.getTargetSchemaName().equals(tfunction.getTargetOwner())) {
+                if (tfunction == null
+                        || (nonNull(sourceDBSchema.getTargetSchemaName())
+                                && !sourceDBSchema
+                                        .getTargetSchemaName()
+                                        .equals(tfunction.getTargetOwner()))) {
                     tfunction = new PlcsqlFunction();
                     tfunction.setOwner(sc.getOwner());
                     tfunction.setTargetOwner(sc.getTargetOwner());
@@ -2170,9 +2193,19 @@ public class MigrationConfiguration {
     public void parsingProcedureFunction(boolean changeDataType) {
         List<SourcePlcsqlProcedureConfig> spcs = getExpPlcsqlProcedureCfg();
         for (SourcePlcsqlProcedureConfig spc : spcs) {
-            PlcsqlProcedure targetProc = getTargetPlcsqlProcedureSchema(spc.getOwner(), spc.getName());
-            if (StringUtils.isBlank(targetProc.getHeaderDDL()) || StringUtils.isBlank(targetProc.getBodyDDL())) {
-                ProcedureDDL procedureDDL = PlConvOracleToCubrid.getProcedureDDL(spc.getSourceDDL(), changeDataType);
+            PlcsqlProcedure targetProc =
+                    getTargetPlcsqlProcedureSchema(spc.getOwner(), spc.getName());
+            if (targetProc.getParseError() != null) {
+                continue;
+            }
+            if (StringUtils.isBlank(targetProc.getHeaderDDL())
+                    || StringUtils.isBlank(targetProc.getBodyDDL())) {
+                ProcedureDDL procedureDDL =
+                        PlConvOracleToCubrid.getProcedureDDL(spc.getSourceDDL(), changeDataType);
+                if (procedureDDL.hasSyntaxError()) {
+                    targetProc.setParseError(procedureDDL.getSyntaxErrorMessage());
+                    continue;
+                }
                 targetProc.setHeaderDDL(procedureDDL.getHeader());
                 targetProc.setBodyDDL(procedureDDL.getBody());
             }
@@ -2180,9 +2213,19 @@ public class MigrationConfiguration {
 
         List<SourcePlcsqlFunctionConfig> fpcs = getExpPlcsqlFunctionCfg();
         for (SourcePlcsqlFunctionConfig fpc : fpcs) {
-            PlcsqlFunction targetFunc = getTargetPlcsqlFunctionSchema(fpc.getOwner(), fpc.getName());
-            if (StringUtils.isBlank(targetFunc.getHeaderDDL()) || StringUtils.isBlank(targetFunc.getBodyDDL())) {
-                ProcedureDDL procedureDDL = PlConvOracleToCubrid.getProcedureDDL(fpc.getSourceDDL(), changeDataType);
+            PlcsqlFunction targetFunc =
+                    getTargetPlcsqlFunctionSchema(fpc.getOwner(), fpc.getName());
+            if (targetFunc.getParseError() != null) {
+                continue;
+            }
+            if (StringUtils.isBlank(targetFunc.getHeaderDDL())
+                    || StringUtils.isBlank(targetFunc.getBodyDDL())) {
+                ProcedureDDL procedureDDL =
+                        PlConvOracleToCubrid.getProcedureDDL(fpc.getSourceDDL(), changeDataType);
+                if (procedureDDL.hasSyntaxError()) {
+                    targetFunc.setParseError(procedureDDL.getSyntaxErrorMessage());
+                    continue;
+                }
                 targetFunc.setHeaderDDL(procedureDDL.getHeader());
                 targetFunc.setBodyDDL(procedureDDL.getBody());
             }
@@ -3669,7 +3712,8 @@ public class MigrationConfiguration {
         }
 
         for (Sequence seq : this.targetSequences) {
-            if (seq.getName().equalsIgnoreCase(target) && seq.getOwner().equalsIgnoreCase(owner)) {
+            if (seq.getName().equalsIgnoreCase(target)
+                    && StringUtils.equalsIgnoreCase(seq.getOwner(), owner)) {
                 return seq;
             }
         }

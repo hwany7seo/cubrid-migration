@@ -796,7 +796,7 @@ public class CUBRIDSQLHelper extends SQLHelper {
         StringBuffer bf = new StringBuffer();
 
         bf.append("CREATE USER ");
-        bf.append(dummySchema.getName());
+        bf.append(dummySchema.getTargetSchemaName());
 
         return bf.toString();
     }

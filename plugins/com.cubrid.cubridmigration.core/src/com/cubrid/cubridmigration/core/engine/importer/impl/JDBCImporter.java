@@ -271,7 +271,15 @@ public class JDBCImporter extends Importer {
      */
     @Override
     public void createPlcsqlProcedureHeader(PlcsqlProcedure pd) {
-        String ddl = CUBRIDSQLHelper.getInstance(null).getPlcsqlProcedureHeaderDDL(pd, config.isAddUserSchema());
+        if (pd.getParseError() != null) {
+            createObjectFailed(
+                    pd,
+                    new NormalMigrationException("PL/CSQL syntax error: " + pd.getParseError()));
+            return;
+        }
+        String ddl =
+                CUBRIDSQLHelper.getInstance(null)
+                        .getPlcsqlProcedureHeaderDDL(pd, config.isAddUserSchema());
         try {
             executeDDL(ddl);
             createObjectSuccess(pd);
@@ -287,7 +295,12 @@ public class JDBCImporter extends Importer {
      */
     @Override
     public void createPlcsqlProcedureBody(PlcsqlProcedure pd) {
-        String ddl = CUBRIDSQLHelper.getInstance(null).getPlcsqlProcedureDDL(pd, config.isAddUserSchema());
+        if (pd.getParseError() != null) {
+            return;
+        }
+        String ddl =
+                CUBRIDSQLHelper.getInstance(null)
+                        .getPlcsqlProcedureDDL(pd, config.isAddUserSchema());
         try {
             executeDDL(ddl);
             createObjectSuccess(pd);
@@ -303,7 +316,15 @@ public class JDBCImporter extends Importer {
      */
     @Override
     public void createPlcsqlFunctionHeader(PlcsqlFunction ft) {
-        String ddl = CUBRIDSQLHelper.getInstance(null).getPlcsqlFunctionHeaderDDL(ft, config.isAddUserSchema());
+        if (ft.getParseError() != null) {
+            createObjectFailed(
+                    ft,
+                    new NormalMigrationException("PL/CSQL syntax error: " + ft.getParseError()));
+            return;
+        }
+        String ddl =
+                CUBRIDSQLHelper.getInstance(null)
+                        .getPlcsqlFunctionHeaderDDL(ft, config.isAddUserSchema());
         try {
             executeDDL(ddl);
             createObjectSuccess(ft);
@@ -319,7 +340,12 @@ public class JDBCImporter extends Importer {
      */
     @Override
     public void createPlcsqlFunctionBody(PlcsqlFunction ft) {
-        String ddl = CUBRIDSQLHelper.getInstance(null).getPlcsqlFunctionDDL(ft, config.isAddUserSchema());
+        if (ft.getParseError() != null) {
+            return;
+        }
+        String ddl =
+                CUBRIDSQLHelper.getInstance(null)
+                        .getPlcsqlFunctionDDL(ft, config.isAddUserSchema());
         try {
             executeDDL(ddl);
             createObjectSuccess(ft);
