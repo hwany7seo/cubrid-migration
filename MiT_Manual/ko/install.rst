@@ -25,12 +25,7 @@
 설치와 실행
 -----------------------
 
-Windows
+Windows, Linux
 `````````````
+MiT를 다운로드 한 압축 해제 후 cubridmigration.exe (linux : cubridmigration)파일을 실행한다.
 
-MiT를 다운로드 한 후 cubridmigration.exe파일을 실행한다.
-
-Linux
-```````````
-
-Windows에서 이관을 최소 한번 시행하여 script 파일을 생성한 후 명령어를 통해서 이관을 진행할 수 있다.

@@ -18,7 +18,7 @@ RDB to GDB 데이터 마이그레이션
 
 .. image:: image/MiT_structure.png
    :width: 1000px
-   :height: 600px
+   :height: 500px
 
 주요 기능은 RDB(CUBRID, Oracle, Tibero)에서 table, index, fk를 추출하여 MiT 내부에서 알고리즘에 따라 총 5가지 GDB 오브젝트로 분류 후 GDB(CoraDB)로 마이그레이션하는 기능이다.
 
