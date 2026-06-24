@@ -61,8 +61,14 @@
 
         <repository>
             <id>elk-p2-repo</id>
-            <url>https://download.eclipse.org/elk/updates/releases/0.10.0/</url>
+            <url>https://download.eclipse.org/elk/updates/releases/0.11.0/</url>
             <layout>p2</layout>
+        </repository>
+
+        <repository>
+               <id>GEF-p2-site</id>
+               <url>https://download.eclipse.org/tools/gef/classic/release/3.27.0/</url>
+               <layout>p2</layout>
         </repository>
     </repositories>
      
