@@ -317,8 +317,10 @@ public class GraphTableSelectPage extends MigrationWizardPage {
             showTableViewerData(schemaList);
             
             makeColumnViewerData(schemaList);
-            tableViewer.getTable().select(0);
-            changeColumnData(tableViewer.getTable().getItem(0).getData());
+            if (tableViewer.getTable().getItemCount() > 0) {
+                tableViewer.getTable().select(0);
+                changeColumnData(tableViewer.getTable().getItem(0).getData());
+            }
         } catch (Exception e) {
             LOG.error(LogUtil.getExceptionString(e));
             throw e;

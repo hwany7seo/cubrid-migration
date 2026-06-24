@@ -1252,7 +1252,7 @@ public class GraphMappingPage extends MigrationWizardPage {
 		gdbColumn2.setText(columnProperties[1]);
 	}
 
-	public void changeColumnSelect(Object selectedColumn) {
+	private void changeColumnSelect(Object selectedColumn) {
 		Column column = (Column) selectedColumn;
 		if (column.isSelected()) {
 			column.setSelected(false);
