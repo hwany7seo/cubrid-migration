@@ -1,4 +1,4 @@
-ddddd<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
          xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -112,6 +112,33 @@ ddddd<?xml version="1.0" encoding="UTF-8"?>
                                 <chmod perm="755">
                                     <fileset dir="${jre.dir}/mac-aarch64/mac-aarch64-jre/Contents/Home/bin" includes="**/*"/>
                                 </chmod>
+                            </target>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>create-mac-aarch64-dmg</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <property name="dmg.staging" value="${project.build.directory}/dmg-staging/macosx-cocoa-aarch64"/>
+                                <delete dir="${dmg.staging}" quiet="true"/>
+                                <mkdir dir="${dmg.staging}"/>
+                                <untar src="${project.build.directory}/${cubridmigration-desktop}-${cubridmigration-version}-macosx-cocoa-aarch64.tar.gz"
+                                       dest="${dmg.staging}" compression="gzip"/>
+                                <exec executable="genisoimage" failonerror="true">
+                                    <arg value="-V"/>
+                                    <arg value="${cubridmigration-desktop}"/>
+                                    <arg value="-D"/>
+                                    <arg value="-R"/>
+                                    <arg value="-apple"/>
+                                    <arg value="-no-pad"/>
+                                    <arg value="-o"/>
+                                    <arg value="${project.build.directory}/${cubridmigration-desktop}-${cubridmigration-version}-macosx-cocoa-aarch64.dmg"/>
+                                    <arg value="${dmg.staging}"/>
+                                </exec>
                             </target>
                         </configuration>
                     </execution>
