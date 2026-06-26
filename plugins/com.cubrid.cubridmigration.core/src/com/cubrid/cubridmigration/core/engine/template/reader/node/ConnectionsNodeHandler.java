@@ -78,7 +78,7 @@ public class ConnectionsNodeHandler extends DefaultHandler {
                             attributes.getValue(ATTR_HOST),
                             Integer.parseInt(attributes.getValue(ATTR_PORT)),
                             attributes.getValue(ATTR_NAME),
-                            DatabaseType.CUBRID,
+                            DatabaseType.CORADB,
                             attributes.getValue(ATTR_CHARSET),
                             attributes.getValue(ATTR_USER),
                             attributes.getValue(ATTR_PASSWORD),
