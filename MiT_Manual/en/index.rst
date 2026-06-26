@@ -5,7 +5,7 @@
 .. _reference-index:
 
 #########################
-MiT 3.0 User Manual
+MiT for CoraDB 0.1 User Manual
 #########################
 
 Quick Links by Topic
