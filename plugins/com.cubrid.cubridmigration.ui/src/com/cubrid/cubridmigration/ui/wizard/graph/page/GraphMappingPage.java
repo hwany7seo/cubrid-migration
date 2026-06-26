@@ -584,38 +584,38 @@ public class GraphMappingPage extends MigrationWizardPage {
 		
 		MenuItem separator3 = new MenuItem(popupMenu, SWT.SEPARATOR);
 		
-		MenuItem dateTimeFilter = new MenuItem(popupMenu, SWT.POP_UP);
-		dateTimeFilter.setText("set datetime filter");
-		
-		dateTimeFilter.addSelectionListener(new SelectionAdapter() {
-			
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				GraphDateTimeFilterDialog dateTimeFilter = new GraphDateTimeFilterDialog(getShell(), selectedObject);
-				dateTimeFilter.open();
-				dateTimeTextHandler();
-				filterHandler();
-			}
-			
-		});
-		
-		MenuItem unsetFilter = new MenuItem(popupMenu, SWT.POP_UP);
-		unsetFilter.setText("unset filter");
-		
-		unsetFilter.addSelectionListener(new SelectionAdapter() {
-			
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (selectedObject instanceof Vertex) {
-					((Vertex) selectedObject).setHasDateTimeFilter(false);
-				} else if (selectedObject instanceof Edge) {
-					((Edge) selectedObject).setHasDateTimeFilter(false);
-				}
-				
-				dateTimeTextHandler();
-				filterHandler();
-			}
-		});
+//		MenuItem dateTimeFilter = new MenuItem(popupMenu, SWT.POP_UP);
+//		dateTimeFilter.setText("set datetime filter");
+//		
+//		dateTimeFilter.addSelectionListener(new SelectionAdapter() {
+//			
+//			@Override
+//			public void widgetSelected(SelectionEvent e) {
+//				GraphDateTimeFilterDialog dateTimeFilter = new GraphDateTimeFilterDialog(getShell(), selectedObject);
+//				dateTimeFilter.open();
+//				dateTimeTextHandler();
+//				filterHandler();
+//			}
+//			
+//		});
+//		
+//		MenuItem unsetFilter = new MenuItem(popupMenu, SWT.POP_UP);
+//		unsetFilter.setText("unset filter");
+//		
+//		unsetFilter.addSelectionListener(new SelectionAdapter() {
+//			
+//			@Override
+//			public void widgetSelected(SelectionEvent e) {
+//				if (selectedObject instanceof Vertex) {
+//					((Vertex) selectedObject).setHasDateTimeFilter(false);
+//				} else if (selectedObject instanceof Edge) {
+//					((Edge) selectedObject).setHasDateTimeFilter(false);
+//				}
+//				
+//				dateTimeTextHandler();
+//				filterHandler();
+//			}
+//		});
 		
 		item1.setEnabled(true);
 		item2.setEnabled(false);
@@ -626,7 +626,7 @@ public class GraphMappingPage extends MigrationWizardPage {
 		redo.setEnabled(false);
 		undo.setEnabled(false);
 		
-		unsetFilter.setEnabled(false);
+//		unsetFilter.setEnabled(false);
 	}
 	
 	public void dateTimeTextHandler() {
