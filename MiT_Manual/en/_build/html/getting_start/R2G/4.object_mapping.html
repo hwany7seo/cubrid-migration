@@ -1,0 +1,376 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Schema Mapping Page &mdash; MiT 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=ea3174ff" />
+
+  
+      <script src="../../_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Migration Confirmation Page" href="5.migration_check.html" />
+    <link rel="prev" title="Target DB Connection Selection Page" href="3.select_tar_conn.html" />
+
+    <!-- meta-tags -->
+      
+      
+      
+        
+        
+          
+        
+        
+          
+        
+      
+
+      <!-- keywords & description -->
+      <meta name="keywords" content="Schema Mapping Page, MiT 1.0 documentation, guide tool" />
+      <meta name="description" content = "Schema Mapping Page &mdash; MiT 1.0 documentation. Introducing the features of object mapping page " />
+    
+      <!-- og -->
+      <meta property="og:title" content="Schema Mapping Page &mdash; MiT 1.0 documentation"/>
+      <meta property="og:keywords" content="Schema Mapping Page, MiT 1.0 documentation, guide tool" />
+      <meta property="og:description" content = "Schema Mapping Page &mdash; MiT 1.0 documentation. Introducing the features of object mapping page " />
+      <meta property="og:type" content="website"/>
+      <meta property="og:site" content="Schema Mapping Page &mdash; MiT 1.0 documentation"/>
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            MiT
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../toc.html">Manual Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../toc.html#manual-structure">Manual Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../toc.html#glossary">Glossary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../toc.html#manual-conventions">Manual Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../toc.html#version-name-and-version-string-conventions">Version Name and Version String Conventions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">Program Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../intro.html#key-features">Key Features</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../intro.html#rdb-to-gdb-data-migration">RDB to GDB Data Migration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../intro.html#data-mapping">Data Mapping</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../install_upgrade.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../install.html">Installation and Execution</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../install.html#supported-platforms-and-recommended-system-requirements">Supported Platforms and Recommended System Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../install.html#id1">Installation and Execution</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../install.html#windows-linux">Windows, Linux</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../start.html">Getting Started</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../start.html#source-db-connection">Source DB Connection</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../start.html#select-migration-type">Select Migration Type</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../start.html#source-type">source type</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../start.html#destination-type">destination type</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../start.html#select-connection">Select Connection</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../start.html#create-connection">Create Connection</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../start.html#database-type">Database Type</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../start.html#select-jdbc-driver">Select JDBC Driver</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../start.html#connection-name">Connection Name</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../start.html#host-address">Host Address</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../start.html#connection-port">Connection Port</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../start.html#database-name">Database Name</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../start.html#character-set">Character Set</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../start.html#username">Username</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../start.html#password">Password</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../start.html#jdbc-advanced-settings">JDBC Advanced Settings</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../start.html#test">Test</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../start.html#rdb-to-gdb">RDB to GDB</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../0.RDB_to_GDB.html">RDB to GDB Migration</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="3.select_tar_conn.html">Target DB Connection Selection Page</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="3.select_tar_conn.html#create-connection">Create Connection</a></li>
+<li class="toctree-l5"><a class="reference internal" href="3.select_tar_conn.html#test">Test</a></li>
+</ul>
+</li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Schema Mapping Page</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#schema-selection-and-change">Schema Selection and Change</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#object-mapping-page">Object Mapping Page</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#schema-selection-page">Schema Selection Page</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#table-list">Table List</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#column-list">Column List</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#graph">Graph</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#rdb-gdb-columns">RDB, GDB Columns</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#gdb-column-data-type-change">GDB Column Data Type Change</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#object-rename-feature">Object Rename Feature</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#custom-edge-add-feature">Custom Edge Add Feature</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#edge-delete-feature">Edge Delete Feature</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#redo-and-undo-feature">Redo and Undo Feature</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#two-way-edge">two-way edge</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="5.migration_check.html">Migration Confirmation Page</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="5.migration_check.html#source-database">Source Database</a></li>
+<li class="toctree-l5"><a class="reference internal" href="5.migration_check.html#target-database">Target Database</a></li>
+<li class="toctree-l5"><a class="reference internal" href="5.migration_check.html#vertex">Vertex</a></li>
+<li class="toctree-l5"><a class="reference internal" href="5.migration_check.html#edge">Edge</a></li>
+<li class="toctree-l5"><a class="reference internal" href="5.migration_check.html#graph-design">Graph Design</a></li>
+<li class="toctree-l5"><a class="reference internal" href="5.migration_check.html#advanced-settings">Advanced Settings</a></li>
+<li class="toctree-l5"><a class="reference internal" href="5.migration_check.html#preview-ddl">Preview DDL</a></li>
+<li class="toctree-l5"><a class="reference internal" href="5.migration_check.html#script">Script</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="6.migration_progress.html">Migration Progress</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="6.migration_progress.html#vertex">vertex</a></li>
+<li class="toctree-l5"><a class="reference internal" href="6.migration_progress.html#edge">Edge</a></li>
+<li class="toctree-l5"><a class="reference internal" href="6.migration_progress.html#console-view">Console View</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="7.migration_report.html">Migration Report</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="7.migration_report.html#summary">Summary</a></li>
+<li class="toctree-l5"><a class="reference internal" href="7.migration_report.html#detail-info">Detail Info</a></li>
+<li class="toctree-l5"><a class="reference internal" href="7.migration_report.html#log">Log</a></li>
+<li class="toctree-l5"><a class="reference internal" href="7.migration_report.html#settings-info">Settings Info</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../5.Type_Mapping.html">Change Type Mapping</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../release_note/index.html">Release Notes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../release_note/index.html#common-information">Common Information</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../release_note/index.html#revision-history">Revision History</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../release_note/index.html#license">License</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../release_note/index.html#additional-information">Additional Information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../release_note/index.html#notes">Notes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">MiT</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../start.html">Getting Started</a></li>
+          <li class="breadcrumb-item"><a href="../0.RDB_to_GDB.html">RDB to GDB Migration</a></li>
+      <li class="breadcrumb-item active">Schema Mapping Page</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/getting_start/R2G/4.object_mapping.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="schema-mapping-page">
+<h1>Schema Mapping Page<a class="headerlink" href="#schema-mapping-page" title="Link to this heading">¶</a></h1>
+<section id="schema-selection-and-change">
+<h2>Schema Selection and Change<a class="headerlink" href="#schema-selection-and-change" title="Link to this heading">¶</a></h2>
+<p>This page allows you to select the schema from the source DB that you want to migrate.
+A list of schemas with access permissions is displayed. Since CoraDB currently does not support multi-schema, migration is only possible to a single schema.
+Click the Update Database Objects button to reload and display updated object information.</p>
+<img alt="../../_images/schema_mapping_page.png" src="../../_images/schema_mapping_page.png" />
+</section>
+</section>
+<section id="object-mapping-page">
+<h1>Object Mapping Page<a class="headerlink" href="#object-mapping-page" title="Link to this heading">¶</a></h1>
+<section id="schema-selection-page">
+<h2>Schema Selection Page<a class="headerlink" href="#schema-selection-page" title="Link to this heading">¶</a></h2>
+<p>This page allows you to select the tables from the source DB that you want to migrate.</p>
+<p>The manual uses the northwind sampleDB.</p>
+<img alt="../../_images/object_mapping_page.png" src="../../_images/object_mapping_page.png" />
+</section>
+<section id="table-list">
+<h2>Table List<a class="headerlink" href="#table-list" title="Link to this heading">¶</a></h2>
+<p>Displays the list of tables from the source DB. Click each row to specify whether to include it in the migration.
+By default, all tables are set to be migrated.</p>
+</section>
+<section id="column-list">
+<h2>Column List<a class="headerlink" href="#column-list" title="Link to this heading">¶</a></h2>
+<p>When a table is selected from the table list, the column information for that table is displayed.
+After selecting the tables to migrate, proceed to the next page.</p>
+</section>
+<section id="graph">
+<h2>Graph<a class="headerlink" href="#graph" title="Link to this heading">¶</a></h2>
+<p>Shows a preview of how the objects selected on the previous page will appear in GraphDB after migration.</p>
+</section>
+<section id="rdb-gdb-columns">
+<h2>RDB, GDB Columns<a class="headerlink" href="#rdb-gdb-columns" title="Link to this heading">¶</a></h2>
+<p>When an object is selected in the graph view, you can see the column information for that object in both RDB and GDB.</p>
+<img alt="../../_images/object_mapping_page2.png" src="../../_images/object_mapping_page2.png" />
+</section>
+<section id="gdb-column-data-type-change">
+<h2>GDB Column Data Type Change<a class="headerlink" href="#gdb-column-data-type-change" title="Link to this heading">¶</a></h2>
+<p>Certain data types for GDB columns can be changed.</p>
+<img alt="../../_images/change_data_type.png" src="../../_images/change_data_type.png" />
+<p>Only changing to the same type or to string type is supported.</p>
+</section>
+<section id="object-rename-feature">
+<h2>Object Rename Feature<a class="headerlink" href="#object-rename-feature" title="Link to this heading">¶</a></h2>
+<p>You can rename a vertex or edge.</p>
+<p>The steps are as follows.</p>
+<ol class="arabic simple">
+<li><p>Right-click the object you want to rename and select Change Name.</p></li>
+</ol>
+<img alt="../../_images/change_name.png" src="../../_images/change_name.png" />
+<ol class="arabic simple" start="2">
+<li><p>Enter the desired name and click OK.</p></li>
+</ol>
+<img alt="../../_images/change_name_dialog.png" src="../../_images/change_name_dialog.png" />
+<ol class="arabic simple" start="3">
+<li><p>Confirm that the name has been changed.</p></li>
+</ol>
+<img alt="../../_images/change_name_complete.png" src="../../_images/change_name_complete.png" />
+</section>
+<section id="custom-edge-add-feature">
+<h2>Custom Edge Add Feature<a class="headerlink" href="#custom-edge-add-feature" title="Link to this heading">¶</a></h2>
+<p>In the graph view, you can add an edge manually when certain conditions are met.</p>
+<p>The steps are as follows.</p>
+<ol class="arabic simple">
+<li><p>First, right-click the vertex you want to set as the start vertex and select it.</p></li>
+</ol>
+<img alt="../../_images/add_edge_step1.png" src="../../_images/add_edge_step1.png" />
+<ol class="arabic simple" start="2">
+<li><p>Similarly, right-click the vertex you want to set as the end vertex and select it. This option becomes active once the start vertex is selected.</p></li>
+</ol>
+<img alt="../../_images/add_edge_step2.png" src="../../_images/add_edge_step2.png" />
+<ol class="arabic simple" start="3">
+<li><p>In the Create New Edge dialog, enter the edge name and select the column to link as FK from the table below. The data types of each column must match.</p></li>
+</ol>
+<img alt="../../_images/add_edge_step3.png" src="../../_images/add_edge_step3.png" />
+<ol class="arabic simple" start="4">
+<li><p>Click OK to confirm that the custom edge has been created.</p></li>
+</ol>
+<img alt="../../_images/add_edge_step5.png" src="../../_images/add_edge_step5.png" />
+</section>
+<section id="edge-delete-feature">
+<h2>Edge Delete Feature<a class="headerlink" href="#edge-delete-feature" title="Link to this heading">¶</a></h2>
+<p>You can delete an edge.</p>
+<ol class="arabic simple">
+<li><p>Select the edge you want to delete and right-click it.</p></li>
+</ol>
+<img alt="../../_images/select_edge_to_delete.png" src="../../_images/select_edge_to_delete.png" />
+<ol class="arabic simple" start="2">
+<li><p>Select [Delete Edge] to delete the selected edge.</p></li>
+</ol>
+<img alt="../../_images/delete_edge.png" src="../../_images/delete_edge.png" />
+</section>
+<section id="redo-and-undo-feature">
+<h2>Redo and Undo Feature<a class="headerlink" href="#redo-and-undo-feature" title="Link to this heading">¶</a></h2>
+<p>After performing operations such as renaming objects or adding edges, you can use the redo and undo features to cancel or redo them.</p>
+<p>The steps are as follows.</p>
+<section id="undo">
+<h3>undo<a class="headerlink" href="#undo" title="Link to this heading">¶</a></h3>
+<ol class="arabic simple">
+<li><p>After canceling a command, click anywhere and right-click.</p></li>
+</ol>
+<img alt="../../_images/undo_enable.png" src="../../_images/undo_enable.png" />
+<ol class="arabic simple" start="2">
+<li><p>Click the undo button to cancel the command.</p></li>
+</ol>
+<img alt="../../_images/execute_undo.png" src="../../_images/execute_undo.png" />
+</section>
+<section id="redo">
+<h3>redo<a class="headerlink" href="#redo" title="Link to this heading">¶</a></h3>
+<ol class="arabic simple">
+<li><p>After performing undo, click anywhere and right-click.</p></li>
+</ol>
+<img alt="../../_images/redo_enable.png" src="../../_images/redo_enable.png" />
+<ol class="arabic simple" start="2">
+<li><p>Click the redo button to re-execute the most recently cancelled command.</p></li>
+</ol>
+<img alt="../../_images/execute_redo.png" src="../../_images/execute_redo.png" />
+</section>
+</section>
+<section id="two-way-edge">
+<h2>two-way edge<a class="headerlink" href="#two-way-edge" title="Link to this heading">¶</a></h2>
+<p>By default, all migrated edges are unidirectional. If an edge needs to be bidirectional when migrated to GDB, use this option.</p>
+<img alt="../../_images/two_way_edge.png" src="../../_images/two_way_edge.png" />
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="3.select_tar_conn.html" class="btn btn-neutral float-left" title="Target DB Connection Selection Page" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="5.migration_check.html" class="btn btn-neutral float-right" title="Migration Confirmation Page" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, CUBRID Corporation.
+      <span class="lastupdated">Last updated on Jun 26, 2026.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
