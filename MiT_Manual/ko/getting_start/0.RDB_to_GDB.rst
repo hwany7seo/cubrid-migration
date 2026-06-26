@@ -11,7 +11,7 @@ RDB to GDB 이관하기
     :titlesonly:
     
     R2G/3.select_tar_conn.rst
-    R2G/5.object_mapping.rst
-    R2G/6.migration_check.rst
-    R2G/7.migration_progress.rst
-    R2G/8.migration_report.rst
+    R2G/4.object_mapping.rst
+    R2G/5.migration_check.rst
+    R2G/6.migration_progress.rst
+    R2G/7.migration_report.rst

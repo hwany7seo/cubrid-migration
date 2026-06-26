@@ -15,8 +15,8 @@ Type Mapping 변경
 
 2. Migration 메뉴에서 원하는 이관 타입을 선택한다
 
+3. 원하는 데이터 타입 매핑를 선택하여 수정할수 있다
+
 .. image:: ./image/type_mapping/select_type.png
-
-3. 원하는 데이터 타입 매핑를 선택하여 수정한다.
-
-.. image:: ./image/type_mapping/select_target_type.png
+    :width: 800px
+    :height: 700px
