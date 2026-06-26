@@ -135,7 +135,7 @@ public class CopyrightDialog extends TrayDialog {
      */
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
-        newShell.setText("Copyright of CUBRID Migration Toolkit");
+        newShell.setText("Copyright of CoraDB Migration Toolkit");
     }
 
     /**

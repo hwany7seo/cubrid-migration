@@ -1,11 +1,11 @@
 Copyright (C) 2008 Search Solution Corporation.
 Copyright (C) 2016-2026 CUBRID Corporation. All rights reserved.
 
-CUBRID Tools are free software. It also repackages other free software. This section explains what you can and cannot do with CUBRID Tools and the software included with it.
-For more information, please refer to the CUBRID home page(https://www.cubrid.org/license).
+CoraDB Tools are free software. It also repackages other free software. This section explains what you can and cannot do with CoraDB Tools and the software included with it.
+For more information, please refer to the CoraDB home page(https://www.coradb.ai/).
 
 
-CUBRID Migration Toolkit License
+CoraDB Migration Toolkit License
 ================================
 
 Copyright (C) 2008 Search Solution Corporation.
@@ -104,9 +104,9 @@ Homepage http://www.eclipse.org
 License (EPL License) http://www.eclipse.org/legal/epl-v10.html
 
 
-CUBRID JDBC drivers
+CoraDB JDBC drivers
 -------------------
-Homepage http://www.cubrid.org
+Homepage https://www.coradb.ai/
 License (BSD License)
 
 

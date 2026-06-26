@@ -216,10 +216,6 @@ public class ObjectMappingPage extends MigrationWizardPage implements IRefreshab
             if (StringUtils.isNotBlank(msg)) {
                 super.setMessage(msg);
             }
-            if (util.doesNeedToChangeCharacterTypeSize()
-                    && UICommonTool.openConfirmBox(Messages.msgCheckCharset)) {
-                openAdjustCharColumnDialog();
-            }
         } catch (RuntimeException ex) {
             LOG.error(LogUtil.getExceptionString(ex));
             throw ex;

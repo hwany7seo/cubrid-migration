@@ -76,10 +76,10 @@ import java.util.List;
  */
 public class BaseConfirmationPage extends MigrationWizardPage {
 
-    private static final String NEWLINE = System.getProperty("line.separator");
+    protected static final String NEWLINE = System.getProperty("line.separator");
     protected StyledText txtSummary;
     protected StyledText txtDDL;
-    private ToolItem btnPreviewDDL;
+    protected ToolItem btnPreviewDDL;
     protected Composite comRoot;
     protected ToolBar tbTools;
 

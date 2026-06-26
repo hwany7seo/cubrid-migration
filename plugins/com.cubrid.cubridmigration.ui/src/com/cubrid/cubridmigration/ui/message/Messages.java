@@ -530,7 +530,6 @@ public class Messages extends NLS {
     public static String msgCfmClearALL;
     public static String msgCfmDeleteSQL;
     public static String msgCfmErrorSave;
-    public static String msgCheckCharset;
     public static String msgConfirmation;
     public static String msgConfirmationChangedType;
     public static String msgConfirmationTypeChanged;

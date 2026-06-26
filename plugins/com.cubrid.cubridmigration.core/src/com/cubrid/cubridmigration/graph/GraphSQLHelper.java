@@ -161,7 +161,7 @@ public class GraphSQLHelper extends SQLHelper {
 
             buffer.append(getColumnDDL(column)).append(' ');
         }
-        buffer.append(")");
+        buffer.append(NEWLINE).append(")");
         return buffer.toString();
 
     }
@@ -178,7 +178,7 @@ public class GraphSQLHelper extends SQLHelper {
                 if (i > 0) {
                     buffer.append(",").append(NEWLINE);
                 } else {
-                    buffer.append(" (");
+                    buffer.append(" (").append(NEWLINE);
                 }
 
                 buffer.append(getColumnDDL(column)).append(' ');

@@ -46,7 +46,13 @@ import org.slf4j.Logger;
 
 import com.cubrid.common.log.LogUtil;
 import com.cubrid.cubridmigration.core.connection.ConnParameters;
+import com.cubrid.cubridmigration.core.dbobject.Table;
 import com.cubrid.cubridmigration.core.engine.config.MigrationConfiguration;
+import com.cubrid.cubridmigration.cubrid.CUBRIDSQLHelper;
+import com.cubrid.cubridmigration.graph.GraphSQLHelper;
+import com.cubrid.cubridmigration.graph.dbobj.Edge;
+import com.cubrid.cubridmigration.graph.dbobj.GraphDictionary;
+import com.cubrid.cubridmigration.graph.dbobj.Vertex;
 import com.cubrid.cubridmigration.ui.SWTResourceConstents;
 import com.cubrid.cubridmigration.ui.common.UIConstant;
 import com.cubrid.cubridmigration.ui.message.Messages;
@@ -276,7 +282,7 @@ public class GraphConfirmationPage extends
 			txtSummary.setStyleRange(sr);
 		}
 		
-		//setDDLText();
+		setDDLText();
 		switchText(false);
 	}
 
@@ -292,4 +298,30 @@ public class GraphConfirmationPage extends
 	protected boolean isSaveSchema() {
 		return btnSaveSchema.getSelection();
 	}
+	
+	@Override
+	protected void setDDLText() {
+		MigrationConfiguration cfg = getMigrationWizard().getMigrationConfig();
+        txtDDL.setText("");
+        prepare4SaveScript();
+        final GraphSQLHelper helper = GraphSQLHelper.getInstance();
+        GraphDictionary dict = cfg.getGraphDictionary();
+        List<Vertex> vList = dict.getMigratedVertexList();
+        List<Edge> eList = dict.getMigratedEdgeList();
+        
+        for (Vertex v : vList) {
+        	txtDDL.append(helper.getVertexDDL(v));
+        	txtDDL.append(NEWLINE);
+        	txtDDL.append(NEWLINE);
+        }
+        
+        for (Edge e : eList) {
+        	txtDDL.append(helper.getEdgeDDL(e));
+        	txtDDL.append(NEWLINE);
+        	txtDDL.append(NEWLINE);
+        }
+        
+        
+	}
+	
 }

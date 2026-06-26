@@ -14,7 +14,7 @@
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            name="CUBRID Migration Perspective"
+            name="CoraDB Migration Perspective"
             class="com.cubrid.cubridmigration.app.Perspective"
             id="com.cubrid.cubridmigration.app.perspective">
       </perspective>
@@ -24,14 +24,14 @@
          point="org.eclipse.core.runtime.products">
       <product
             application="com.cubrid.cubridmigration.app.application"
-            name="CUBRID Migration">
+            name="CoraDB Migration">
          <property
-               name="CUBRID Migration Toolkit"
+               name="CoraDB Migration Toolkit"
                value="com.cubrid.cubridmigration.product">
          </property>
          <property
                name="appName"
-               value="CUBRID Migration">
+               value="CoraDB Migration">
          </property>
 
       </product>
@@ -48,6 +48,7 @@
             id="com.cubrid.cubridmigration.ui.preference.MigrationConfigPage"
             name="%prefTitleMigration">
       </page>
+<!--      
       <page
             category="com.cubrid.cubridmigration.ui.preference.MigrationConfigPage"
             class="com.cubrid.cubridmigration.ui.preference.MySQLToCUBRIDTypeMapPage"
@@ -102,6 +103,7 @@
             id="com.cubrid.cubridmigration.ui.preference.SQLServer2CUBRIDTypeMapPage"
             name="MSSQL&gt;&gt;CUBRID">
       </page>
+-->      
       <page
             category="com.cubrid.cubridmigration.ui.preference.MigrationConfigPage"
             class="com.cubrid.cubridmigration.ui.preference.CUBRID2CUBRIDTypeMapPage"
@@ -238,6 +240,7 @@
                name="com.cubrid.cubridmigration.ui.toolbar.separator1"
                visible="true">
          </separator>
+<!--
          <command
                commandId="com.cubrid.cubridmigration.ui.command.NewMigration"
                icon="icons/tb/tb_new_wizard.png"
@@ -246,6 +249,7 @@
                style="push"
                tooltip="%ttCreateNewMigration">
          </command>
+-->
          <command
                commandId="com.cubrid.cubridmigration.ui.command.NewGraphMigration"
                icon="icons/tb/tb_new_wizard.png"

@@ -56,7 +56,7 @@ public class DoMigration {
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
-        System.out.println("Thank you for using CUBRID Migration Toolkit(CMT) Console.");
+        System.out.println("Thank you for using CoraDB Migration Toolkit(CMT) Console.");
         PathUtils.initPaths();
         LogInitializer.initLog(PathUtils.getLogDir());
         List<String> argList = new ArrayList<String>();

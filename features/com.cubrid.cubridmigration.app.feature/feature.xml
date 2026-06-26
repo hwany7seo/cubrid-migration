@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="com.cubrid.cubridmigration.app.feature"
-      label="CUBRID Migration Toolkit Application"
+      label="CoraDB Migration Toolkit Application"
       version="1.0.0.qualifier"
       provider-name="%providerName"
       plugin="com.cubrid.cubridmigration.app">

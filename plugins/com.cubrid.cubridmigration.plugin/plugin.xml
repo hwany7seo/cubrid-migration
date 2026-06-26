@@ -25,41 +25,6 @@
          <menu
                id="com.cubrid.cubridmigration.ui.menu.migration"
                label="%migration">
-<!--               
-            <command
-                  commandId="com.cubrid.cubridmigration.ui.command.NewMigration"
-                  label="%newMigration"
-                  style="push">
-            </command>
--->            
-            <command
-                  commandId="com.cubrid.cubridmigration.ui.command.NewGraphMigration"
-                  label="%newGraphMigration"
-                  style="push">
-            </command>
-            <separator
-                  name="com.cubrid.cubridmigration.ui.menu.migration.separator3"
-                  visible="true">
-            </separator>
-            <command
-                  commandId="com.cubrid.cubridmigration.ui.command.MigrationHistory"
-                  label="%migrationHistory"
-                  style="push">
-            </command>
-            <separator
-                  name="com.cubrid.cubridmigration.ui.menu.migration.separator1"
-                  visible="true">
-            </separator>
-            <command
-                  commandId="com.cubrid.cubridmigration.ui.action.handler.ShowScriptManagementViewPartHandler"
-                  label="%scriptManager"
-                  style="push">
-            </command>
-            <command
-                  commandId="com.cubrid.cubridmigration.ui.command.OpenExtScript"
-                  label="%loadMigration"
-                  style="push">
-            </command>
          </menu>
       </menuContribution>
 	  <menuContribution

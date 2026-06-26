@@ -78,7 +78,7 @@ public class AboutDialog extends ProductInfoDialog {
                 Messages.bind(
                         Messages.aboutMessage,
                         new String[] {
-                            productName,
+                            "CoraDB Migration Tools",
                             Version.releaseVersion,
                             strs[strs.length - 1],
                             Messages.msgCubridHomePageUrl,

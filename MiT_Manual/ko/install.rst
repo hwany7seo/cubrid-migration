@@ -27,5 +27,5 @@
 
 Windows, Linux
 `````````````
-MiT를 다운로드 한 압축 해제 후 cubridmigration.exe (linux : cubridmigration)파일을 실행한다.
+MiT를 다운로드 한 압축 해제 후 coradbmigration.exe (linux : coradbmigration)파일을 실행한다.
 

@@ -229,7 +229,7 @@ latex_elements = {
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
   ('index', 'iitp.tex', u'Documentation',
-   u'CUBRID', 'manual'),
+   u'CoraDB', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -259,7 +259,7 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     ('index', 'iitp', u'Documentation',
-     [u'CUBRID'], 1)
+     [u'CoraDB'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -272,8 +272,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'iitp', u'Documentation',
-   u'CUBRID', 'cubrid', 'One line description of project.',
+  ('index', 'coradb', u'Documentation',
+   u'CoraDB', 'coradb', 'One line description of project.',
    'Miscellaneous'),
 ]
 
@@ -289,9 +289,7 @@ texinfo_documents = [
 # -- Options for linkcheck builder ---------------------------------------------
 
 linkcheck_ignore = [
-  r'https://github.com/postech-dblab-iitp/.*', 
-  r'http://jira.iitp.cubrid.org/browse/.*',
-  r'https://www.apachelounge.com/download/win64/binaries/.*'
+  r'https://www.coradb.ai/.*', 
 ]
 
 linkcheck_timeout = 30

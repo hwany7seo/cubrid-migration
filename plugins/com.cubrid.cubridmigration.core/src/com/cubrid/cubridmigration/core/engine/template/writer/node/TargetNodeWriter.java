@@ -68,7 +68,7 @@ public class TargetNodeWriter {
         } else {
             writer.writeAttribute(ATTR_TYPE, VALUE_OFFLINE);
         }
-        writer.writeAttribute(ATTR_DB_TYPE, "cubrid");
+        writer.writeAttribute(ATTR_DB_TYPE, "coradb");
 
         writeTargetTableNodes(writer, config);
         writeTargetSequenceNodes(writer, config);

@@ -1,5 +1,5 @@
 
-:meta-keywords: install , running ,configuration, cubrid migration
+:meta-keywords: install , running ,configuration, coradb migration
 :meta-description: Index for Installing Program
 
 *****

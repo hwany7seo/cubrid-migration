@@ -62,7 +62,7 @@
          point="org.eclipse.ui.views">
       <category
             id="com.cubrid.cubridmigration.app.category1"
-            name="CUBRID Migration Toolkit">
+            name="CoraDB Migration Toolkit">
       </category>
       <view
             allowMultiple="false"

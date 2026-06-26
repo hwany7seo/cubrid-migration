@@ -400,7 +400,7 @@ public class ColumnMappingView extends AbstractMappingView {
         lblHandlerExample.addMouseListener(
                 new MouseAdapter() {
                     public void mouseDown(MouseEvent me) {
-                        Program.launch("http://www.cubrid.org/wiki_tools/entry/cmt_manual_qanda");
+                        Program.launch("https://www.coradb.ai/manual/");
                     }
                 });
 
