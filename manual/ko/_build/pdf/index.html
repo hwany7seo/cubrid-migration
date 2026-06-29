@@ -1,0 +1,1953 @@
+<!DOCTYPE html>
+<html data-content_root="./" lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   MiT 1.0 documentation
+  </title>
+  <link href="_static/pygments.css?v=03e43079" rel="stylesheet" type="text/css"/>
+  <link href="_static/main.css?v=0baa9469" rel="stylesheet" type="text/css"/>
+  <link href="_static/style.css?v=ea3174ff" rel="stylesheet" type="text/css"/>
+  <script src="_static/documentation_options.js?v=b5f0cf65">
+  </script>
+  <script src="_static/doctools.js?v=9bcbadda">
+  </script>
+  <script src="_static/sphinx_highlight.js?v=dc90522c">
+  </script>
+  <link href="genindex.html" rel="index" title="Index"/>
+  <link href="search.html" rel="search" title="Search"/>
+ </head>
+ <body>
+  <article class="dont-break" id="cover">
+   <div class="container">
+    <!-- Logo -->
+    <div class="logo">
+     <p>
+     </p>
+    </div>
+    <!-- Cover middle -->
+    <div class="cover-middle">
+     <div class="title">
+      <h1 class="title-cover">
+       MiT
+      </h1>
+      <p class="subtitle-cover">
+       Version 1.0
+      </p>
+      <span class="meta">
+      </span>
+     </div>
+     <!--
+      <div class="client-logo">
+        <img src="../data/logo_.png" alt="Logotipo">
+      </div>
+      -->
+    </div>
+    <!-- Footer -->
+    <div class="cover-footer">
+     <p>
+     </p>
+    </div>
+   </div>
+  </article>
+  <div aria-label="Main" class="sphinxsidebar" role="navigation">
+   <div class="sphinxsidebarwrapper">
+    <div>
+     <h3>
+      <a href="#">
+       Table of Contents
+      </a>
+     </h3>
+     <ul>
+      <li class="toctree-l1">
+       <a class="reference internal" href="#">
+        매뉴얼 소개
+       </a>
+       <ul>
+        <li class="toctree-l2">
+         <a class="reference internal" href="#">
+          매뉴얼 구성
+         </a>
+        </li>
+        <li class="toctree-l2">
+         <a class="reference internal" href="#">
+          용어 정리
+         </a>
+        </li>
+        <li class="toctree-l2">
+         <a class="reference internal" href="#">
+          매뉴얼 규약
+         </a>
+        </li>
+        <li class="toctree-l2">
+         <a class="reference internal" href="#">
+          버전명 및 버전 문자열 규약
+         </a>
+        </li>
+       </ul>
+      </li>
+      <li class="toctree-l1">
+       <a class="reference internal" href="#">
+        프로그램 소개
+       </a>
+       <ul>
+        <li class="toctree-l2">
+         <a class="reference internal" href="#">
+          주요 기능
+         </a>
+        </li>
+       </ul>
+      </li>
+      <li class="toctree-l1">
+       <a class="reference internal" href="#">
+        설치
+       </a>
+       <ul>
+        <li class="toctree-l2">
+         <a class="reference internal" href="#">
+          설치와 실행
+         </a>
+        </li>
+       </ul>
+      </li>
+      <li class="toctree-l1">
+       <a class="reference internal" href="#">
+        시작하기
+       </a>
+       <ul>
+        <li class="toctree-l2">
+         <a class="reference internal" href="#db">
+          원본 DB 연결 관련
+         </a>
+        </li>
+        <li class="toctree-l2">
+         <a class="reference internal" href="#rdb-to-gdb">
+          RDB to GDB
+         </a>
+        </li>
+       </ul>
+      </li>
+      <li class="toctree-l1">
+       <a class="reference internal" href="#">
+        릴리스 노트
+       </a>
+       <ul>
+        <li class="toctree-l2">
+         <a class="reference internal" href="#">
+          공통 정보
+         </a>
+        </li>
+       </ul>
+      </li>
+     </ul>
+    </div>
+   </div>
+  </div>
+  <div class="document">
+   <div class="documentwrapper">
+    <div class="bodywrapper">
+     <div class="body" role="main">
+      <section id="mit-3-0">
+       <span id="reference-index">
+       </span>
+       <h1>
+        MiT 3.0 사용자 매뉴얼
+        <a class="headerlink" href="#mit-3-0" title="Link to this heading">
+         &para;
+        </a>
+       </h1>
+       <section id="id1">
+        <h2>
+         주제별 빠른 링크 모음
+         <a class="headerlink" href="#id1" title="Link to this heading">
+          &para;
+         </a>
+        </h2>
+        <table class="docutils align-default" id="topic-quick-reference">
+         <thead>
+          <tr class="row-odd">
+           <th class="head">
+            <p>
+             General
+            </p>
+           </th>
+          </tr>
+         </thead>
+         <tbody>
+          <tr class="row-even">
+           <td>
+            <p>
+             <a class="reference internal" href="#document-intro">
+              <span class="doc">
+               프로그램 소개
+              </span>
+             </a>
+            </p>
+           </td>
+          </tr>
+          <tr class="row-odd">
+           <td>
+            <p>
+             <a class="reference internal" href="#document-start">
+              <span class="doc">
+               시작하기
+              </span>
+             </a>
+            </p>
+           </td>
+          </tr>
+          <tr class="row-even">
+           <td>
+            <p>
+             <a class="reference internal" href="#document-install_upgrade">
+              <span class="doc">
+               설치
+              </span>
+             </a>
+            </p>
+           </td>
+          </tr>
+          <tr class="row-odd">
+           <td>
+            <p>
+             <a class="reference internal" href="#document-release_note/index">
+              <span class="doc">
+               릴리스 노트
+              </span>
+             </a>
+            </p>
+           </td>
+          </tr>
+         </tbody>
+        </table>
+       </section>
+       <section id="id2">
+        <h2>
+         매뉴얼 목차
+         <a class="headerlink" href="#id2" title="Link to this heading">
+          &para;
+         </a>
+        </h2>
+        <div class="toctree-wrapper compound">
+         <span id="document-toc">
+         </span>
+         <section id="id1">
+          <h3>
+           매뉴얼 소개
+           <a class="headerlink" href="#id1" title="Link to this heading">
+            &para;
+           </a>
+          </h3>
+          <section id="id2">
+           <h4>
+            매뉴얼 구성
+            <a class="headerlink" href="#id2" title="Link to this heading">
+             &para;
+            </a>
+           </h4>
+           <p>
+            본 프로그램의 매뉴얼의 구성은 다음과 같다.
+           </p>
+           <ul class="simple">
+            <li>
+             <p>
+              <a class="reference internal" href="#document-intro">
+               <span class="doc">
+                프로그램 소개
+               </span>
+              </a>
+              : 본 프로그램  구조 및 특징을 설명한다.
+             </p>
+            </li>
+            <li>
+             <p>
+              <a class="reference internal" href="#document-start">
+               <span class="doc">
+                시작하기
+               </span>
+              </a>
+              : 본 프로그램을 처음 시작하는데 참고할 수 있는 내용을 제공한다.
+             </p>
+            </li>
+            <li>
+             <p>
+              <a class="reference internal" href="#document-release_note/index">
+               <span class="doc">
+                릴리스 노트
+               </span>
+              </a>
+              : 이전 버전 대비 추가, 변경, 개선 및 버그 수정 등을 설명한다.
+             </p>
+            </li>
+           </ul>
+          </section>
+          <section id="id3">
+           <h4>
+            용어 정리
+            <a class="headerlink" href="#id3" title="Link to this heading">
+             &para;
+            </a>
+           </h4>
+           <p>
+            본 메뉴얼 에서 사용하는 주요 용어를 정리 하였다&hellip;.
+           </p>
+           <table class="docutils align-default">
+            <tbody>
+             <tr class="row-odd">
+              <td>
+               <p>
+                MiT
+               </p>
+              </td>
+              <td>
+               <p>
+                Migration Toolkit
+               </p>
+              </td>
+             </tr>
+            </tbody>
+           </table>
+          </section>
+          <section id="id4">
+           <h4>
+            매뉴얼 규약
+            <a class="headerlink" href="#id4" title="Link to this heading">
+             &para;
+            </a>
+           </h4>
+           <p>
+            다음 표는 매뉴얼에서 &lsquo;문장&rsquo;, &lsquo;명령어&rsquo;, 그리고 &lsquo;텍스트 안에서의 참조&rsquo;를 식별하는데 사용되는 문서 규약이다.
+           </p>
+           <table class="docutils align-default">
+            <thead>
+             <tr class="row-odd">
+              <th class="head">
+               <p>
+                규약
+               </p>
+              </th>
+              <th class="head">
+               <p>
+                설명
+               </p>
+              </th>
+              <th class="head">
+               <p>
+                예제
+               </p>
+              </th>
+             </tr>
+            </thead>
+            <tbody>
+             <tr class="row-even">
+              <td>
+               <p>
+                <em>
+                 기울임꼴
+                </em>
+               </p>
+              </td>
+              <td>
+               <p>
+                변수 이름, 예시로 사용하는 값(시스템, 데이터베이스,
+테이블 칼럼, 파일 등의 이름)을 나타낸다.
+               </p>
+              </td>
+              <td>
+               <p>
+                <em>
+                 persistent
+                </em>
+                :
+                <em>
+                 stringVariableName
+                </em>
+               </p>
+              </td>
+             </tr>
+             <tr class="row-odd">
+              <td>
+               <p>
+                <strong>
+                 굵게
+                </strong>
+               </p>
+              </td>
+              <td>
+               <p>
+                상수, 키워드 등 정해진 값을 나타낸다.
+               </p>
+              </td>
+              <td>
+               <p>
+                <strong>
+                 fetch
+                </strong>
+                ( ) member function
+               </p>
+              </td>
+             </tr>
+             <tr class="row-even">
+              <td>
+               <p>
+                고정폭 글꼴
+               </p>
+              </td>
+              <td>
+               <p>
+                구문, 코드 예제 또는 명령어의 실행 및 결과를 나타낸다.
+               </p>
+              </td>
+              <td>
+               <p>
+                database_name
+               </p>
+              </td>
+             </tr>
+             <tr class="row-odd">
+              <td>
+               <p>
+                대문자
+               </p>
+              </td>
+              <td>
+               <p>
+                키워드를 나타내는 데 사용된다(
+                <strong>
+                 굵게
+                </strong>
+                참조).
+               </p>
+              </td>
+              <td>
+               <p>
+                <strong>
+                 SELECT
+                </strong>
+               </p>
+              </td>
+             </tr>
+             <tr class="row-even">
+              <td>
+               <p>
+                작은 따옴표(&rsquo; &lsquo;)
+               </p>
+              </td>
+              <td>
+               <p>
+                중괄호, 대괄호와 함께 사용되면 문법의 필요한 부분을
+나타낸다. 스트링을 감쌀 때도 사용된다.
+               </p>
+              </td>
+              <td>
+               <p>
+                {&lsquo;{&rsquo;
+                <em>
+                 const_list
+                </em>
+                &lsquo;}&rsquo;}
+               </p>
+              </td>
+             </tr>
+             <tr class="row-odd">
+              <td>
+               <p>
+                대괄호([ ])
+               </p>
+              </td>
+              <td>
+               <p>
+                파라미터나 키워드가 선택적임을 나타낸다.
+               </p>
+              </td>
+              <td>
+               <p>
+                [
+                <strong>
+                 ONLY
+                </strong>
+                ]
+               </p>
+              </td>
+             </tr>
+             <tr class="row-even">
+              <td>
+               <p>
+                세로줄( | )
+               </p>
+              </td>
+              <td>
+               <p>
+                여럿 중의 하나만을 선택할 수 있음을 나타낸다.
+               </p>
+              </td>
+              <td>
+               <p>
+                [
+                <strong>
+                 COLUMN
+                </strong>
+                |
+                <strong>
+                 ATTRIBUTE
+                </strong>
+                ]
+               </p>
+              </td>
+             </tr>
+             <tr class="row-odd">
+              <td>
+               <p>
+                중괄호({ })로 싼
+파라미터
+               </p>
+              </td>
+              <td>
+               <p>
+                여럿 중에서 하나만을 반드시 선택해야 함을 나타낸다.
+               </p>
+              </td>
+              <td>
+               <p>
+                <strong>
+                 CREATE
+                </strong>
+                {
+                <strong>
+                 TABLE
+                </strong>
+                |
+                <strong>
+                 CLASS
+                </strong>
+                }
+               </p>
+              </td>
+             </tr>
+             <tr class="row-even">
+              <td>
+               <p>
+                중괄호({ })로 싼
+값
+               </p>
+              </td>
+              <td>
+               <p>
+                집합을 구성하는 원소를 나타낸다.
+               </p>
+              </td>
+              <td>
+               <p>
+                {2, 4, 6}
+               </p>
+              </td>
+             </tr>
+             <tr class="row-odd">
+              <td>
+               <p>
+                중괄호 뒤의
+줄임표({ }&hellip;)
+               </p>
+              </td>
+              <td>
+               <p>
+                파라미터 지정이 반복될 수 있음을 나타낸다.
+               </p>
+              </td>
+              <td>
+               <p>
+                {,
+                <em>
+                 class_name
+                </em>
+                }&hellip;
+               </p>
+              </td>
+             </tr>
+             <tr class="row-even">
+              <td>
+               <p>
+                산괄호(&lt; &gt;)
+               </p>
+              </td>
+              <td>
+               <p>
+                단일 키 또는 일련의 키 입력을 나타낸다.
+               </p>
+              </td>
+              <td>
+               <p>
+                &lt;Ctrl+n&gt;
+               </p>
+              </td>
+             </tr>
+            </tbody>
+           </table>
+          </section>
+          <section id="id5">
+           <h4>
+            버전명 및 버전 문자열 규약
+            <a class="headerlink" href="#id5" title="Link to this heading">
+             &para;
+            </a>
+           </h4>
+           <p>
+            본 프로그램의 1.0 이후의 버전명 및 버전 문자열은 다음과 같이 표기한다.
+           </p>
+          </section>
+         </section>
+         <span id="document-intro">
+         </span>
+         <section id="id1">
+          <h3>
+           프로그램 소개
+           <a class="headerlink" href="#id1" title="Link to this heading">
+            &para;
+           </a>
+          </h3>
+          <p>
+           본 프로그램은 CUBRID, Oracle, Tibero (RDB)에서 CoraDB (GDB)로 DB object, record 등의 정보를 마이그레이션 할 수 있도록 개발된 Eclipse RCP 기반의 도구이다.
+          </p>
+          <section id="id2">
+           <h4>
+            주요 기능
+            <a class="headerlink" href="#id2" title="Link to this heading">
+             &para;
+            </a>
+           </h4>
+           <section id="rdb-to-gdb">
+            <h5>
+             RDB to GDB 데이터 마이그레이션
+             <a class="headerlink" href="#rdb-to-gdb" title="Link to this heading">
+              &para;
+             </a>
+            </h5>
+            <a class="reference internal image-reference" href="_images/MiT_structure.png">
+             <img alt="_images/MiT_structure.png" src="_images/MiT_structure.png" style="width: 1000px; height: 500px;"/>
+            </a>
+            <p>
+             주요 기능은 RDB(CUBRID, Oracle, Tibero)에서 table, index, fk를 추출하여 MiT 내부에서 알고리즘에 따라 총 5가지 GDB 오브젝트로 분류 후 GDB(CoraDB)로 마이그레이션하는 기능이다.
+            </p>
+           </section>
+           <section id="id3">
+            <h5>
+             데이터 맵핑
+             <a class="headerlink" href="#id3" title="Link to this heading">
+              &para;
+             </a>
+            </h5>
+            <p>
+             R2G 마이그레이션 시 RDB의 데이터 타입을 GDB에 맞게 변환한다.
+            </p>
+           </section>
+          </section>
+         </section>
+         <span id="document-install_upgrade">
+         </span>
+         <section id="id1">
+          <h3>
+           설치
+           <a class="headerlink" href="#id1" title="Link to this heading">
+            &para;
+           </a>
+          </h3>
+          <p>
+           본프로그램을 설치 할수 있다
+          </p>
+          <div class="toctree-wrapper compound">
+           <span id="document-install">
+           </span>
+           <section id="install-execute">
+            <span id="id1">
+            </span>
+            <h4>
+             설치와 실행
+             <a class="headerlink" href="#install-execute" title="Link to this heading">
+              &para;
+             </a>
+            </h4>
+            <section id="supported">
+             <span id="id2">
+             </span>
+             <h5>
+              지원 플랫폼 및 설치 권장 사양
+              <a class="headerlink" href="#supported" title="Link to this heading">
+               &para;
+              </a>
+             </h5>
+             <p>
+              본프로그램이 지원하는 플랫폼과 설치를 위한 하드웨어/소프트웨어 요구 사항은 아래 표와 같다.
+             </p>
+            </section>
+            <section id="id3">
+             <h5>
+              설치와 실행
+              <a class="headerlink" href="#id3" title="Link to this heading">
+               &para;
+              </a>
+             </h5>
+             <section id="windows-linux">
+              <h6>
+               Windows, Linux
+               <a class="headerlink" href="#windows-linux" title="Link to this heading">
+                &para;
+               </a>
+              </h6>
+              <p>
+               MiT를 다운로드 한 압축 해제 후 coradbmigration.exe (linux : coradbmigration)파일을 실행한다.
+              </p>
+             </section>
+            </section>
+           </section>
+          </div>
+         </section>
+         <span id="document-start">
+         </span>
+         <section id="id1">
+          <h3>
+           시작하기
+           <a class="headerlink" href="#id1" title="Link to this heading">
+            &para;
+           </a>
+          </h3>
+          <p>
+           본 프로그램을 처음 사용하는데 참고할 수 있는 간략한 사용법을 설명한다.
+          </p>
+          <section id="db">
+           <h4>
+            원본 DB 연결 관련
+            <a class="headerlink" href="#db" title="Link to this heading">
+             &para;
+            </a>
+           </h4>
+           <p>
+            원본 DB에 연결 하기 위한 과정을 소개한다.
+           </p>
+           <section id="id2">
+            <h5>
+             이관 타입 선택
+             <a class="headerlink" href="#id2" title="Link to this heading">
+              &para;
+             </a>
+            </h5>
+            <img alt="_images/GDB_to_RDB2.png" src="_images/GDB_to_RDB2.png"/>
+            <p>
+             이관을 실행하기 위해 &lsquo;새 그래프 마이그레이션&rsquo; 버튼을 선택하면 표시되는 화면.
+            </p>
+            <section id="source-type">
+             <h6>
+              source type
+              <a class="headerlink" href="#source-type" title="Link to this heading">
+               &para;
+              </a>
+             </h6>
+             <p>
+              화면의 왼쪽 영역에 해당하는 부분이다.
+             </p>
+             <p>
+              target으로 이관할 데이터를 가져올 source를 선택하는 부분이다.
+             </p>
+             <p>
+              현재 선택 가능한 DBMS는 CUBRID, Oracle, Tibero가 있다.
+             </p>
+            </section>
+            <section id="destination-type">
+             <h6>
+              destination type
+              <a class="headerlink" href="#destination-type" title="Link to this heading">
+               &para;
+              </a>
+             </h6>
+             <p>
+              화면의 오른쪽 영역에 해당하는 부분이다.
+             </p>
+             <p>
+              target의 출력을 어떻게 할 것인지 설정하는 부분이다.
+             </p>
+             <p>
+              현재는 Onlne CoraDB만 지원한다.
+             </p>
+            </section>
+           </section>
+           <section id="id3">
+            <h5>
+             연결 선택
+             <a class="headerlink" href="#id3" title="Link to this heading">
+              &para;
+             </a>
+            </h5>
+            <p>
+             원본DB의 connection을 관리한다.
+            </p>
+            <img alt="_images/select_src_conn_page.png" src="_images/select_src_conn_page.png"/>
+            <p>
+             미리 생성된 연결을 선택하거나 유효한 연결을 새로 생성하여 선택한 뒤 대상DB 선택 페이지 또는 다른 설정 페이지로 진행할 수 있다.
+            </p>
+            <section id="id4">
+             <h6>
+              연결 생성
+              <a class="headerlink" href="#id4" title="Link to this heading">
+               &para;
+              </a>
+             </h6>
+             <p>
+              connection을 생성한다
+             </p>
+             <img alt="_images/select_src_conn_page_create_conn.png" src="_images/select_src_conn_page_create_conn.png"/>
+             <section id="id5">
+              <h6 aria-level="7">
+               데이터베이스 종류
+               <a class="headerlink" href="#id5" title="Link to this heading">
+                &para;
+               </a>
+              </h6>
+              <p>
+               현재 선택된 데이터베이스의 타입을 나타낸다. 현재 원본 DB는 CUBRID, Oracle, Tibero가 있다.
+              </p>
+             </section>
+             <section id="jdbc">
+              <h6 aria-level="7">
+               JDBC 드라이버 선택
+               <a class="headerlink" href="#jdbc" title="Link to this heading">
+                &para;
+               </a>
+              </h6>
+              <p>
+               찾아보기를 눌러 JDBC 드라이버를 추가할 수 있다. 만약 한번 진행 했을 경우 dropbox 메뉴를 통해 기존에 사용했던 JDBC를 사용할 수 있다.
+CUBRID JDBC는 미리 추가 되어 있으며 Oracle, Tibero는 다운로드 후 추가하여 사용하여야 한다.
+Oracle에 경우 연결시 ojdbc버전에 따라 orai18n.jar 관련 오류가 발생하는 경우 선택 된 jdbc와 동일한 경로에 다운로드 후 동일한 폴더에 복사 후
+프로그램을 재시작하여 다시 연결하면 오류를 해결 할 수 있다.
+              </p>
+             </section>
+             <section id="id6">
+              <h6 aria-level="7">
+               연결 이름
+               <a class="headerlink" href="#id6" title="Link to this heading">
+                &para;
+               </a>
+              </h6>
+              <p>
+               원본 DB 선택 페이지에서 보여질 이름을 입력할 수 있다.
+              </p>
+             </section>
+             <section id="id7">
+              <h6 aria-level="7">
+               호스트 주소
+               <a class="headerlink" href="#id7" title="Link to this heading">
+                &para;
+               </a>
+              </h6>
+              <p>
+               원본 DB가 있는 IP주소를 입력한다.
+              </p>
+             </section>
+             <section id="id8">
+              <h6 aria-level="7">
+               연결 포트
+               <a class="headerlink" href="#id8" title="Link to this heading">
+                &para;
+               </a>
+              </h6>
+              <p>
+               DB의 포트 번호를 입력한다. 기본값은 CUBRID의 기본 포트인 33000으로 되어있다. (Oracle의 경우 1521, Tibero의 경우 8629)
+              </p>
+             </section>
+             <section id="id9">
+              <h6 aria-level="7">
+               데이터베이스 이름
+               <a class="headerlink" href="#id9" title="Link to this heading">
+                &para;
+               </a>
+              </h6>
+              <p>
+               원본 DB 내부의 스키마 또는 DB 이름을 입력한다. (e.g. CUBRID의 샘플 DB인 demodb, Orcale에 경우 ORCL)
+              </p>
+             </section>
+             <section id="id10">
+              <h6 aria-level="7">
+               문자 집합
+               <a class="headerlink" href="#id10" title="Link to this heading">
+                &para;
+               </a>
+              </h6>
+              <p>
+               원본 DB에서 사용중인 인코딩 타입을 설정한다. CUBRID가 지원하는 인코딩 타입은 아래와 같다.
+Oracle, Tibero에 경우 자동 설정되므로 지원하지 않는다.
+              </p>
+              <ul class="simple">
+               <li>
+                <p>
+                 UTF-8(기본)
+                </p>
+               </li>
+               <li>
+                <p>
+                 MS949
+                </p>
+               </li>
+               <li>
+                <p>
+                 ISO-8859-1
+                </p>
+               </li>
+               <li>
+                <p>
+                 EUC-KR
+                </p>
+               </li>
+               <li>
+                <p>
+                 EUC-JR
+                </p>
+               </li>
+               <li>
+                <p>
+                 GB2312
+                </p>
+               </li>
+               <li>
+                <p>
+                 GBK
+                </p>
+               </li>
+              </ul>
+             </section>
+             <section id="id11">
+              <h6 aria-level="7">
+               사용자 이름
+               <a class="headerlink" href="#id11" title="Link to this heading">
+                &para;
+               </a>
+              </h6>
+              <p>
+               DB에 접속하기 위한 계정 이름을 입력한다.
+              </p>
+             </section>
+             <section id="id12">
+              <h6 aria-level="7">
+               비밀번호
+               <a class="headerlink" href="#id12" title="Link to this heading">
+                &para;
+               </a>
+              </h6>
+              <p>
+               계정의 비밀번호를 입력한다.
+              </p>
+             </section>
+             <section id="id13">
+              <h6 aria-level="7">
+               JDBC 고급 설정
+               <a class="headerlink" href="#id13" title="Link to this heading">
+                &para;
+               </a>
+              </h6>
+              <p>
+               JDBC URL을 커스텀 할 수 있다. 만약 DB연결시 parameter가 필요할 경우 해당 옵션에서 사용할 수 있다.
+              </p>
+              <img alt="_images/select_src_custom_url.png" src="_images/select_src_custom_url.png"/>
+             </section>
+            </section>
+            <section id="id14">
+             <h6>
+              테스트
+              <a class="headerlink" href="#id14" title="Link to this heading">
+               &para;
+              </a>
+             </h6>
+             <p>
+              입력된 정보를 통해 연결을 테스트한다.
+             </p>
+             <img alt="_images/select_conn_test.png" src="_images/select_conn_test.png"/>
+            </section>
+           </section>
+          </section>
+          <section id="rdb-to-gdb">
+           <h4>
+            RDB to GDB
+            <a class="headerlink" href="#rdb-to-gdb" title="Link to this heading">
+             &para;
+            </a>
+           </h4>
+           <p>
+            각 이관 기능 별 세부 사항은 다음을 참고한다.
+           </p>
+           <div class="toctree-wrapper compound">
+            <span id="document-getting_start/0.RDB_to_GDB">
+            </span>
+            <section id="rdb-to-gdb">
+             <h5>
+              RDB to GDB 이관하기
+              <a class="headerlink" href="#rdb-to-gdb" title="Link to this heading">
+               &para;
+              </a>
+             </h5>
+             <p>
+              본 프로그램의 Relation DataBase를 Graph DataBase로 이관하는 작업이다.
+             </p>
+             <div class="toctree-wrapper compound">
+              <span id="document-getting_start/R2G/3.select_tar_conn">
+              </span>
+              <section id="db">
+               <h6>
+                목표DB 연결 선택 페이지
+                <a class="headerlink" href="#db" title="Link to this heading">
+                 &para;
+                </a>
+               </h6>
+               <p>
+                대상DB의 connection을 관리한다.
+               </p>
+               <img alt="_images/select_tar_conn_page.png" src="_images/select_tar_conn_page.png"/>
+               <p>
+                미리 생성된 연결을 선택하거나 유효한 연결을 새로 생성하여 선택한 뒤 객체 맵핑 페이지로 진행할 수 있다.
+               </p>
+               <p>
+                원본 DB 연결을 선택하는 페이지와 큰 차이점은 존재하지 않는다.
+               </p>
+               <section id="id1">
+                <h6 aria-level="7">
+                 연결 생성
+                 <a class="headerlink" href="#id1" title="Link to this heading">
+                  &para;
+                 </a>
+                </h6>
+                <p>
+                 connection을 생성한다
+                </p>
+                <img alt="_images/select_tar_conn_page_create_conn.png" src="_images/select_tar_conn_page_create_conn.png"/>
+                <section id="id2">
+                 <h6 aria-level="8">
+                  데이터베이스 종류
+                  <a class="headerlink" href="#id2" title="Link to this heading">
+                   &para;
+                  </a>
+                 </h6>
+                 <p>
+                  현재 선택된 데이터베이스의 타입을 나타낸다.
+                 </p>
+                </section>
+                <section id="jdbc">
+                 <h6 aria-level="8">
+                  JDBC 드라이버 선택
+                  <a class="headerlink" href="#jdbc" title="Link to this heading">
+                   &para;
+                  </a>
+                 </h6>
+                 <p>
+                  찾아보기를 눌러 JDBC 드라이버를 추가할 수 있다. 만약 한번 진행했을 경우 ComboBox 메뉴를 통해 기존에 사용했던 JDBC를 사용할 수 있다.
+                 </p>
+                </section>
+                <section id="id3">
+                 <h6 aria-level="8">
+                  연결 이름
+                  <a class="headerlink" href="#id3" title="Link to this heading">
+                   &para;
+                  </a>
+                 </h6>
+                 <p>
+                  대상 DB 선택 페이지에서 보여질 이름을 입력할 수 있다.
+                 </p>
+                </section>
+                <section id="id4">
+                 <h6 aria-level="8">
+                  호스트 주소
+                  <a class="headerlink" href="#id4" title="Link to this heading">
+                   &para;
+                  </a>
+                 </h6>
+                 <p>
+                  대상 DB가 있는 IP주소를 입력한다.
+                 </p>
+                </section>
+                <section id="id5">
+                 <h6 aria-level="8">
+                  연결 포트
+                  <a class="headerlink" href="#id5" title="Link to this heading">
+                   &para;
+                  </a>
+                 </h6>
+                 <p>
+                  DB의 포트 번호를 입력한다. CoraDB의 기본값은 33000으로 설정 되어있다
+                 </p>
+                </section>
+                <section id="id6">
+                 <h6 aria-level="8">
+                  데이터베이스 이름
+                  <a class="headerlink" href="#id6" title="Link to this heading">
+                   &para;
+                  </a>
+                 </h6>
+                 <p>
+                  대상 DB 내부의 스키마 또는 DB 이름을 입력한다. (ex. CoraDB의 샘플 DB인 demodb)
+                 </p>
+                </section>
+                <section id="id7">
+                 <h6 aria-level="8">
+                  문자 집합
+                  <a class="headerlink" href="#id7" title="Link to this heading">
+                   &para;
+                  </a>
+                 </h6>
+                 <p>
+                  CUBRID가 지원하는 인코딩 타입은 아래와 같다.
+                 </p>
+                 <ul class="simple">
+                  <li>
+                   <p>
+                    UTF-8(기본)
+                   </p>
+                  </li>
+                  <li>
+                   <p>
+                    MS949
+                   </p>
+                  </li>
+                  <li>
+                   <p>
+                    ISO-8859-1
+                   </p>
+                  </li>
+                  <li>
+                   <p>
+                    EUC-KR
+                   </p>
+                  </li>
+                  <li>
+                   <p>
+                    EUC-JR
+                   </p>
+                  </li>
+                  <li>
+                   <p>
+                    GB2312
+                   </p>
+                  </li>
+                  <li>
+                   <p>
+                    GBK
+                   </p>
+                  </li>
+                 </ul>
+                </section>
+                <section id="id8">
+                 <h6 aria-level="8">
+                  사용자 이름
+                  <a class="headerlink" href="#id8" title="Link to this heading">
+                   &para;
+                  </a>
+                 </h6>
+                 <p>
+                  DB에 접속하기 위한 계정 이름을 입력한다.
+                 </p>
+                </section>
+                <section id="id9">
+                 <h6 aria-level="8">
+                  비밀번호
+                  <a class="headerlink" href="#id9" title="Link to this heading">
+                   &para;
+                  </a>
+                 </h6>
+                 <p>
+                  계정의 비밀번호를 입력한다.
+                 </p>
+                </section>
+                <section id="id10">
+                 <h6 aria-level="8">
+                  JDBC 고급 설정
+                  <a class="headerlink" href="#id10" title="Link to this heading">
+                   &para;
+                  </a>
+                 </h6>
+                 <p>
+                  JDBC URL을 커스텀 할 수 있다. 만약 DB연결시 parameter가 필요할 경우 해당 옵션에서 사용할 수 있다.
+                 </p>
+                 <img alt="_images/select_tar_custom_url.png" src="_images/select_tar_custom_url.png"/>
+                </section>
+               </section>
+               <section id="id11">
+                <h6 aria-level="7">
+                 테스트
+                 <a class="headerlink" href="#id11" title="Link to this heading">
+                  &para;
+                 </a>
+                </h6>
+                <p>
+                 입력된 정보를 통해 연결을 테스트한다.
+                </p>
+                <img alt="_images/select_conn_test.png" src="_images/select_conn_test.png"/>
+               </section>
+              </section>
+              <span id="document-getting_start/R2G/4.object_mapping">
+              </span>
+              <section id="id1">
+               <h6>
+                스키마 맵핑 페이지
+                <a class="headerlink" href="#id1" title="Link to this heading">
+                 &para;
+                </a>
+               </h6>
+               <section id="id2">
+                <h6 aria-level="7">
+                 스키마 선택 및 변경
+                 <a class="headerlink" href="#id2" title="Link to this heading">
+                  &para;
+                 </a>
+                </h6>
+                <p>
+                 원본 DB의 스키마 중에 이관하고싶은 스키마를 선택하는 페이지이다.
+권한이 있는 스키마 목록이 표시되며, 현재 CoraDB는 멀티 스키마 지원하지 않으므로 단일 스키마로만 이관이 가능하다.
+Update Database Objects 버튼을 통해 변경 된 객체 정보를 다시 로드하여 표시한다.
+                </p>
+                <img alt="_images/schema_mapping_page.png" src="_images/schema_mapping_page.png"/>
+               </section>
+              </section>
+              <section id="id3">
+               <h6>
+                객체 맵핑 페이지
+                <a class="headerlink" href="#id3" title="Link to this heading">
+                 &para;
+                </a>
+               </h6>
+               <section id="id4">
+                <h6 aria-level="7">
+                 스키마 선택 페이지
+                 <a class="headerlink" href="#id4" title="Link to this heading">
+                  &para;
+                 </a>
+                </h6>
+                <p>
+                 원본 DB의 테이블들 중에 이관하고싶은 테이블을 선택하는 페이지이다.
+                </p>
+                <p>
+                 메뉴얼에서는 northwind sampleDB를 사용하였다.
+                </p>
+                <img alt="_images/object_mapping_page.png" src="_images/object_mapping_page.png"/>
+               </section>
+               <section id="id5">
+                <h6 aria-level="7">
+                 테이블 리스트
+                 <a class="headerlink" href="#id5" title="Link to this heading">
+                  &para;
+                 </a>
+                </h6>
+                <p>
+                 원본 DB의 테이블 목록을 표시한다. 각 행을 클릭하여 이관 여부를 지정할 수 있다.
+기본적으로 모든 테이블을 이관하도록 설정 되어있다.
+                </p>
+               </section>
+               <section id="id6">
+                <h6 aria-level="7">
+                 컬럼 리스트
+                 <a class="headerlink" href="#id6" title="Link to this heading">
+                  &para;
+                 </a>
+                </h6>
+                <p>
+                 테이블 리스트에서 테이블을 선택한 경우 해당 테이블의 컬럼 정보를 확인할 수 있다.
+이관할 테이블을 선택한 후 다음 페이지로 진행한다.
+                </p>
+               </section>
+               <section id="id7">
+                <h6 aria-level="7">
+                 그래프
+                 <a class="headerlink" href="#id7" title="Link to this heading">
+                  &para;
+                 </a>
+                </h6>
+                <p>
+                 전 페이지에서 선택된 object들이 이관될 경우 GraphDB에서 어떻게 보이게 될지 예시를 보여준다.
+                </p>
+               </section>
+               <section id="rdb-gdb">
+                <h6 aria-level="7">
+                 RDB, GDB 컬럼
+                 <a class="headerlink" href="#rdb-gdb" title="Link to this heading">
+                  &para;
+                 </a>
+                </h6>
+                <p>
+                 그래프 뷰에서 object를 선택한 경우 해당 object의 RDB에서의 컬럼 정보와 GDB에서의 컬럼 정보를 확인할 수 있다.
+                </p>
+                <img alt="_images/object_mapping_page2.png" src="_images/object_mapping_page2.png"/>
+               </section>
+               <section id="gdb">
+                <h6 aria-level="7">
+                 GDB 컬럼 데이터 타입 변경 기능
+                 <a class="headerlink" href="#gdb" title="Link to this heading">
+                  &para;
+                 </a>
+                </h6>
+                <p>
+                 GDB column의 특정 데이터 타입은 변경이 가능하다.
+                </p>
+                <img alt="_images/change_data_type.png" src="_images/change_data_type.png"/>
+                <p>
+                 자기 자신의 타입과, string으로의 타입 변경만을 지원한다.
+                </p>
+               </section>
+               <section id="id8">
+                <h6 aria-level="7">
+                 오브젝트 이름 변경 기능
+                 <a class="headerlink" href="#id8" title="Link to this heading">
+                  &para;
+                 </a>
+                </h6>
+                <p>
+                 vertex 또는 edge의 이름을 수정할 수 있다.
+                </p>
+                <p>
+                 방법은 아래와 같다
+                </p>
+                <ol class="arabic simple">
+                 <li>
+                  <p>
+                   이름을 수정하고 싶은 오브젝트를 우클릭한 후 Change Name을 선택한다
+                  </p>
+                 </li>
+                </ol>
+                <img alt="_images/change_name.png" src="_images/change_name.png"/>
+                <ol class="arabic simple" start="2">
+                 <li>
+                  <p>
+                   원하는 이름을 입력하고 확인을 누른다
+                  </p>
+                 </li>
+                </ol>
+                <img alt="_images/change_name_dialog.png" src="_images/change_name_dialog.png"/>
+                <ol class="arabic simple" start="3">
+                 <li>
+                  <p>
+                   수정된 것을 확인한다.
+                  </p>
+                 </li>
+                </ol>
+                <img alt="_images/change_name_complete.png" src="_images/change_name_complete.png"/>
+               </section>
+               <section id="edge">
+                <h6 aria-level="7">
+                 사용자 지정 edge 추가 기능
+                 <a class="headerlink" href="#edge" title="Link to this heading">
+                  &para;
+                 </a>
+                </h6>
+                <p>
+                 그래프 뷰에서 조건을 만족하는 경우 사용자가 edge를 추가할 수 있다
+                </p>
+                <p>
+                 방법은 아래와 같다
+                </p>
+                <ol class="arabic simple">
+                 <li>
+                  <p>
+                   우선 start vertex로 지정할 vertex를 우클릭하여 선택한다.
+                  </p>
+                 </li>
+                </ol>
+                <img alt="_images/add_edge_step1.png" src="_images/add_edge_step1.png"/>
+                <ol class="arabic simple" start="2">
+                 <li>
+                  <p>
+                   end vertex로 지정할 vertex도 마찬가지로 우클릭하여 선택한다. start vertex를 선택하였다면 활성화 된다.
+                  </p>
+                 </li>
+                </ol>
+                <img alt="_images/add_edge_step2.png" src="_images/add_edge_step2.png"/>
+                <ol class="arabic simple" start="3">
+                 <li>
+                  <p>
+                   Create New Edge dialog에서 edge 이름을 입력하고, 아래 테이블에서 FK를 연결할 컬럼을 선택한다. 이때 각 컬럼은 타입이 동일해야 한다.
+                  </p>
+                 </li>
+                </ol>
+                <img alt="_images/add_edge_step3.png" src="_images/add_edge_step3.png"/>
+                <ol class="arabic simple" start="4">
+                 <li>
+                  <p>
+                   그 후 확인을 누르면 사용자 지정 edge가 생성된 것을 확인 할 수 있다.
+                  </p>
+                 </li>
+                </ol>
+                <img alt="_images/add_edge_step5.png" src="_images/add_edge_step5.png"/>
+               </section>
+               <section id="id9">
+                <h6 aria-level="7">
+                 edge 삭제 기능
+                 <a class="headerlink" href="#id9" title="Link to this heading">
+                  &para;
+                 </a>
+                </h6>
+                <p>
+                 edge를 삭제할 수 있다.
+                </p>
+                <ol class="arabic simple">
+                 <li>
+                  <p>
+                   삭제할 edge를 선택한 후 우클릭한다.
+                  </p>
+                 </li>
+                </ol>
+                <img alt="_images/select_edge_to_delete.png" src="_images/select_edge_to_delete.png"/>
+                <ol class="arabic simple" start="2">
+                 <li>
+                  <p>
+                   [Delete Edge]를 선택하면 선택한 edge가 삭제된다.
+                  </p>
+                 </li>
+                </ol>
+                <img alt="_images/delete_edge.png" src="_images/delete_edge.png"/>
+               </section>
+               <section id="redo-undo">
+                <h6 aria-level="7">
+                 redo, undo 기능
+                 <a class="headerlink" href="#redo-undo" title="Link to this heading">
+                  &para;
+                 </a>
+                </h6>
+                <p>
+                 오브젝트 이름 변경, edge 추가 등의 기능을 수행한 뒤 취소하고 싶거나 다시 수행하고 싶은 경우 redo, undo 기능을 사용할 수 있다
+                </p>
+                <p>
+                 방법은 아래와 같다.
+                </p>
+                <section id="undo">
+                 <h6 aria-level="8">
+                  undo
+                  <a class="headerlink" href="#undo" title="Link to this heading">
+                   &para;
+                  </a>
+                 </h6>
+                 <ol class="arabic simple">
+                  <li>
+                   <p>
+                    무언가 명령을 취소한 후 아무곳이나 선택 후 우클릭한다.
+                   </p>
+                  </li>
+                 </ol>
+                 <img alt="_images/undo_enable.png" src="_images/undo_enable.png"/>
+                 <ol class="arabic simple" start="2">
+                  <li>
+                   <p>
+                    undo 버튼을 선택하면 명령이 취소된다.
+                   </p>
+                  </li>
+                 </ol>
+                 <img alt="_images/execute_undo.png" src="_images/execute_undo.png"/>
+                </section>
+                <section id="redo">
+                 <h6 aria-level="8">
+                  redo
+                  <a class="headerlink" href="#redo" title="Link to this heading">
+                   &para;
+                  </a>
+                 </h6>
+                 <ol class="arabic simple">
+                  <li>
+                   <p>
+                    undo를 실행한 후 아무곳이나 선택 후 우클릭한다.
+                   </p>
+                  </li>
+                 </ol>
+                 <img alt="_images/redo_enable.png" src="_images/redo_enable.png"/>
+                 <ol class="arabic simple" start="2">
+                  <li>
+                   <p>
+                    redo 버튼을 선택하면 가장 최근에 취소됐던 명령이 다시 실행된다.
+                   </p>
+                  </li>
+                 </ol>
+                 <img alt="_images/execute_redo.png" src="_images/execute_redo.png"/>
+                </section>
+               </section>
+               <section id="two-way-edge">
+                <h6 aria-level="7">
+                 two-way edge
+                 <a class="headerlink" href="#two-way-edge" title="Link to this heading">
+                  &para;
+                 </a>
+                </h6>
+                <p>
+                 기본적으로 이관되는 모든 edge는 단방향이다. 만약 gdb로 이관하였을 때 edge가 양방향으로 연결되어야 할 필요가 있다면 해당 옵션을 사용하면 된다.
+                </p>
+                <img alt="_images/two_way_edge.png" src="_images/two_way_edge.png"/>
+               </section>
+              </section>
+              <span id="document-getting_start/R2G/5.migration_check">
+              </span>
+              <section id="id1">
+               <h6>
+                이관 확인 페이지
+                <a class="headerlink" href="#id1" title="Link to this heading">
+                 &para;
+                </a>
+               </h6>
+               <p>
+                이관할 object들의 정보를 최종적으로 확인한다.
+               </p>
+               <img alt="_images/migration_check.png" src="_images/migration_check.png"/>
+               <section id="id2">
+                <h6 aria-level="7">
+                 원본 데이터베이스
+                 <a class="headerlink" href="#id2" title="Link to this heading">
+                  &para;
+                 </a>
+                </h6>
+                <p>
+                 원본 데이터베이스에 대한 연결 정보를 표시한다.
+                </p>
+               </section>
+               <section id="id3">
+                <h6 aria-level="7">
+                 대상 데이터베이스
+                 <a class="headerlink" href="#id3" title="Link to this heading">
+                  &para;
+                 </a>
+                </h6>
+                <p>
+                 대상 데이터베이스에 대한 연결 정보를 표시한다.
+                </p>
+               </section>
+               <section id="vertex">
+                <h6 aria-level="7">
+                 Vertex
+                 <a class="headerlink" href="#vertex" title="Link to this heading">
+                  &para;
+                 </a>
+                </h6>
+                <p>
+                 원본 DB에서 vertex로 추출할 table을 표시한다.
+                </p>
+               </section>
+               <section id="edge">
+                <h6 aria-level="7">
+                 Edge
+                 <a class="headerlink" href="#edge" title="Link to this heading">
+                  &para;
+                 </a>
+                </h6>
+                <p>
+                 원본 DB에서 Edge로 추출할 join table 또는 FK를 표시한다.
+                </p>
+               </section>
+               <section id="graph-design">
+                <h6 aria-level="7">
+                 Graph Design
+                 <a class="headerlink" href="#graph-design" title="Link to this heading">
+                  &para;
+                 </a>
+                </h6>
+                <p>
+                 생성될 그래프를 문자 형식으로 간단히 보여준다.
+                </p>
+               </section>
+               <section id="advanced-settings">
+                <h6 aria-level="7">
+                 Advanced Settings
+                 <a class="headerlink" href="#advanced-settings" title="Link to this heading">
+                  &para;
+                 </a>
+                </h6>
+                <p>
+                 이관 진행시 사용될 thread 갯수, commit 주기 등을 설정할 수 있다.
+                </p>
+                <img alt="_images/advance_performance_setting.png" src="_images/advance_performance_setting.png"/>
+               </section>
+               <section id="preview-ddl">
+                <h6 aria-level="7">
+                 Preview DDL
+                 <a class="headerlink" href="#preview-ddl" title="Link to this heading">
+                  &para;
+                 </a>
+                </h6>
+                <p>
+                 이관 진행시 생성 될 DDL을 미리 확인할 수 있다.
+                </p>
+                <a class="reference internal image-reference" href="_images/preview_ddl.png">
+                 <img alt="_images/preview_ddl.png" src="_images/preview_ddl.png" style="width: 600px; height: 700px;"/>
+                </a>
+               </section>
+               <section id="id4">
+                <h6 aria-level="7">
+                 스크립트
+                 <a class="headerlink" href="#id4" title="Link to this heading">
+                  &para;
+                 </a>
+                </h6>
+                <p>
+                 MiT에서는 스크립트 관련 기능이 동작하지 않는다.
+                </p>
+               </section>
+              </section>
+              <span id="document-getting_start/R2G/6.migration_progress">
+              </span>
+              <section id="id1">
+               <h6>
+                이관 진행
+                <a class="headerlink" href="#id1" title="Link to this heading">
+                 &para;
+                </a>
+               </h6>
+               <p>
+                이관 진행 상황을 확인할 수 있는 페이지
+               </p>
+               <img alt="_images/migration_progress.png" src="_images/migration_progress.png"/>
+               <section id="vertex">
+                <h6 aria-level="7">
+                 vertex
+                 <a class="headerlink" href="#vertex" title="Link to this heading">
+                  &para;
+                 </a>
+                </h6>
+                <p>
+                 원본 DB의 테이블 이름과 각 테이블에서 추출되는 vertex 개수, 진행상황 등을 표시한다.
+                </p>
+               </section>
+               <section id="edge">
+                <h6 aria-level="7">
+                 Edge
+                 <a class="headerlink" href="#edge" title="Link to this heading">
+                  &para;
+                 </a>
+                </h6>
+                <p>
+                 원본 DB에서 추출된 FK, join table edge와 이름, 시작 vertex와 끝 vertex를 표시한다.
+                </p>
+               </section>
+               <section id="console">
+                <h6 aria-level="7">
+                 Console 화면
+                 <a class="headerlink" href="#console" title="Link to this heading">
+                  &para;
+                 </a>
+                </h6>
+                <p>
+                 진행 상황을 표시한다. 진행하면서 이관이 실패하는 경우 빨간색으로 내용이 표시된다.
+                </p>
+               </section>
+              </section>
+              <span id="document-getting_start/R2G/7.migration_report">
+              </span>
+              <section id="id1">
+               <h6>
+                이관 보고서
+                <a class="headerlink" href="#id1" title="Link to this heading">
+                 &para;
+                </a>
+               </h6>
+               <p>
+                이관 완료 후 결과를 표시한다.
+               </p>
+               <section id="id2">
+                <h6 aria-level="7">
+                 요약
+                 <a class="headerlink" href="#id2" title="Link to this heading">
+                  &para;
+                 </a>
+                </h6>
+                <a class="reference internal image-reference" href="_images/migration_report.png">
+                 <img alt="_images/migration_report.png" src="_images/migration_report.png" style="width: 600px; height: 700px;"/>
+                </a>
+                <p>
+                 vertex와 edge의 추출 개수, 입력 개수, 실패한 개수, 진행도 등을 확인할 수 있다.
+                </p>
+               </section>
+               <section id="id3">
+                <h6 aria-level="7">
+                 상세 정보
+                 <a class="headerlink" href="#id3" title="Link to this heading">
+                  &para;
+                 </a>
+                </h6>
+                <p>
+                 vertex, edge의 이관에 대한 상세한 정보를 확인할 수 있다.
+                </p>
+                <a class="reference internal image-reference" href="_images/detail_info.png">
+                 <img alt="_images/detail_info.png" src="_images/detail_info.png" style="width: 600px; height: 700px;"/>
+                </a>
+                <ul class="simple">
+                 <li>
+                  <p>
+                   status: 이관 성공, 실패 여부를 알려준다.
+                  </p>
+                 </li>
+                 <li>
+                  <p>
+                   type: 이관된 object의 vertex, edge, join table edge 여부를 표시한다.
+                  </p>
+                 </li>
+                 <li>
+                  <p>
+                   name: object의 이름을 표시한다.
+                  </p>
+                 </li>
+                 <li>
+                  <p>
+                   source db object: RDB의 어떤 object가 이관되면서 변경된 것인지 표시한다.
+                  </p>
+                 </li>
+                </ul>
+               </section>
+               <section id="id4">
+                <h6 aria-level="7">
+                 로그
+                 <a class="headerlink" href="#id4" title="Link to this heading">
+                  &para;
+                 </a>
+                </h6>
+                <a class="reference internal image-reference" href="_images/report_log.png">
+                 <img alt="_images/report_log.png" src="_images/report_log.png" style="width: 600px; height: 700px;"/>
+                </a>
+                <p>
+                 이관 진행 페이지에서 console 화면에 표시되었던 내용이 저장된다.
+                </p>
+               </section>
+               <section id="id5">
+                <h6 aria-level="7">
+                 설정 정보
+                 <a class="headerlink" href="#id5" title="Link to this heading">
+                  &para;
+                 </a>
+                </h6>
+                <a class="reference internal image-reference" href="_images/report_setting_info.png">
+                 <img alt="_images/report_setting_info.png" src="_images/report_setting_info.png" style="width: 600px; height: 700px;"/>
+                </a>
+                <p>
+                 이관 확인 페이지에서 표시되었던 정보들을 확인할 수 있다.
+                </p>
+               </section>
+              </section>
+             </div>
+            </section>
+            <span id="document-getting_start/5.Type_Mapping">
+            </span>
+            <section id="type-mapping">
+             <h5>
+              Type Mapping 변경
+              <a class="headerlink" href="#type-mapping" title="Link to this heading">
+               &para;
+              </a>
+             </h5>
+             <p>
+              이관 시 대상 DB에 이관되는 값의 데이터 타입을 바꾸고 싶을 때 사용하는 기능이다.
+             </p>
+             <p>
+              메뉴 진입 방법은 아래와 같다.
+             </p>
+             <ol class="arabic simple">
+              <li>
+               <p>
+                설정 메뉴를 선택한다.
+               </p>
+              </li>
+             </ol>
+             <img alt="_images/preference.png" src="_images/preference.png"/>
+             <ol class="arabic simple" start="2">
+              <li>
+               <p>
+                Migration 메뉴에서 원하는 이관 타입을 선택한다
+               </p>
+              </li>
+              <li>
+               <p>
+                원하는 데이터 타입 매핑를 선택하여 수정할수 있다
+               </p>
+              </li>
+             </ol>
+             <a class="reference internal image-reference" href="_images/select_type.png">
+              <img alt="_images/select_type.png" src="_images/select_type.png" style="width: 800px; height: 700px;"/>
+             </a>
+            </section>
+           </div>
+          </section>
+         </section>
+         <span id="document-release_note/index">
+         </span>
+         <section id="id1">
+          <h3>
+           릴리스 노트
+           <a class="headerlink" href="#id1" title="Link to this heading">
+            &para;
+           </a>
+          </h3>
+          <div class="toctree-wrapper compound">
+          </div>
+          <section id="id2">
+           <h4>
+            공통 정보
+            <a class="headerlink" href="#id2" title="Link to this heading">
+             &para;
+            </a>
+           </h4>
+           <section id="id3">
+            <h5>
+             개정 내역
+             <a class="headerlink" href="#id3" title="Link to this heading">
+              &para;
+             </a>
+            </h5>
+            <table class="docutils align-default">
+             <thead>
+              <tr class="row-odd">
+               <th class="head">
+                <p>
+                 작성 날짜
+                </p>
+               </th>
+               <th class="head">
+                <p>
+                 설명
+                </p>
+               </th>
+              </tr>
+             </thead>
+             <tbody>
+              <tr class="row-even">
+               <td>
+                <p>
+                 2026년 06월
+                </p>
+               </td>
+               <td>
+                <p>
+                 MiT 0.1 릴리즈
+                </p>
+               </td>
+              </tr>
+             </tbody>
+            </table>
+           </section>
+           <section id="id4">
+            <h5>
+             라이선스
+             <a class="headerlink" href="#id4" title="Link to this heading">
+              &para;
+             </a>
+            </h5>
+           </section>
+           <section id="id5">
+            <h5>
+             추가 정보
+             <a class="headerlink" href="#id5" title="Link to this heading">
+              &para;
+             </a>
+            </h5>
+           </section>
+           <section id="id6">
+            <h5>
+             주의 사항
+             <a class="headerlink" href="#id6" title="Link to this heading">
+              &para;
+             </a>
+            </h5>
+           </section>
+          </section>
+         </section>
+        </div>
+       </section>
+       <section id="id3">
+        <h2>
+         인덱스
+         <a class="headerlink" href="#id3" title="Link to this heading">
+          &para;
+         </a>
+        </h2>
+        <ul class="simple">
+         <li>
+          <p>
+           <a class="reference internal" href="genindex.html">
+            <span class="std std-ref">
+             Index
+            </span>
+           </a>
+          </p>
+         </li>
+        </ul>
+       </section>
+      </section>
+      <div class="clearer">
+      </div>
+     </div>
+    </div>
+   </div>
+   <div class="sphinxsidebar">
+    <div class="sphinxsidebarwrapper">
+     <h3>
+      <a href="#">
+       Table Of Contents
+      </a>
+     </h3>
+     <ul>
+      <li class="toctree-l1">
+       <a class="reference internal" href="#document-toc">
+        매뉴얼 소개
+       </a>
+      </li>
+      <li class="toctree-l1">
+       <a class="reference internal" href="#document-intro">
+        프로그램 소개
+       </a>
+      </li>
+      <li class="toctree-l1">
+       <a class="reference internal" href="#document-install_upgrade">
+        설치
+       </a>
+      </li>
+      <li class="toctree-l1">
+       <a class="reference internal" href="#document-start">
+        시작하기
+       </a>
+      </li>
+      <li class="toctree-l1">
+       <a class="reference internal" href="#document-release_note/index">
+        릴리스 노트
+       </a>
+      </li>
+     </ul>
+     <h3 style="margin-top: 1.5em;">
+      Manual Search
+     </h3>
+     <form action="search.html" class="search" method="get">
+      <input name="q" size="18" type="text"/>
+      <input type="submit" value="Go"/>
+      <input name="check_keywords" type="hidden" value="yes"/>
+      <input name="area" type="hidden" value="default"/>
+     </form>
+     <p class="searchtip" style="font-size: 90%">
+      Search Area: Manual. Enter only one keyword.
+     </p>
+     <h3 style="margin-top: 1.5em;">
+      Site Search
+     </h3>
+     <form action="http://www.cubrid.org/?" class="search" method="get">
+      <input name="is_keyword" size="18" type="text"/>
+      <input type="submit" value="Go"/>
+      <input name="act" type="hidden" value="IS"/>
+      <input name="search_target" type="hidden" value="title_content"/>
+     </form>
+     <p class="searchtip" style="font-size: 90%">
+      Search Area: cubrid.org Site. You can enter several keywords.
+     </p>
+    </div>
+   </div>
+   <div class="clearer">
+   </div>
+  </div>
+  <article id="back-cover">
+   <div class="container">
+    <div class="back-cover-footer">
+     <p>
+      &copy; Copyright 2022, CUBRID Corporation.
+     </p>
+     <p>
+      Created using
+      <a href="http://sphinx-doc.org/">
+       Sphinx
+      </a>
+      8.2.3.
+     </p>
+    </div>
+   </div>
+  </article>
+ </body>
+</html>

@@ -33,3 +33,4 @@ testd
 tests/unit-test/logs/
 MiT_Manual/ko/_build/
 MiT_Manual/en/_build/
+.claude

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+d<?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
 <product name="CoraDB Migration" uid="com.cubrid.cubridmigration.desktop" id="com.cubrid.cubridmigration.app.product" application="com.cubrid.cubridmigration.app.application" version="1.0.0.qualifier" useFeatures="true" includeLaunchers="true">
@@ -14,11 +14,11 @@
    <splash location="com.cubrid.cubridmigration.app"/>
 
    <launcher name="coradbmigration">
-      <linux icon="/icons/cubridmigration.xpm"/>
-      <macosx icon="/icons/cubridmigration.icns"/>
+      <linux icon="/icons/coradbmigration.xpm"/>
+      <macosx icon="/icons/coradbmigration.icns"/>
       <solaris/>
       <win useIco="true">
-         <ico path="/icons/cubridmigration.ico"/>
+         <ico path="/icons/coradbmigration.ico"/>
       </win>
    </launcher>
 

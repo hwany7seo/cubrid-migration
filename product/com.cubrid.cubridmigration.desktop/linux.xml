@@ -26,8 +26,8 @@
             <directory>${basedir}/target/products/com.cubrid.cubridmigration.desktop/linux/gtk/x86_64/cubridmigration/</directory>
             <outputDirectory>/</outputDirectory>
             <includes>
-                <include>cubridmigration</include>
-                <include>cubridmigration.ini</include>
+                <include>coradbmigration</include>
+                <include>coradbmigration.ini</include>
             </includes>
         </fileSet>
         <fileSet>

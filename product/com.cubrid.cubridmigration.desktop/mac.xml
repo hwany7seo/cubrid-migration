@@ -25,22 +25,23 @@
         <fileSet>
             <directory>${basedir}/target/products/com.cubrid.cubridmigration.desktop/macosx/cocoa/x86_64/Cubridmigration.app/Contents/MacOS/</directory>
             <outputDirectory>/</outputDirectory>
+            <fileMode>0755</fileMode>
             <includes>
-                <include>cubridmigration</include>
+                <include>coradbmigration</include>
             </includes>
         </fileSet>
         <fileSet>
             <directory>${basedir}/target/products/com.cubrid.cubridmigration.desktop/macosx/cocoa/x86_64/Cubridmigration.app/Contents/Eclipse/</directory>
             <outputDirectory>/</outputDirectory>
             <includes>
-                <include>cubridmigration.ini</include>
+                <include>coradbmigration.ini</include>
             </includes>
         </fileSet>
         <fileSet>
             <directory>${basedir}/target/products/com.cubrid.cubridmigration.desktop/macosx/cocoa/x86_64/Cubridmigration.app/Contents/Resources/</directory>
             <outputDirectory>/</outputDirectory>
             <includes>
-                <include>cubridmigration.icns</include>
+                <include>coradbmigration.icns</include>
             </includes>
         </fileSet>
         <fileSet>

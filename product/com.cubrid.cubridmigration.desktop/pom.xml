@@ -116,6 +116,26 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>fix-mac-ini-paths</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <!-- Remove ../Eclipse/ prefix from Mac ini files so paths work in flat tarball layout -->
+                                <replace token="../Eclipse/" value="">
+                                    <fileset dir="${project.build.directory}/products/com.cubrid.cubridmigration.desktop/macosx/cocoa/aarch64/Cubridmigration.app/Contents/Eclipse"
+                                             includes="coradbmigration.ini"/>
+                                </replace>
+                                <replace token="../Eclipse/" value="">
+                                    <fileset dir="${project.build.directory}/products/com.cubrid.cubridmigration.desktop/macosx/cocoa/x86_64/Cubridmigration.app/Contents/Eclipse"
+                                             includes="coradbmigration.ini"/>
+                                </replace>
+                            </target>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>create-mac-aarch64-dmg</id>
                         <phase>verify</phase>
                         <goals>
