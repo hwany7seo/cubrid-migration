@@ -31,6 +31,6 @@ target/
 
 testd
 tests/unit-test/logs/
-MiT_Manual/ko/_build/
-MiT_Manual/en/_build/
+manual/ko/_build/
+manual/en/_build/
 .claude
