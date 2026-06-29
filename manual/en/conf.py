@@ -1,4 +1,4 @@
-d# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #
 # test documentation build configuration file, created by
 # sphinx-quickstart on Wed Oct 24 15:44:38 2012.

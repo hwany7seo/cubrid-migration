@@ -34,3 +34,4 @@ tests/unit-test/logs/
 manual/ko/_build/
 manual/en/_build/
 .claude
+manual/dist/
